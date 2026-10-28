@@ -22,15 +22,22 @@
     "check": "npm run tokens:check && npm run lint && npm run typecheck && npm run format:check && npm test"
   },
   "dependencies": {
+    "@mdx-js/mdx": "^3.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "github-slugger": "^2.0.0",
     "lucide-react": "^1.63.0",
+    "mdast-util-to-string": "^4.0.0",
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "shiki": "^4.5.0",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "unist-util-visit": "^5.2.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -38,6 +45,8 @@
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
+    "@types/mdast": "^4.0.4",
+    "@types/mdx": "^2.0.14",
     "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
