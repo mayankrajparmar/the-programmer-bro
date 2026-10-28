@@ -186,6 +186,46 @@
     animation: tpb-tok 0.5s var(--ease-tpb-spring) both;
     animation-delay: var(--d, 0s);
   }
+
+  /* A menu sheet sliding in under the header each time it opens. */
+  .tpb-sheet:not([hidden]) {
+    animation: tpb-rise 0.25s var(--ease-tpb) both;
+  }
+}
+
+/*
+ * Code highlighting. Shiki runs at build time with a theme made of CSS
+ * variables (src/lib/highlight.ts); these map them onto the design tokens:
+ * keywords info, strings accent-text, comments text-muted in italic, the rest text.
+ */
+.tpb-code {
+  --shiki-foreground: var(--text);
+  --shiki-background: transparent;
+  --shiki-token-keyword: var(--info);
+  --shiki-token-string: var(--accent-text);
+  --shiki-token-string-expression: var(--accent-text);
+  --shiki-token-comment: var(--text-muted);
+  --shiki-token-constant: var(--text);
+  --shiki-token-function: var(--text);
+  --shiki-token-parameter: var(--text);
+  --shiki-token-punctuation: var(--text);
+  --shiki-token-link: var(--text);
+  --shiki-token-inserted: var(--success);
+  --shiki-token-deleted: var(--danger);
+}
+
+.tpb-code [style*="--shiki-token-comment"] {
+  font-style: italic;
+}
+
+.tpb-code pre {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 15px;
+  line-height: 24px;
+  tab-size: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {
