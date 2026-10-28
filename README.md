@@ -55,6 +55,9 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 
 ```text
 .
+├── content/
+│   ├── learn/<track>/         # track.json (the lesson plan) and NN-slug.mdx lessons
+│   └── quizzes/               # <lesson-slug>.json, one quiz per lesson
 ├── design/
 │   └── tokens.json            # Design tokens exported from the design system (source of truth)
 ├── e2e/                       # Playwright browser tests
@@ -79,8 +82,15 @@ The first time you run browser tests, install Chromium with `npx playwright inst
     │   │   ├── components/    # The feature's own components and their tests
     │   │   └── index.ts       # The feature's public surface
     │   ├── design-system/     # Internal preview of every shared component
-    │   └── errors/            # 404 page
-    ├── lib/                   # Helpers: cn(), theme, motion, code highlighting
+    │   ├── errors/            # 404 page
+    │   └── learn/             # Tracks, lessons, quizzes and browser-saved progress
+    │       ├── components/    # Track and lesson pages, MDX components
+    │       ├── diagrams/      # Lesson diagrams as React components
+    │       ├── progress/      # Progress in localStorage (tpb:progress:v1)
+    │       ├── quiz/          # The end-of-lesson quiz
+    │       ├── server/        # Reads and validates content/ at build
+    │       └── schema.ts      # Zod schemas for every content file
+    ├── lib/                   # Helpers: cn(), theme, motion, code highlighting, MDX
     └── styles/                # globals.css, generated tokens.css, self-hosted fonts
 ```
 
@@ -96,7 +106,7 @@ How code is organised:
 - **Tests sit next to the code** as `*.test.ts(x)`. Browser tests that cover whole pages live in
   `e2e/`.
 - Coming in Stage 1, as the plan describes: `src/server/` for data access shared by features,
-  `content/` for MDX lessons, `jobs/` for scheduled jobs and `supabase/` for database migrations.
+  `jobs/` for scheduled jobs and `supabase/` for database migrations.
 
 ## Design system
 
@@ -124,6 +134,45 @@ That page never ships to production.
 
 Brand rules: the PB logo and the "The Programmer Bro" wordmark are amber on both dark and light
 backgrounds. Don't recolour, stretch or add effects to them.
+
+## Writing a lesson
+
+Lessons are MDX files in the repo, so every change is reviewed in a pull request. The plan for
+a track lives in `content/learn/<track>/track.json`; a planned lesson shows as "Coming soon"
+until its file exists.
+
+1. Create `content/learn/how-ai-works/NN-<slug>.mdx`, where `NN` is the lesson's number in the
+   plan (for example `05-tokens.mdx`). Start it with this frontmatter:
+
+   ```yaml
+   ---
+   description: One sentence for search results, 50 to 160 characters.
+   inShort: The one or two sentence summary shown at the top of the lesson.
+   lastReviewed: 2026-11-10 # the day a person last checked it for accuracy
+   draft: true # drafts show on previews only; set false once reviewed
+   sources:
+     - title: Source title
+       url: https://example.com/
+       type: Article # Article, Paper, Docs, Video, Course, GitHub or Book
+       note: What the reader gets from it.
+   ---
+   ```
+
+2. Write the lesson in Markdown, following the lesson template: hook, then `##` sections
+   (concept, analogy, example), then try it and key takeaways. These components are available:
+   `<Analogy>`, `<TryIt>`, `<Callout kind="note | tip | warn">`, `<Figure caption="…">` and
+   `<KeyTakeaways>` with a bullet list inside. Leave a blank line after each opening tag and
+   before each closing tag, so the Markdown inside is read as Markdown.
+3. Add the quiz to `content/quizzes/<slug>.json`: 5 to 8 questions, four options each, the
+   index (0 to 3) of the right answer, an explanation, and at least two `application`
+   questions that ask the learner to use the idea on a new case.
+4. Run `npm test`. The content tests load every lesson the way the build does, so a mistake
+   in a file fails with the file name and the problem. Reading time is worked out for you.
+
+A diagram is a React component in `src/features/learn/diagrams/`, registered in
+`src/features/learn/components/mdx-components.tsx`. Draw it with design-token colour classes
+(`fill-surface-raised`, `stroke-amber`, ...) so it works in both themes, and give the SVG an
+`aria-label` that says what it shows.
 
 ## Launch switch
 

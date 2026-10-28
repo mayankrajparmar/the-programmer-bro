@@ -1,0 +1,83 @@
+{
+  "lesson": "what-is-ai",
+  "questions": [
+    {
+      "id": "ml-definition",
+      "type": "recall",
+      "prompt": "What makes machine learning different from a rule-based system?",
+      "options": [
+        "It runs on faster computers",
+        "It learns patterns from examples instead of following rules a person wrote",
+        "It only works with images and voice",
+        "It never makes mistakes"
+      ],
+      "answer": 1,
+      "explanation": "A rule-based system follows if-then rules that people write by hand. Machine learning studies lots of examples and works out the patterns itself, so it can handle cases nobody wrote a rule for."
+    },
+    {
+      "id": "upi-fraud",
+      "type": "application",
+      "prompt": "Your bank flags a ₹14,000 payment because it looks very different from your usual habits, judged against millions of past payments. What is doing the flagging?",
+      "options": [
+        "A rule a developer wrote for that exact amount",
+        "Generative AI writing a warning message",
+        "A machine learning model trained on past payments",
+        "Nothing automatic: a bank employee checks every payment"
+      ],
+      "answer": 2,
+      "explanation": "The system compares your payment with patterns it learned from millions of past payments. That's machine learning: nobody wrote a rule for this exact case, and it isn't creating anything new."
+    },
+    {
+      "id": "nesting-order",
+      "type": "recall",
+      "prompt": "Which order goes from the broadest idea to the narrowest?",
+      "options": [
+        "Generative AI, deep learning, machine learning, AI",
+        "AI, machine learning, deep learning, generative AI",
+        "Machine learning, AI, generative AI, deep learning",
+        "Deep learning, AI, machine learning, generative AI"
+      ],
+      "answer": 1,
+      "explanation": "AI is the broad goal. Machine learning is one way to reach it, deep learning is a kind of machine learning, and today's generative AI is built with deep learning. Each sits inside the one before it."
+    },
+    {
+      "id": "leave-application",
+      "type": "application",
+      "prompt": "You ask a chatbot to write a polite leave application for your manager, and it writes a fresh one in seconds. Which kind of AI is this?",
+      "options": [
+        "Generative AI",
+        "A rule-based expert system",
+        "A search engine",
+        "Not AI at all"
+      ],
+      "answer": 0,
+      "explanation": "The chatbot creates brand-new text instead of judging something that already exists. Creating new content is what makes it generative AI, and it runs on a large language model."
+    },
+    {
+      "id": "deep-meaning",
+      "type": "recall",
+      "prompt": "What does \"deep\" mean in deep learning?",
+      "options": [
+        "The model understands ideas deeply, like a person",
+        "The model was trained for a very long time",
+        "The neural network has many layers",
+        "The model stores the whole internet"
+      ],
+      "answer": 2,
+      "explanation": "\"Deep\" just means the neural network has many layers, each one picking up a slightly more complex pattern than the one before. It says nothing about real understanding."
+    },
+    {
+      "id": "free-delivery",
+      "type": "application",
+      "prompt": "A food app shows \"Free delivery on orders above ₹199\". Is that AI?",
+      "options": [
+        "Yes, it's machine learning because the app uses data",
+        "Yes, it's generative AI because it shows a message",
+        "No, it's one fixed rule that a person wrote",
+        "Yes, it's deep learning because it runs on a phone"
+      ],
+      "answer": 2,
+      "explanation": "It's a single if-then rule: if the total is above ₹199, delivery is free. Nothing is learned or predicted, so it's ordinary software, not AI."
+    }
+  ]
+}

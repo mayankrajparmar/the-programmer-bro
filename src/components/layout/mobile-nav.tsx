@@ -3,7 +3,7 @@
 import { ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { Suspense, useEffect, useId, useRef, useState } from "react";
 import { isCurrentSection, MAIN_NAV } from "@/config/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,18 +13,27 @@ import { cn } from "@/lib/utils";
  * Closes on Escape, on a tap outside, and after navigating.
  */
 export function MobileNav({ className }: { className?: string }) {
-  const [open, setOpen] = useState(false);
+  return (
+    <div className={className}>
+      {/* While the pathname is unknown (prerendering) the menu works, without a current section. */}
+      <Suspense fallback={<MobileNavMenu pathname={null} />}>
+        <CurrentMobileNavMenu />
+      </Suspense>
+    </div>
+  );
+}
+
+function CurrentMobileNavMenu() {
   const pathname = usePathname();
+  // A new key after each navigation remounts the menu, which closes it.
+  return <MobileNavMenu key={pathname} pathname={pathname} />;
+}
+
+function MobileNavMenu({ pathname }: { pathname: string | null }) {
+  const [open, setOpen] = useState(false);
   const sheetId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  // Close after a navigation.
-  const [lastPathname, setLastPathname] = useState(pathname);
-  if (pathname !== lastPathname) {
-    setLastPathname(pathname);
-    setOpen(false);
-  }
 
   useEffect(() => {
     if (!open) return;
@@ -46,7 +55,7 @@ export function MobileNav({ className }: { className?: string }) {
   }, [open]);
 
   return (
-    <div ref={rootRef} className={className}>
+    <div ref={rootRef}>
       <button
         ref={buttonRef}
         type="button"

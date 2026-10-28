@@ -107,6 +107,16 @@
   }
 }
 
+@keyframes tpb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
 @keyframes tpb-tok {
   from {
     opacity: 0;
@@ -187,10 +197,80 @@
     animation-delay: var(--d, 0s);
   }
 
+  /* A gentle, repeating pulse for "up next" markers. Reduced motion stops it. */
+  .tpb-pulse {
+    animation: tpb-pulse 2.4s ease-in-out infinite;
+  }
+
   /* A menu sheet sliding in under the header each time it opens. */
   .tpb-sheet:not([hidden]) {
     animation: tpb-rise 0.25s var(--ease-tpb) both;
   }
+}
+
+/*
+ * Lesson prose: the "lesson" type style, with even spacing between blocks.
+ * Callouts, figures, code and tables get a little more room around them.
+ */
+.tpb-prose {
+  font-size: 18px;
+  line-height: 30px;
+}
+
+.tpb-prose > * {
+  margin-block: 0;
+}
+
+.tpb-prose > * + * {
+  margin-top: var(--space-4);
+}
+
+.tpb-prose > h2 {
+  margin-top: var(--space-8);
+}
+
+.tpb-prose > :is(aside, figure, section, .tpb-table),
+.tpb-prose > :is(aside, figure, section, .tpb-table) + * {
+  margin-top: var(--space-6);
+}
+
+.tpb-list {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.tpb-list > li + li {
+  margin-top: var(--space-2);
+}
+
+.tpb-list > li::marker {
+  color: var(--text-muted);
+}
+
+/* Key takeaways: a check mark in place of each bullet. */
+.tpb-takeaways ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tpb-takeaways li {
+  position: relative;
+  padding-left: 32px;
+}
+
+.tpb-takeaways li::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: var(--accent-text);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
 }
 
 /*
