@@ -1,0 +1,120 @@
+import { describe, expect, it } from "vitest";
+import { QuizSchema, TrackSchema } from "../schema";
+import { getLearnRoutes, getLesson, getPublishedLessons, getTrack, getTracks } from "./content";
+
+/*
+ * Runs the real content in content/ through the same loader the build uses,
+ * plus the checks that can't run at build time (dates against today).
+ */
+describe("learning content", () => {
+  const tracks = getTracks();
+
+  it("loads every track without errors", () => {
+    expect(tracks.length).toBeGreaterThan(0);
+  });
+
+  it("numbers lessons 1..n with no gaps", () => {
+    for (const track of tracks) {
+      expect(track.lessons.map((lesson) => lesson.number)).toEqual(
+        track.lessons.map((_, i) => i + 1),
+      );
+    }
+  });
+
+  it("has a quiz and a reading time for every written lesson", () => {
+    for (const summary of getPublishedLessons()) {
+      const lesson = getLesson(summary.trackSlug, summary.slug);
+      expect(lesson, summary.href).not.toBeNull();
+      expect(lesson?.quiz.questions.length).toBeGreaterThanOrEqual(5);
+      expect(summary.readingMinutes).toBeGreaterThan(0);
+    }
+  });
+
+  it("never dates a review in the future", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    for (const summary of getPublishedLessons()) {
+      const lesson = getLesson(summary.trackSlug, summary.slug);
+      expect((lesson?.frontmatter.lastReviewed ?? "") <= today, summary.href).toBe(true);
+    }
+  });
+
+  it("keeps drafts out of the sitemap", () => {
+    const drafts = getPublishedLessons().filter((lesson) => lesson.draft);
+    const routes = getLearnRoutes();
+    for (const draft of drafts) expect(routes).not.toContain(draft.href);
+  });
+
+  it("returns null for lessons and tracks that don't exist", () => {
+    expect(getTrack("no-such-track")).toBeNull();
+    expect(getLesson("how-ai-works", "no-such-lesson")).toBeNull();
+    expect(getLesson("how-ai-works", "tokens")).toBeNull(); // planned, not written yet
+  });
+
+  it("links each lesson to its neighbours", () => {
+    const lesson = getLesson("how-ai-works", "what-is-ai");
+    expect(lesson?.previous).toBeNull();
+    expect(lesson?.next?.slug).toBe("history");
+    expect(lesson?.total).toBe(16);
+  });
+});
+
+const question = (id: string, type: "recall" | "application") => ({
+  id,
+  type,
+  prompt: "Which of these is true?",
+  options: ["a", "b", "c", "d"],
+  answer: 0,
+  explanation: "Because the lesson says so, clearly.",
+});
+
+describe("quiz rules", () => {
+  const valid = {
+    lesson: "x",
+    questions: [
+      question("q1", "recall"),
+      question("q2", "recall"),
+      question("q3", "recall"),
+      question("q4", "application"),
+      question("q5", "application"),
+    ],
+  };
+
+  it("accepts a well-formed quiz", () => {
+    expect(QuizSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it("needs 5 to 8 questions", () => {
+    expect(QuizSchema.safeParse({ ...valid, questions: valid.questions.slice(0, 4) }).success).toBe(
+      false,
+    );
+  });
+
+  it("needs four options and an answer from 0 to 3", () => {
+    const [first, ...rest] = valid.questions;
+    const three = { ...first, options: ["a", "b", "c"] };
+    const outOfRange = { ...first, answer: 4 };
+    expect(QuizSchema.safeParse({ ...valid, questions: [three, ...rest] }).success).toBe(false);
+    expect(QuizSchema.safeParse({ ...valid, questions: [outOfRange, ...rest] }).success).toBe(
+      false,
+    );
+  });
+
+  it("needs at least two application questions", () => {
+    const recallOnly = valid.questions.map((q) => ({ ...q, type: "recall" }));
+    const result = QuizSchema.safeParse({ ...valid, questions: recallOnly });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toMatch(/application/);
+  });
+
+  it("rejects duplicate lesson slugs in a track plan", () => {
+    const lesson = { slug: "same", title: "T", summary: "S" };
+    const result = TrackSchema.safeParse({
+      slug: "t",
+      title: "T",
+      description: "D",
+      level: "Beginner",
+      modules: [{ id: "A", title: "M", lessons: [lesson, lesson] }],
+    });
+    expect(result.success).toBe(false);
+  });
+});

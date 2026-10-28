@@ -1,0 +1,115 @@
+---
+description: AI, machine learning, deep learning and generative AI explained in plain English, with everyday examples from UPI, YouTube and Google Maps.
+inShort: AI is the big goal of getting computers to do tasks that need human-like thinking. Machine learning, deep learning and generative AI are ways of getting there, each one sitting inside the last.
+lastReviewed: 2026-10-28
+draft: true
+sources:
+  - title: Machine Learning Crash Course
+    url: https://developers.google.com/machine-learning/crash-course
+    type: Course
+    note: Google's free, hands-on introduction to machine learning, for when you want to go one level deeper.
+  - title: Traffic prediction with advanced Graph Neural Networks
+    url: https://deepmind.google/discover/blog/traffic-prediction-with-advanced-graph-neural-networks/
+    type: Article
+    note: How Google Maps and DeepMind use deep learning to predict arrival times.
+  - title: Deep Neural Networks for YouTube Recommendations
+    url: https://research.google/pubs/pub45530
+    type: Paper
+    note: The 2016 paper on how YouTube used deep learning to choose which videos to recommend.
+---
+
+You open Google Maps and it says 18 minutes to the office. YouTube lines up a video you actually want to watch. Your bank sends an SMS asking whether that ₹14,000 payment at 2 a.m. was really you. No person is sitting behind any of these apps making the call. Each one is a piece of AI, quietly doing its job.
+
+In this lesson you'll learn what AI actually means, and how machine learning, deep learning and generative AI fit together. By the end you'll be able to look at any "AI-powered" feature and say what kind of AI it is.
+
+## So what is AI?
+
+**Artificial intelligence (AI)** is the broad goal of getting computers to do tasks that normally need human intelligence: recognising a face, understanding a sentence, predicting what happens next, deciding what to recommend, or writing something new.
+
+Notice that AI is a goal, not one particular technology. Over the years, people have tried very different ways of reaching it. They fall into two big families: writing the rules by hand, and letting the computer learn from examples.
+
+## Rules written by people
+
+The oldest approach is to write the rules yourself. A developer spells out every step as if-then instructions:
+
+- If a payment is above ₹50,000 and it's after midnight, flag it.
+- If an email says "You have won a lottery", send it to spam.
+
+Early AI systems, called **expert systems** (programs that store a specialist's know-how as thousands of rules), worked exactly like this. They're fine when the rules are clear and don't change. But real life is messy. Fraudsters change tricks every week, and nobody can write a rule for every case. A rule-based system also can't improve on its own: every fix needs a person to write a new rule.
+
+One rule on its own isn't AI, by the way. "Free delivery on orders above ₹199" is just ordinary software.
+
+<Callout kind="warn">
+
+"AI-powered" on a product page doesn't prove much. Marketing teams use the label for almost anything. If a feature could be one if-then rule, it probably is one.
+
+</Callout>
+
+## Machine learning: learning from examples
+
+**Machine learning (ML)** flips the approach. Instead of writing the rules, you show the computer lots of examples and let it work out the patterns itself.
+
+Take fraud checks on UPI payments. A bank has records of millions of past payments, and it knows which ones turned out to be fraud. A machine learning system studies those examples: the amount, the time, the place, the phone, how each person usually pays. From them it builds a **model**, a bundle of learned patterns that it can apply to payments it has never seen. The study phase is called **training**. Using the model on new data is called making a **prediction**.
+
+When your new payment looks very different from your usual habits, the model gives it a high risk score and the bank asks you to confirm. Nobody wrote a rule for that exact payment. The pattern was learned.
+
+<Analogy>
+
+Think about how you learnt to tell a ripe mango from a raw one. Nobody gave you a rule book. After squeezing and smelling enough mangoes, you just know. Machine learning learns the same way, from examples instead of instructions.
+
+</Analogy>
+
+## Deep learning: learning in layers
+
+**Deep learning** is a kind of machine learning that uses **neural networks**: programs built from many small connected units, loosely inspired by how brain cells pass signals to each other. The units are arranged in layers, and each layer picks up a slightly more complex pattern than the one before. In a photo, early layers might notice edges, later ones shapes, and the last ones whole faces. "Deep" just means there are many layers.
+
+Deep learning shines with messy data like photos, voice and text, where writing rules by hand is hopeless. When you speak a message in Hindi and your phone types it out, or when Google Lens translates a signboard, deep learning is doing the heavy lifting. YouTube has used deep neural networks to pick which videos to recommend from its huge catalogue.
+
+You'll open up a neural network properly in lesson 9.
+
+## Generative AI: models that create
+
+Most of the AI above makes a judgement about something that already exists. Is this payment fraud? Which video comes next? How long will this trip take? **Generative AI** goes a step further and creates new content: text, images, audio, video or code.
+
+When you ask ChatGPT or Gemini to draft a leave application, or ask an image tool for a poster of a cricket stadium at sunset, that's generative AI. Today's generative AI is built with deep learning. The text tools run on **large language models (LLMs)**: deep learning models trained on huge amounts of text to predict what comes next, one small piece at a time. You'll meet the LLM properly in lesson 3.
+
+## How they fit together
+
+These four terms aren't rivals. Each one sits inside the one before it.
+
+<Figure caption="Figure 1: each idea sits inside the one before it. Rule-based expert systems are AI too, but they aren't machine learning.">
+  <AiLayersDiagram />
+</Figure>
+
+<Analogy>
+
+It's like an address: India, then Karnataka, then Bengaluru, then Koramangala. Koramangala is in Bengaluru, but plenty of Bengaluru isn't Koramangala. In the same way, today's generative AI is deep learning, all deep learning is machine learning, and all machine learning is AI, but not the other way round.
+
+</Analogy>
+
+## Spot the AI in your day
+
+Here's the morning from the start of this lesson again, with a label on each piece.
+
+| What you see                            | What's happening behind it                                | Kind of AI                     |
+| --------------------------------------- | --------------------------------------------------------- | ------------------------------ |
+| Google Maps says 18 minutes             | Predicts travel time from live traffic and past trips     | Machine learning (deep)        |
+| YouTube lines up your next video        | Ranks a huge catalogue by what you're likely to watch     | Machine learning (deep)        |
+| Your bank asks "Was this you?"          | Scores how unusual a payment is compared with your habits | Machine learning               |
+| A chatbot drafts your leave application | Writes brand-new text, one piece at a time                | Generative AI                  |
+| "Free delivery on orders above ₹199"    | One fixed rule that a person wrote                        | Not AI, just ordinary software |
+
+<TryIt>
+
+Pick three features on your phone that feel "smart". For each one, ask two questions. Does it judge something that already exists, or create something new? And could a person have written it as one simple rule? You'll start spotting real AI, and fake "AI", everywhere.
+
+</TryIt>
+
+<KeyTakeaways>
+
+- AI is the goal: computers doing tasks that normally need human intelligence.
+- Machine learning reaches that goal by learning patterns from examples instead of following hand-written rules.
+- Deep learning is machine learning with many-layered neural networks, and it's great with photos, voice and text.
+- Generative AI creates new content. Today it's built with deep learning, and LLMs are its text side.
+
+</KeyTakeaways>

@@ -1,0 +1,113 @@
+{
+  "$comment": "The Track 1 lesson plan. Order here is lesson order. A lesson becomes a page when its NN-slug.mdx file and content/quizzes/<slug>.json exist; until then it shows as coming soon.",
+  "slug": "how-ai-works",
+  "title": "How AI Works",
+  "description": "16 lessons that take you from ‘what is AI?’ to how reasoning models think. About 2 hours in total.",
+  "level": "Beginner",
+  "modules": [
+    {
+      "id": "A",
+      "title": "Big picture",
+      "lessons": [
+        {
+          "slug": "what-is-ai",
+          "title": "What is AI, really?",
+          "summary": "AI vs ML vs deep learning vs generative AI, with everyday Indian examples"
+        },
+        {
+          "slug": "history",
+          "title": "From rules to reasoning: a short history",
+          "summary": "Turing to ChatGPT to agents"
+        },
+        {
+          "slug": "meet-the-llm",
+          "title": "Meet the LLM",
+          "summary": "What a large language model is and what ‘large’ means"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "title": "How an LLM talks",
+      "lessons": [
+        {
+          "slug": "next-word",
+          "title": "Predicting the next word",
+          "summary": "Generation one token at a time, probabilities, temperature"
+        },
+        {
+          "slug": "tokens",
+          "title": "Tokens: the LLM's alphabet",
+          "summary": "Tokenization, token IDs, context windows, cost"
+        },
+        {
+          "slug": "search-vs-llm",
+          "title": "Search engine vs LLM",
+          "summary": "Knowledge cutoffs, hallucinations, why confident isn't correct"
+        },
+        {
+          "slug": "embeddings",
+          "title": "Embeddings: meaning as numbers",
+          "summary": "Vectors, similarity, semantic search"
+        },
+        {
+          "slug": "rag",
+          "title": "RAG: giving the model an open book",
+          "summary": "Retrieval-augmented generation in plain words"
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Inside the model",
+      "lessons": [
+        {
+          "slug": "neural-networks",
+          "title": "Neural networks without the scary maths",
+          "summary": "Neurons, weights and layers, explained with pictures instead of equations"
+        },
+        {
+          "slug": "transformer",
+          "title": "The Transformer, step by step",
+          "summary": "Attention and the building blocks inside every modern LLM"
+        },
+        {
+          "slug": "how-models-learn",
+          "title": "How models learn",
+          "summary": "Training data, loss and gradient descent in plain words"
+        },
+        {
+          "slug": "base-model-to-assistant",
+          "title": "From base model to assistant",
+          "summary": "Fine-tuning and human feedback: how a text predictor becomes a helpful chatbot"
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Today and next",
+      "lessons": [
+        {
+          "slug": "can-ai-reason",
+          "title": "Can AI reason?",
+          "summary": "What reasoning models do differently, and where they still slip"
+        },
+        {
+          "slug": "multimodal-and-agents",
+          "title": "Beyond text: multimodal AI and agents",
+          "summary": "Models that see and hear, and models that take actions with tools"
+        },
+        {
+          "slug": "responsible-ai",
+          "title": "Using AI responsibly",
+          "summary": "Bias, privacy, copyright, and checking the output before you trust it"
+        },
+        {
+          "slug": "capstone",
+          "title": "Capstone: the journey of one prompt",
+          "summary": "Follow one prompt from your keyboard to the reply, using everything so far"
+        }
+      ]
+    }
+  ]
+}

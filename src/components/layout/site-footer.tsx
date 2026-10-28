@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BrandLockup } from "@/components/brand/brand-lockup";
 import { FOOTER_SITE_LINKS } from "@/config/navigation";
 import { site } from "@/config/site";
+import { FooterCredits } from "./footer-credits";
 
 const linkClass =
   "group inline-flex min-h-11 items-center gap-2 text-text no-underline hover:text-text hover:underline hover:underline-offset-4";
@@ -27,7 +28,7 @@ export function SiteFooter() {
             <ul className="m-0 list-none p-0">
               {FOOTER_SITE_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className={linkClass}>
+                  <Link href={link.href} prefetch={false} className={linkClass}>
                     {link.label}
                   </Link>
                 </li>
@@ -57,9 +58,7 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-border">
-        <p className="mx-auto my-0 max-w-page px-4 py-4 text-small text-text-muted sm:px-6">
-          © 2026 {site.name}
-        </p>
+        <FooterCredits className="mx-auto max-w-page px-4 py-4 sm:px-6" />
       </div>
     </footer>
   );

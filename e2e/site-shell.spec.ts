@@ -15,6 +15,9 @@ test.describe("site layout", () => {
     const footer = page.getByRole("contentinfo");
     await expect(footer.getByRole("link", { name: "Privacy" })).toBeVisible();
     await expect(footer.getByRole("link", { name: /^LinkedIn/ })).toBeVisible();
+    await expect(
+      page.getByRole("contentinfo").getByRole("link", { name: "Mayank Raj Parmar" }),
+    ).toHaveAttribute("href", "https://me.theprogrammerbro.in");
   });
 
   test("lets keyboard users skip to the main content", async ({ page }) => {
