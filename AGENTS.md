@@ -27,6 +27,10 @@ code. The rules that matter most:
 - **Components:** reuse `src/components/ui` (Button, Tag, Callout, CodeBlock, Card, ...) before
   writing new markup; see them at `/design-system` on a local build. Style a link as a button with
   `buttonVariants({ variant }, extraClasses)`.
+- **Lessons** are content, not code: follow "Writing a lesson" in the README. Every lesson starts
+  as `draft: true`; only a person who has checked it for accuracy sets it to `false`. Write in
+  simple English with Indian examples, define every piece of jargon in one line, and cite real
+  sources you have checked.
 - **Class names:** combine with `cn()` from `@/lib/utils`. If the design system adds a type style or
   radius, add it to `TYPE_STYLES` / `RADII` there (a unit test checks they match).
 - **Brand:** the PB logo and wordmark are amber (`public/brand/*-amber.svg`) on dark and light
