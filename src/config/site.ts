@@ -16,9 +16,12 @@ export const site = {
   locale: "en_IN",
   /**
    * The coming-soon page shows a button for each profile listed here, in this order.
-   * Add the real profile URLs; the "Follow along" block stays hidden while this is empty.
+   * Add X and YouTube here when those profiles exist.
    */
-  social: [] as SocialLink[],
+  social: [
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/the-programmer-bro/" },
+    { label: "Instagram", href: "https://www.instagram.com/theprogrammerbro/" },
+  ] as SocialLink[],
 } as const;
 
 /**

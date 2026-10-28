@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { site } from "../src/config/site";
 
 test.describe("coming-soon page", () => {
   test("shows the brand, headline and tokenizer demo without errors", async ({ page }) => {
@@ -19,6 +20,17 @@ test.describe("coming-soon page", () => {
     ).toBeVisible();
     await expect(page.locator("footer")).toContainText("The Programmer Bro");
     expect(errors).toEqual([]);
+  });
+
+  test("links to every social profile in the site config", async ({ page }) => {
+    await page.goto("/");
+    const follow = page.getByRole("navigation", { name: "Follow along as we build it" });
+    await expect(follow.getByRole("link")).toHaveCount(site.social.length);
+    for (const { label, href } of site.social) {
+      await expect(
+        follow.getByRole("link", { name: `${label} (opens in a new tab)` }),
+      ).toHaveAttribute("href", href);
+    }
   });
 
   test("fits the screen without sideways scrolling", async ({ page }) => {
