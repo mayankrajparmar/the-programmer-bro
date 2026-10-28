@@ -243,9 +243,22 @@ export function getLesson(trackSlug: string, lessonSlug: string): Lesson | null 
   };
 }
 
-/** Every visible lesson, for generateStaticParams. */
+/** Every lesson visible in this build. */
 export function getPublishedLessons(): LessonSummary[] {
   return getTracks().flatMap((track) => track.lessons.filter((lesson) => lesson.published));
+}
+
+/**
+ * Params for every planned lesson, for generateStaticParams. Lessons that aren't
+ * visible in this build (not written yet, or drafts in production) prerender as
+ * a static 404. Listing the whole plan also keeps the list from ever being empty,
+ * which Cache Components doesn't allow: production has no visible lessons while
+ * every lesson is still a draft.
+ */
+export function getLessonParams(): { track: string; lesson: string }[] {
+  return getTracks().flatMap((track) =>
+    track.lessons.map((lesson) => ({ track: track.slug, lesson: lesson.slug })),
+  );
 }
 
 /** Public, indexable learn pages for the sitemap: never drafts. */

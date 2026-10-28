@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { QuizSchema, TrackSchema } from "../schema";
-import { getLearnRoutes, getLesson, getPublishedLessons, getTrack, getTracks } from "./content";
+import {
+  getLearnRoutes,
+  getLesson,
+  getLessonParams,
+  getPublishedLessons,
+  getTrack,
+  getTracks,
+} from "./content";
 
 /*
  * Runs the real content in content/ through the same loader the build uses,
@@ -36,6 +43,13 @@ describe("learning content", () => {
       const lesson = getLesson(summary.trackSlug, summary.slug);
       expect((lesson?.frontmatter.lastReviewed ?? "") <= today, summary.href).toBe(true);
     }
+  });
+
+  it("always has lesson params to prerender, even before any lesson is published", () => {
+    // Cache Components fails the build when generateStaticParams returns nothing.
+    const params = getLessonParams();
+    expect(params.length).toBe(tracks.reduce((sum, track) => sum + track.lessons.length, 0));
+    expect(params).toContainEqual({ track: "how-ai-works", lesson: "what-is-ai" });
   });
 
   it("keeps drafts out of the sitemap", () => {

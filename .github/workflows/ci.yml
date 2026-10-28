@@ -42,7 +42,14 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run build
+      # Production keeps the full site behind the launch switch and hides drafts,
+      # so it builds different pages: check that build works before testing the preview one.
+      - name: Build as production
+        run: npm run build
+        env:
+          VERCEL_ENV: production
+      - name: Build as a preview
+        run: npm run build
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
