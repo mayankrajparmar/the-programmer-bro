@@ -3,8 +3,9 @@
 Free lessons that take you from the basics of AI to expert level, with quizzes, daily AI news,
 resources and a prompt hub. Live at [theprogrammerbro.in](https://theprogrammerbro.in).
 
-**Status:** Stage 0, foundation. The site shows a coming-soon page while Stage 1 (the first
-learning track, quizzes, AI News and Resources) is built.
+**Status:** Stage 1 in progress (the first learning track, quizzes, AI News and Resources).
+Production shows the coming-soon page until launch; preview deployments show the full site as it
+is built (see [Launch switch](#launch-switch)).
 
 ## Tech stack
 
@@ -14,6 +15,7 @@ learning track, quizzes, AI News and Resources) is built.
 | Styling   | Tailwind CSS 4, driven by the design system's tokens                     |
 | UI        | Own components in the shadcn/ui style (`cva` variants, `cn()` merging)   |
 | Fonts     | Montserrat, Source Sans 3 and JetBrains Mono, self-hosted with next/font |
+| Code      | Shiki, highlighting at build time with design-token colours              |
 | Icons     | lucide-react                                                             |
 | Tests     | Vitest and Testing Library (unit), Playwright with axe (browser)         |
 | CI        | GitHub Actions                                                           |
@@ -61,17 +63,24 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 ├── scripts/
 │   ├── build-tokens.ts        # tokens.json → src/styles/tokens.css
 │   └── tokens/                # Token rendering and contrast helpers, with tests
+├── test/stubs/                # Stand-ins for server-only modules in unit tests
 └── src/
     ├── app/                   # Routes only: layouts, pages, metadata files (icons, robots, sitemap)
+    │   ├── (site)/            # The full site, inside the header and footer (hidden until launch)
+    │   ├── page.tsx           # The coming-soon page
+    │   └── not-found.tsx      # The 404 page
     ├── components/
-    │   ├── ui/                # Design-system primitives (Button, ...), reused by every feature
+    │   ├── ui/                # Design-system primitives, reused by every feature
+    │   ├── layout/            # Site header, footer, navigation, theme switch, skip link
     │   └── brand/             # Logo lockup, dotted backdrop
-    ├── config/                # Site facts and route lists (name, URL, social links)
+    ├── config/                # Site facts, navigation, the launch switch, feature switches
     ├── features/              # One folder per product area
-    │   └── coming-soon/
-    │       ├── components/    # The feature's own components and their tests
-    │       └── index.ts       # The feature's public surface
-    ├── lib/                   # Framework-free helpers: cn(), theme, motion
+    │   ├── coming-soon/
+    │   │   ├── components/    # The feature's own components and their tests
+    │   │   └── index.ts       # The feature's public surface
+    │   ├── design-system/     # Internal preview of every shared component
+    │   └── errors/            # 404 page
+    ├── lib/                   # Helpers: cn(), theme, motion, code highlighting
     └── styles/                # globals.css, generated tokens.css, self-hosted fonts
 ```
 
@@ -108,8 +117,26 @@ switches all colours at once, and a unit test checks every contrast promise in t
 To change a token, update the design system, export `tokens.json` into `design/`, run
 `npm run tokens` and commit both files.
 
+Shared components live in `src/components/ui`: `Button` (and `buttonVariants()` for links styled
+as buttons), `Tag`, `Callout`, `CodeBlock` and `InlineCode`, the `Card` parts, `CopyButton` and
+`AdSlot`. Open **`/design-system`** on a local or preview build to see them all in both themes.
+That page never ships to production.
+
 Brand rules: the PB logo and the "The Programmer Bro" wordmark are amber on both dark and light
 backgrounds. Don't recolour, stretch or add effects to them.
+
+## Launch switch
+
+Stage 1 is merged to `main` piece by piece, but the full site stays hidden in production until
+launch. `src/config/site-mode.ts` decides:
+
+| Where                                | What visitors see                                         |
+| ------------------------------------ | --------------------------------------------------------- |
+| Production (`VERCEL_ENV=production`) | The coming-soon page; every other page answers with a 404 |
+| Preview deployments and local        | The full site                                             |
+
+`SITE_MODE=live` or `SITE_MODE=coming-soon` overrides the default. **To launch,** set
+`SITE_MODE=live` for the Production environment in Vercel and redeploy.
 
 ## Deployment
 

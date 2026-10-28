@@ -21,6 +21,12 @@ code. The rules that matter most:
 - **Design tokens:** use the token utilities (`bg-surface`, `text-text-muted`, `text-h1`,
   `rounded-md`, ...). Never hard-code colours or font sizes. Don't edit `src/styles/tokens.css`;
   it is generated from `design/tokens.json` by `npm run tokens`.
+- **Full-site pages** go under `src/app/(site)/`, which adds the header and footer and hides them
+  in production until launch (`src/config/site-mode.ts`). Keep those routes static or give them
+  `generateStaticParams`, so the header knows the current section when prerendering.
+- **Components:** reuse `src/components/ui` (Button, Tag, Callout, CodeBlock, Card, ...) before
+  writing new markup; see them at `/design-system` on a local build. Style a link as a button with
+  `buttonVariants({ variant }, extraClasses)`.
 - **Class names:** combine with `cn()` from `@/lib/utils`. If the design system adds a type style or
   radius, add it to `TYPE_STYLES` / `RADII` there (a unit test checks they match).
 - **Brand:** the PB logo and wordmark are amber (`public/brand/*-amber.svg`) on dark and light
