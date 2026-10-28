@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTrack, getTrackSlugs, TrackPage } from "@/features/learn";
 
 /*
- * Lessons and tracks are fully static. This also makes an unknown slug wait
- * for its render, so it gets a real 404 status instead of a streamed fallback.
+ * Tracks are fully static. This also makes an unknown slug wait for its
+ * render, so it gets a real 404 status instead of a streamed fallback.
  */
 export const ensureStatic = "navigation";
-import { getTrack, getTrackSlugs, TrackPage } from "@/features/learn";
 
 export function generateStaticParams() {
   return getTrackSlugs().map((track) => ({ track }));

@@ -5,6 +5,7 @@ export { TrackPage } from "./components/track-page";
 export {
   getLearnRoutes,
   getLesson,
+  getLessonParams,
   getPublishedLessons,
   getTrack,
   getTracks,
