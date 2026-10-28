@@ -1,0 +1,163 @@
+/*
+ * Generated from design/tokens.json by `npm run tokens`. Do not edit by hand:
+ * change the design system, export tokens.json again, then run the script.
+ * The Programmer Bro design tokens, version 1.
+ */
+
+/* Dark is the default theme, matching the logo. */
+:root,
+[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-raised: #1e1e1e;
+  --surface-code: #111111;
+  --border: #2e2e2e;
+  --border-strong: #6b6b6b;
+  --text: #f5f5f4;
+  --text-muted: #a8a29e;
+  --amber: #ffb200;
+  --amber-hover: #ffc633;
+  --on-amber: #0a0a0a;
+  --accent-text: #ffb200;
+  --amber-subtle: #2b2000;
+  --focus-ring: #ffb200;
+  --success: #4ade80;
+  --success-subtle: #0f2a1a;
+  --danger: #f87171;
+  --danger-subtle: #2e1414;
+  --info: #60a5fa;
+  --info-subtle: #0e1a2e;
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #faf7f0;
+  --surface-raised: #ffffff;
+  --surface-code: #f4f0e6;
+  --border: #e7e1d3;
+  --border-strong: #8c8576;
+  --text: #111111;
+  --text-muted: #57534e;
+  --amber: #ffb200;
+  --amber-hover: #ffc21f;
+  --on-amber: #111111;
+  --accent-text: #8a5200;
+  --amber-subtle: #fff4d6;
+  --focus-ring: #8a5200;
+  --success: #15803d;
+  --success-subtle: #eaf7ee;
+  --danger: #b91c1c;
+  --danger-subtle: #fcecec;
+  --info: #1d4ed8;
+  --info-subtle: #eaf1fd;
+  --shadow-pop: 0 8px 24px rgba(17, 17, 17, 0.08);
+  color-scheme: light;
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --measure-lesson: 720px;
+  --page-max: 1200px;
+  --header-height: 64px;
+  --tap-target: 44px;
+  --ad-slot-inline: 280px;
+}
+
+@theme inline {
+  /* Only design-system colours, sizes and fonts: Tailwind's defaults are switched off. */
+  --color-*: initial;
+  --text-*: initial;
+  --font-*: initial;
+  --radius-*: initial;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-code: var(--surface-code);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-amber: var(--amber);
+  --color-amber-hover: var(--amber-hover);
+  --color-on-amber: var(--on-amber);
+  --color-accent-text: var(--accent-text);
+  --color-amber-subtle: var(--amber-subtle);
+  --color-focus-ring: var(--focus-ring);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+
+  --font-display: var(--font-montserrat), system-ui, sans-serif;
+  --font-body: var(--font-source-sans), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --default-font-family: var(--font-source-sans), system-ui, sans-serif;
+  --default-mono-font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --text-display: 48px;
+  --text-display--line-height: 52px;
+  --text-display--font-weight: 800;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: 36px;
+  --text-h1--line-height: 44px;
+  --text-h1--font-weight: 800;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: 28px;
+  --text-h2--line-height: 36px;
+  --text-h2--font-weight: 700;
+  --text-h3: 22px;
+  --text-h3--line-height: 30px;
+  --text-h3--font-weight: 700;
+  --text-title: 18px;
+  --text-title--line-height: 26px;
+  --text-title--font-weight: 700;
+  --text-label: 14px;
+  --text-label--line-height: 20px;
+  --text-label--font-weight: 600;
+  --text-label--letter-spacing: 0.01em;
+  --text-lesson: 18px;
+  --text-lesson--line-height: 30px;
+  --text-lesson--font-weight: 400;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
+  --text-body--font-weight: 400;
+  --text-body-strong: 16px;
+  --text-body-strong--line-height: 26px;
+  --text-body-strong--font-weight: 600;
+  --text-small: 14px;
+  --text-small--line-height: 22px;
+  --text-small--font-weight: 400;
+  --text-caption: 13px;
+  --text-caption--line-height: 18px;
+  --text-caption--font-weight: 400;
+  --text-code: 15px;
+  --text-code--line-height: 24px;
+  --text-code--font-weight: 400;
+  --text-code-small: 13px;
+  --text-code-small--line-height: 20px;
+  --text-code-small--font-weight: 400;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --container-lesson: 720px;
+  --container-page: 1200px;
+}
