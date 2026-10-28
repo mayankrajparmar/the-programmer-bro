@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // Include the files so an on-demand render (e.g. an unknown lesson's 404) can read them too.
   outputFileTracingIncludes: {
     "/learn/**": ["./content/**/*"],
+    "/resources": ["./content/**/*"],
     "/sitemap.xml": ["./content/**/*"],
   },
   turbopack: {

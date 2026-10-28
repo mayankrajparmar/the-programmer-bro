@@ -1,0 +1,170 @@
+{
+  "$comment": "Hand-picked resources for /resources. Check every link before adding it, describe it in our own words, and pair it with a lesson slug from content/learn when one fits.",
+  "resources": [
+    {
+      "id": "elements-of-ai",
+      "title": "Elements of AI",
+      "url": "https://www.elementsofai.com/",
+      "type": "Course",
+      "level": "Beginner",
+      "cost": "Free",
+      "length": "Self-paced",
+      "description": "A friendly online course from the University of Helsinki and MinnaLearn on what AI can and can't do, with no maths or programming needed.",
+      "lesson": "what-is-ai"
+    },
+    {
+      "id": "intro-to-llms",
+      "title": "Intro to Large Language Models",
+      "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
+      "type": "Video course",
+      "level": "Beginner",
+      "cost": "Free",
+      "length": "About 1 hour",
+      "description": "Andrej Karpathy's one-hour talk on what an LLM is, how it's trained and where it's heading. The best single video to watch before or after meeting the LLM.",
+      "lesson": "meet-the-llm"
+    },
+    {
+      "id": "tiktokenizer",
+      "title": "Tiktokenizer",
+      "url": "https://tiktokenizer.vercel.app/",
+      "type": "Tool",
+      "level": "Beginner",
+      "cost": "Free",
+      "description": "Paste any text and watch it split into tokens and token IDs, right in the browser. The quickest way to try what the tokens lesson describes.",
+      "lesson": "tokens"
+    },
+    {
+      "id": "3b1b-neural-networks",
+      "title": "But what is a neural network? (3Blue1Brown)",
+      "url": "https://www.youtube.com/watch?v=aircAruvnKk",
+      "type": "Video course",
+      "level": "Beginner",
+      "cost": "Free",
+      "length": "Series of short videos",
+      "description": "Grant Sanderson's animated series on how neural networks see and learn, with pictures doing most of the work. Start with chapter 1 and carry on from there.",
+      "lesson": "neural-networks"
+    },
+    {
+      "id": "google-colab",
+      "title": "Google Colab",
+      "url": "https://colab.research.google.com/",
+      "type": "Tool",
+      "level": "Beginner",
+      "cost": "Free tier",
+      "description": "Run Python notebooks in the browser, with some free GPU time. Use it for any code in our lessons without installing anything on your laptop."
+    },
+    {
+      "id": "ml-crash-course",
+      "title": "Machine Learning Crash Course",
+      "url": "https://developers.google.com/machine-learning/crash-course",
+      "type": "Course",
+      "level": "Intermediate",
+      "cost": "Free",
+      "length": "Self-paced",
+      "description": "Google's hands-on introduction to machine learning, with videos, visualisations and coding exercises. Good once you're comfortable with a little Python.",
+      "lesson": "how-models-learn"
+    },
+    {
+      "id": "generative-ai-for-beginners",
+      "title": "Generative AI for Beginners",
+      "url": "https://github.com/microsoft/generative-ai-for-beginners",
+      "type": "Course",
+      "level": "Intermediate",
+      "cost": "Free",
+      "length": "21 lessons",
+      "description": "Microsoft's open course for developers who want to build with LLMs: prompts, chat apps, search apps and more, each lesson with code you can run.",
+      "lesson": "meet-the-llm"
+    },
+    {
+      "id": "llm-semantic-search",
+      "title": "Large Language Models with Semantic Search",
+      "url": "https://www.deeplearning.ai/short-courses/large-language-models-semantic-search",
+      "type": "Course",
+      "level": "Intermediate",
+      "cost": "Free",
+      "length": "About 1 hour",
+      "description": "A short DeepLearning.AI course with Cohere on embeddings, dense retrieval and reranking, with Python notebooks. It builds directly on the embeddings lesson.",
+      "lesson": "embeddings"
+    },
+    {
+      "id": "hugging-face-llm-course",
+      "title": "Hugging Face LLM Course",
+      "url": "https://huggingface.co/learn/llm-course/chapter1/1",
+      "type": "Course",
+      "level": "Intermediate",
+      "cost": "Free",
+      "length": "Self-paced",
+      "description": "Learn to use, fine-tune and share transformer models with the Hugging Face libraries. A practical next step after the Transformer lesson.",
+      "lesson": "transformer"
+    },
+    {
+      "id": "ollama",
+      "title": "Ollama",
+      "url": "https://ollama.com/",
+      "type": "Tool",
+      "level": "Intermediate",
+      "cost": "Free",
+      "description": "Download and run open models such as Llama, Gemma and Mistral on your own computer with one command, and call them from your code."
+    },
+    {
+      "id": "attention-is-all-you-need",
+      "title": "Attention Is All You Need",
+      "url": "https://arxiv.org/abs/1706.03762",
+      "type": "Paper",
+      "level": "Advanced",
+      "cost": "Free",
+      "description": "The 2017 paper that introduced the Transformer, the design behind today's LLMs. Read the introduction and look at the figures first.",
+      "lesson": "transformer"
+    },
+    {
+      "id": "rag-paper",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "type": "Paper",
+      "level": "Advanced",
+      "cost": "Free",
+      "description": "The paper that named retrieval-augmented generation. Read it after the RAG lesson to see where the idea came from.",
+      "lesson": "rag"
+    },
+    {
+      "id": "chain-of-thought",
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "url": "https://arxiv.org/abs/2201.11903",
+      "type": "Paper",
+      "level": "Advanced",
+      "cost": "Free",
+      "description": "Showed that asking a model to write out its steps improves its answers on maths and logic problems. A key paper behind today's reasoning models.",
+      "lesson": "can-ai-reason"
+    },
+    {
+      "id": "dive-into-deep-learning",
+      "title": "Dive into Deep Learning",
+      "url": "https://d2l.ai/",
+      "type": "Book",
+      "level": "Advanced",
+      "cost": "Free online",
+      "description": "An interactive book that teaches deep learning with the maths, the explanation and runnable code side by side.",
+      "lesson": "how-models-learn"
+    },
+    {
+      "id": "zero-to-hero",
+      "title": "Neural Networks: Zero to Hero",
+      "url": "https://karpathy.ai/zero-to-hero.html",
+      "type": "Video course",
+      "level": "Expert",
+      "cost": "Free",
+      "description": "Andrej Karpathy builds neural networks and a small GPT from an empty file, line by line, in Python. Best saved for after the capstone lesson.",
+      "lesson": "capstone"
+    },
+    {
+      "id": "deep-learning-book",
+      "title": "Deep Learning",
+      "url": "https://www.deeplearningbook.org/",
+      "type": "Book",
+      "level": "Expert",
+      "cost": "Free online",
+      "description": "The classic textbook by Goodfellow, Bengio and Courville, covering the maths and theory of neural networks in depth.",
+      "lesson": "neural-networks"
+    }
+  ]
+}
