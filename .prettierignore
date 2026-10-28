@@ -1,0 +1,9 @@
+# Generated or vendored
+src/styles/tokens.css
+design/tokens.json
+package-lock.json
+next-env.d.ts
+.next
+coverage
+playwright-report
+test-results
