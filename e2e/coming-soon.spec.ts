@@ -19,6 +19,9 @@ test.describe("coming-soon page", () => {
       page.getByRole("img", { name: /tokenizer and comes out as 8 tokens/ }),
     ).toBeVisible();
     await expect(page.locator("footer")).toContainText("The Programmer Bro");
+    await expect(
+      page.getByRole("contentinfo").getByRole("link", { name: "Mayank Raj Parmar" }),
+    ).toHaveAttribute("href", "https://me.theprogrammerbro.in");
     expect(errors).toEqual([]);
   });
 

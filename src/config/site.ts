@@ -14,6 +14,11 @@ export const site = {
   description:
     "Free lessons from the basics to expert level, with quizzes and daily AI news. Launching soon.",
   locale: "en_IN",
+  /** Credited in every footer. */
+  author: {
+    name: "Mayank Raj Parmar",
+    url: "https://me.theprogrammerbro.in",
+  },
   /**
    * The coming-soon page shows a button for each profile listed here, in this order.
    * Add X and YouTube here when those profiles exist.

@@ -1,5 +1,6 @@
 import { BrandLockup } from "@/components/brand/brand-lockup";
 import { DotGrid } from "@/components/brand/dot-grid";
+import { FooterCredits } from "@/components/layout/footer-credits";
 import { site } from "@/config/site";
 import { delay } from "@/lib/motion";
 import { FollowLinks } from "./follow-links";
@@ -49,9 +50,7 @@ export function ComingSoonPage() {
       </main>
 
       <footer className="relative flex-none border-t border-border bg-bg">
-        <p className="m-0 px-4 py-4 text-center text-small text-text-muted sm:px-6">
-          © 2026 {site.name}
-        </p>
+        <FooterCredits align="center" className="px-4 py-4 sm:px-6" />
       </footer>
     </div>
   );
