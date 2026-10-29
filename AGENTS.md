@@ -39,4 +39,13 @@ code. The rules that matter most:
   `@/lib/motion`. Animations play once, and reduced motion turns them off.
 - **Accessibility:** tap targets at least 44px, visible focus, one `h1` per page, text alternatives
   for diagrams. The browser tests run axe on every page in both themes.
+- **Data and secrets:** only `NEXT_PUBLIC_*` values may reach the browser. The service-role client
+  (`createServiceClient()`) skips row-level security: call it only on the server, after
+  `requireAdmin()`, which every admin page and Server Action must call itself (the proxy's
+  redirect is not a security check). Database changes are new files in `supabase/migrations/`,
+  additive only, with RLS on every table; `supabase/migrations.test.ts` checks them.
+- **Jobs:** `jobs/` runs under plain Node, so import with relative paths ending in `.ts`, never
+  Next.js. Summaries never copy the source; drafts are only published by a person.
+- **Proxy:** `src/proxy.ts` runs for `/admin` only and imports a feature's `proxy.ts` entry, which
+  must stay free of React and Server Actions.
 - **Checks:** `npm run check` and `npm run build && npm run test:e2e` must pass.
