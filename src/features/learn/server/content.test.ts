@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { QuizSchema, TrackSchema } from "../schema";
+import { ComingNextSchema, QuizSchema, TrackSchema } from "../schema";
 import {
   getLearnRoutes,
   getLesson,
@@ -7,6 +7,7 @@ import {
   getPublishedLessons,
   getTrack,
   getTracks,
+  getUpcomingTracks,
 } from "./content";
 
 /*
@@ -62,6 +63,21 @@ describe("learning content", () => {
     expect(getTrack("no-such-track")).toBeNull();
     expect(getLesson("how-ai-works", "no-such-lesson")).toBeNull();
     expect(getLesson("how-ai-works", "tokens")).toBeNull(); // planned, not written yet
+  });
+
+  it("lists the tracks coming next, none of which exist yet", () => {
+    const upcoming = getUpcomingTracks();
+    expect(upcoming.length).toBeGreaterThan(0);
+    const titles = new Set(tracks.map((track) => track.title));
+    expect(upcoming.filter((track) => titles.has(track.title))).toEqual([]);
+  });
+
+  it("only allows the site's levels, or All levels, for upcoming tracks", () => {
+    const parse = (level: string) =>
+      ComingNextSchema.safeParse({ tracks: [{ title: "A track", level }] }).success;
+    expect(parse("All levels")).toBe(true);
+    expect(parse("Expert")).toBe(true);
+    expect(parse("Ninja")).toBe(false);
   });
 
   it("links each lesson to its neighbours", () => {

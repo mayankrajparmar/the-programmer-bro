@@ -1,4 +1,5 @@
 // Public surface of the learning section: its pages and the content queries routes need.
+export { ContinueLearning } from "./components/continue-learning";
 export { LearnPage } from "./components/learn-page";
 export { LessonPage } from "./components/lesson-page";
 export { TrackPage } from "./components/track-page";
@@ -10,7 +11,9 @@ export {
   getTrack,
   getTracks,
   getTrackSlugs,
+  getUpcomingTracks,
   type Lesson,
   type LessonSummary,
   type Track,
 } from "./server/content";
+export type { UpcomingTrack } from "./schema";

@@ -5,12 +5,14 @@ import type { z } from "zod";
 import { showInternalPages } from "@/config/site-mode";
 import { readingMinutes, splitFrontmatter } from "@/lib/mdx";
 import {
+  ComingNextSchema,
   LessonFrontmatterSchema,
   QuizSchema,
   TrackSchema,
   type LessonFrontmatter,
   type Level,
   type Quiz,
+  type UpcomingTrack,
 } from "../schema";
 
 /*
@@ -201,6 +203,23 @@ function loaded(trackSlug: string, includeDrafts = showInternalPages): LoadedTra
   const result = loadTrack(trackSlug, includeDrafts);
   if (shouldCache) cache.set(key, result);
   return result;
+}
+
+/**
+ * Tracks planned after the current ones, for "Coming next" on the home page. A track that
+ * already has a folder in content/learn fails the build, so the list can't go stale.
+ */
+export function getUpcomingTracks(): UpcomingTrack[] {
+  const file = path.join(LEARN_DIR, "coming-next.json");
+  if (!existsSync(file)) return [];
+  const { tracks } = parseWith(ComingNextSchema, readJson(file), file);
+  const written = new Set(getTracks().map((track) => track.title.toLowerCase()));
+  for (const track of tracks) {
+    if (written.has(track.title.toLowerCase())) {
+      throw new ContentError(file, `"${track.title}" is already a track; remove it from this list`);
+    }
+  }
+  return tracks;
 }
 
 export function getTrackSlugs(): string[] {

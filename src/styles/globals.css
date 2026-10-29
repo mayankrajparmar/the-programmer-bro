@@ -206,6 +206,25 @@
   .tpb-sheet:not([hidden]) {
     animation: tpb-rise 0.25s var(--ease-tpb) both;
   }
+
+  /*
+   * Rises in as it scrolls into view; set --i on siblings to stagger them. Driven by
+   * the scroll position, so browsers without scroll timelines simply show it.
+   */
+  @supports (animation-timeline: view()) {
+    .tpb-reveal {
+      animation: tpb-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 4%) entry calc(40% + var(--i, 0) * 4%);
+    }
+  }
+}
+
+@keyframes tpb-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
 
 /*

@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { allowIndexing, site } from "@/config/site";
+import { isLive } from "@/config/site-mode";
 import { DEFAULT_THEME, themeInitScript } from "@/lib/theme";
 import { fontVariables } from "@/styles/fonts";
 import "@/styles/globals.css";
 
 const title = `${site.name}: ${site.tagline}`;
+const description = isLive ? site.description : `${site.description} Launching soon.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
     default: title,
     template: `%s · ${site.name}`,
   },
-  description: site.description,
+  description,
   applicationName: site.name,
   authors: [{ name: site.author.name, url: site.author.url }],
   creator: site.author.name,
@@ -23,12 +25,12 @@ export const metadata: Metadata = {
     locale: site.locale,
     url: "/",
     title,
-    description: site.description,
+    description,
   },
   twitter: {
     card: "summary_large_image",
     title,
-    description: site.description,
+    description,
   },
   robots: allowIndexing ? { index: true, follow: true } : { index: false, follow: false },
 };

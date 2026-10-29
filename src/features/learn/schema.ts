@@ -113,9 +113,27 @@ export const QuizSchema = z
     }
   });
 
+/** content/learn/coming-next.json: tracks that are planned but not written yet. */
+export const ComingNextSchema = z
+  .object({
+    $comment: z.string().optional(),
+    tracks: z
+      .array(
+        z
+          .object({
+            title: z.string().min(1),
+            level: z.enum([...LEVELS, "All levels"]),
+          })
+          .strict(),
+      )
+      .max(12),
+  })
+  .strict();
+
 export type TrackFile = z.infer<typeof TrackSchema>;
 export type LessonFrontmatter = z.infer<typeof LessonFrontmatterSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
+export type UpcomingTrack = z.infer<typeof ComingNextSchema>["tracks"][number];
 export type QuizQuestion = Quiz["questions"][number];
 export type Source = LessonFrontmatter["sources"][number];
 export type { Level };
