@@ -34,7 +34,7 @@ jobs:
   e2e:
     name: Build and browser tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -42,19 +42,21 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # Production keeps the full site behind the launch switch and hides drafts,
-      # so it builds different pages: check that build works before testing the preview one.
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      # Production keeps the full site behind the launch switch and hides drafts, so it builds
+      # different pages: build it and check only the coming-soon page shows.
       - name: Build as production
         run: npm run build
         env:
           VERCEL_ENV: production
+      - name: Browser tests on the production build
+        run: npm run test:e2e:production
       - name: Build as a preview
         run: npm run build
         env:
           # The News page shows sample stories (e2e/fixtures/news.json) instead of the database.
           NEWS_FIXTURES: "1"
-      - name: Install Chromium for Playwright
-        run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - name: Upload the Playwright report
         if: ${{ failure() }}
