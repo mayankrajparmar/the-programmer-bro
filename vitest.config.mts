@@ -12,7 +12,12 @@ export default defineConfig({
   },
   test: {
     // Unit tests live next to the code they test. Browser tests live in e2e/ (Playwright).
-    include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
+    include: [
+      "src/**/*.test.{ts,tsx}",
+      "scripts/**/*.test.ts",
+      "jobs/**/*.test.ts",
+      "supabase/**/*.test.ts",
+    ],
     // Node by default; component tests opt into jsdom with a `// @vitest-environment jsdom` comment.
     environment: "node",
     restoreMocks: true,

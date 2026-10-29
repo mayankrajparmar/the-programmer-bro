@@ -12,6 +12,7 @@ import {
   CardType,
 } from "@/components/ui/card";
 import { CodeBlock, InlineCode } from "@/components/ui/code-block";
+import { Field, Input, Select, TextArea } from "@/components/ui/field";
 import { Tag } from "@/components/ui/tag";
 
 /*
@@ -143,6 +144,23 @@ export function DesignSystemPage() {
               <CardLink href="https://example.com/">Open</CardLink>
             </CardFooter>
           </Card>
+        </div>
+      </Section>
+
+      <Section title="Form fields">
+        <div className="grid max-w-lesson gap-4">
+          <Field label="Headline" htmlFor="ds-headline">
+            <Input id="ds-headline" defaultValue="An open model that reads long prompts" />
+          </Field>
+          <Field label="Summary" htmlFor="ds-summary" hint="Aim for 2 or 3 sentences.">
+            <TextArea id="ds-summary" rows={3} defaultValue="A short summary in plain English." />
+          </Field>
+          <Field label="Topic" htmlFor="ds-topic" className="max-w-[240px]">
+            <Select id="ds-topic" defaultValue="models">
+              <option value="models">Models</option>
+              <option value="tools">Tools</option>
+            </Select>
+          </Field>
         </div>
       </Section>
 

@@ -7,7 +7,7 @@ import { getLearnRoutes } from "@/features/learn";
 export default function sitemap(): MetadataRoute.Sitemap {
   // Until launch, production only serves the coming-soon page.
   const routes = isLive
-    ? [...PUBLIC_ROUTES, "/learn", ...getLearnRoutes(), "/resources"]
+    ? [...PUBLIC_ROUTES, "/learn", ...getLearnRoutes(), "/news", "/resources"]
     : [...PUBLIC_ROUTES];
   return routes.map((path) => ({
     url: new URL(path, site.url).toString(),

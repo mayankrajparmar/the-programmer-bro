@@ -15,7 +15,8 @@ const eslintConfig = defineConfig([
         {
           patterns: [
             {
-              group: ["@/features/*/*"],
+              // src/proxy.ts may use a feature's proxy entry, which has no React in it.
+              group: ["@/features/*/*", "!@/features/*/proxy"],
               message:
                 "Import a feature from its public index (@/features/<name>), not its internals.",
             },
