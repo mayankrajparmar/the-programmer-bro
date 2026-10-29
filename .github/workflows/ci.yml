@@ -50,6 +50,9 @@ jobs:
           VERCEL_ENV: production
       - name: Build as a preview
         run: npm run build
+        env:
+          # The News page shows sample stories (e2e/fixtures/news.json) instead of the database.
+          NEWS_FIXTURES: "1"
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

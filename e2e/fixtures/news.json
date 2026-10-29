@@ -1,0 +1,162 @@
+[
+  {
+    "daysAgo": 0,
+    "tag": "models",
+    "title": "An open-source model release adds a longer context window",
+    "summary": "An example lab has published a new open-source language model that accepts much longer prompts than its last version. That's handy for summarising long documents, but more tokens in means more memory and slower replies when you run it yourself.",
+    "url": "https://lab.example.com/blog/open-model-long-context",
+    "source_name": "Example Lab"
+  },
+  {
+    "daysAgo": 0,
+    "tag": "tools",
+    "title": "A coding assistant can now run your tests before suggesting a fix",
+    "summary": "An example coding tool now runs a project's test suite and shows the results next to its suggested change. It's a useful safety net, though passing tests only prove what your tests actually check.",
+    "url": "https://tools.example.com/news/assistant-runs-tests",
+    "source_name": "Example Tools Blog"
+  },
+  {
+    "daysAgo": 0,
+    "tag": "india",
+    "title": "Draft framework on AI in public services opens for comment",
+    "summary": "An example ministry has asked citizens, companies and researchers for feedback on a draft framework for using AI in government services. It focuses on transparency and on a person checking automated decisions.",
+    "url": "https://news.example.in/policy/ai-public-services",
+    "source_name": "Example News India"
+  },
+  {
+    "daysAgo": 0,
+    "tag": "research",
+    "title": "Study suggests small models can match large ones on narrow tasks",
+    "summary": "Researchers report that a small model trained carefully on one task held its own against much bigger general models on that task. The catch: it did worse on anything outside that narrow area.",
+    "url": "https://research.example.org/small-models-narrow-tasks",
+    "source_name": "Example Research"
+  },
+  {
+    "daysAgo": 0,
+    "tag": "tools",
+    "title": "A notebook tool adds an assistant that explains error messages",
+    "summary": "An example notebook app now has a built-in assistant that explains Python errors in plain language and suggests a fix. It's great for learning, as long as you read the fix before you run it.",
+    "url": "https://tools.example.com/news/notebook-error-assistant",
+    "source_name": "Example Tools Blog"
+  },
+  {
+    "daysAgo": 1,
+    "tag": "models",
+    "title": "A multilingual model update improves Indian-language support",
+    "summary": "An example lab says its latest update handles Hindi, Tamil, Bengali and other Indian languages better, and uses fewer tokens per sentence for them. If you build for Indian users, re-test your prompts.",
+    "url": "https://lab.example.com/blog/indian-languages-update",
+    "source_name": "Example Lab"
+  },
+  {
+    "daysAgo": 1,
+    "tag": "policy",
+    "title": "Regulators publish guidance on labelling AI-generated content",
+    "summary": "An example regulator has released guidance on when apps should tell people that text, images or audio were made with AI. It isn't law yet, but it shows where disclosure rules are likely heading.",
+    "url": "https://news.example.in/policy/ai-content-labels",
+    "source_name": "Example News India"
+  },
+  {
+    "daysAgo": 1,
+    "tag": "tools",
+    "title": "A vector database adds a free tier for small projects",
+    "summary": "An example database company now offers a free tier sized for side projects and student work. It's a low-cost way to try semantic search once you've learned how embeddings work.",
+    "url": "https://tools.example.com/news/vector-db-free-tier",
+    "source_name": "Example Tools Blog"
+  },
+  {
+    "daysAgo": 1,
+    "tag": "india",
+    "title": "A university adds an applied AI elective for final-year students",
+    "summary": "An example university is introducing an applied AI elective that covers language models, embeddings and retrieval. If you're preparing for placements, its syllabus is a handy checklist of what interviewers ask about.",
+    "url": "https://news.example.in/education/applied-ai-elective",
+    "source_name": "Example News India"
+  },
+  {
+    "daysAgo": 2,
+    "tag": "research",
+    "title": "A new benchmark tests whether models follow instructions in long prompts",
+    "summary": "An example research group has released a benchmark that checks whether models still follow instructions buried deep inside long prompts. If you write long prompts, put the key instructions near the start or the end.",
+    "url": "https://research.example.org/long-prompt-instructions",
+    "source_name": "Example Research"
+  },
+  {
+    "daysAgo": 2,
+    "tag": "india",
+    "title": "Startups get access to shared GPUs through a national programme",
+    "summary": "An example national programme now lets startups book time on shared graphics cards for training and testing models. It lowers the cost of trying ideas that need more computing power than a laptop.",
+    "url": "https://news.example.in/startups/shared-gpus",
+    "source_name": "Example News India"
+  },
+  {
+    "daysAgo": 2,
+    "tag": "tools",
+    "title": "A speech-to-text tool now works offline on phones",
+    "summary": "An example speech app can now turn speech into text without an internet connection, running a small model on the phone itself. That helps in places with patchy mobile data and keeps recordings private.",
+    "url": "https://tools.example.com/news/offline-speech",
+    "source_name": "Example Tools Blog"
+  },
+  {
+    "daysAgo": 2,
+    "tag": "models",
+    "title": "A lab shares how it trained a model to say \"I don't know\"",
+    "summary": "An example lab explains how it trained its model to admit uncertainty instead of guessing. Fewer made-up answers makes the model more useful for studying, but you should still check important facts.",
+    "url": "https://lab.example.com/blog/saying-i-dont-know",
+    "source_name": "Example Lab"
+  },
+  {
+    "daysAgo": 4,
+    "tag": "research",
+    "title": "Researchers map which parts of a model store facts",
+    "summary": "An example research team traced where a language model keeps simple facts, such as capital cities, inside its layers. Work like this helps explain why models sometimes mix facts up.",
+    "url": "https://research.example.org/where-models-store-facts",
+    "source_name": "Example Research"
+  },
+  {
+    "daysAgo": 4,
+    "tag": "tools",
+    "title": "A browser extension summarises long articles in Hindi",
+    "summary": "An example browser extension now summarises long English articles in Hindi with one click. It's handy for skimming, though summaries can drop details, so read the original when it matters.",
+    "url": "https://tools.example.com/news/hindi-summaries",
+    "source_name": "Example Tools Blog"
+  },
+  {
+    "daysAgo": 4,
+    "tag": "models",
+    "title": "An image model learns to draw readable text",
+    "summary": "An example lab says its newest image model can now place short, correctly spelled words inside pictures, something earlier models often got wrong. Posters and diagrams are the obvious uses.",
+    "url": "https://lab.example.com/blog/image-model-text",
+    "source_name": "Example Lab"
+  },
+  {
+    "daysAgo": 4,
+    "tag": "india",
+    "title": "A state launches an AI helpline for farmers in local languages",
+    "summary": "An example state government has started a phone helpline where farmers can ask about crops and weather in their own language, answered by an AI system and checked by experts.",
+    "url": "https://news.example.in/agriculture/ai-helpline",
+    "source_name": "Example News India"
+  },
+  {
+    "daysAgo": 6,
+    "tag": "policy",
+    "title": "Data protection rules set deadlines for AI apps that store personal data",
+    "summary": "An example set of data protection rules gives apps a deadline to explain what personal data they keep and why. AI apps that store chats or voice notes will need clear consent screens.",
+    "url": "https://news.example.in/policy/data-protection-deadlines",
+    "source_name": "Example News India"
+  },
+  {
+    "daysAgo": 6,
+    "tag": "research",
+    "title": "A study finds chatbots give different answers to the same question",
+    "summary": "An example study asked chatbots the same question many times and got noticeably different answers. It's a reminder that model replies are sampled, so one answer isn't the whole story.",
+    "url": "https://research.example.org/chatbot-consistency",
+    "source_name": "Example Research"
+  },
+  {
+    "daysAgo": 6,
+    "tag": "tools",
+    "title": "A free course platform adds hands-on AI labs in the browser",
+    "summary": "An example learning platform now includes small AI labs that run in the browser, so you can try prompts and embeddings without installing anything or paying for an API key.",
+    "url": "https://tools.example.com/news/browser-ai-labs",
+    "source_name": "Example Tools Blog"
+  }
+]
