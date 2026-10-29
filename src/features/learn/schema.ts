@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LEVELS, type Level } from "@/config/levels";
 
 /*
  * The shape of every file under content/learn and content/quizzes. Content is
@@ -9,8 +10,6 @@ import { z } from "zod";
 const slug = z
   .string()
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "use lowercase words joined by hyphens");
-
-export const LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"] as const;
 
 export const TrackSchema = z
   .object({
@@ -119,4 +118,4 @@ export type LessonFrontmatter = z.infer<typeof LessonFrontmatterSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
 export type QuizQuestion = Quiz["questions"][number];
 export type Source = LessonFrontmatter["sources"][number];
-export type Level = (typeof LEVELS)[number];
+export type { Level };

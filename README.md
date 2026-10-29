@@ -57,7 +57,8 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 .
 ├── content/
 │   ├── learn/<track>/         # track.json (the lesson plan) and NN-slug.mdx lessons
-│   └── quizzes/               # <lesson-slug>.json, one quiz per lesson
+│   ├── quizzes/               # <lesson-slug>.json, one quiz per lesson
+│   └── resources.json         # The hand-picked list on /resources
 ├── design/
 │   └── tokens.json            # Design tokens exported from the design system (source of truth)
 ├── e2e/                       # Playwright browser tests
@@ -83,13 +84,14 @@ The first time you run browser tests, install Chromium with `npx playwright inst
     │   │   └── index.ts       # The feature's public surface
     │   ├── design-system/     # Internal preview of every shared component
     │   ├── errors/            # 404 page
-    │   └── learn/             # Tracks, lessons, quizzes and browser-saved progress
-    │       ├── components/    # Track and lesson pages, MDX components
-    │       ├── diagrams/      # Lesson diagrams as React components
-    │       ├── progress/      # Progress in localStorage (tpb:progress:v1)
-    │       ├── quiz/          # The end-of-lesson quiz
-    │       ├── server/        # Reads and validates content/ at build
-    │       └── schema.ts      # Zod schemas for every content file
+    │   ├── learn/             # Tracks, lessons, quizzes and browser-saved progress
+    │   │   ├── components/    # Track and lesson pages, MDX components
+    │   │   ├── diagrams/      # Lesson diagrams as React components
+    │   │   ├── progress/      # Progress in localStorage (tpb:progress:v1)
+    │   │   ├── quiz/          # The end-of-lesson quiz
+    │   │   ├── server/        # Reads and validates content/ at build
+    │   │   └── schema.ts      # Zod schemas for every content file
+    │   └── resources/         # /resources: cards with level and type filters
     ├── lib/                   # Helpers: cn(), theme, motion, code highlighting, MDX
     └── styles/                # globals.css, generated tokens.css, self-hosted fonts
 ```
@@ -173,6 +175,14 @@ A diagram is a React component in `src/features/learn/diagrams/`, registered in
 `src/features/learn/components/mdx-components.tsx`. Draw it with design-token colour classes
 (`fill-surface-raised`, `stroke-amber`, ...) so it works in both themes, and give the SVG an
 `aria-label` that says what it shows.
+
+## Adding a resource
+
+Add an entry to `content/resources.json` with an `id`, `title`, `https` `url`, `type` (Course,
+Video course, Paper, Tool or Book), `level`, `cost`, and a one or two sentence `description` in
+our own words. Add `length` only when you know it, and `lesson` (a lesson slug) when the resource
+pairs with a lesson. Open the link and check it before adding it. `npm test` validates the file
+and checks that every paired lesson exists.
 
 ## Launch switch
 
