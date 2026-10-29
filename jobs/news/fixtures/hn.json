@@ -1,0 +1,28 @@
+{
+  "hits": [
+    {
+      "objectID": "41000001",
+      "title": "Show HN: A tiny LLM that runs in the browser",
+      "url": "https://www.github.com/example/tiny-llm",
+      "points": 412,
+      "created_at_i": 1793242800,
+      "story_text": null
+    },
+    {
+      "objectID": "41000002",
+      "title": "Ask HN: What are you reading this week?",
+      "url": null,
+      "points": 150,
+      "created_at_i": 1793239200,
+      "story_text": "<p>Share your books.</p>"
+    },
+    {
+      "objectID": "41000003",
+      "title": "The history of the floppy disk",
+      "url": "https://retro.example.org/floppy",
+      "points": 230,
+      "created_at_i": 1793235600
+    }
+  ],
+  "nbHits": 3
+}

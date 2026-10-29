@@ -1,0 +1,65 @@
+name: News ingest
+
+# Reads the feeds in content/news-sources.json, summarises new AI stories with Gemini and
+# saves them as drafts for approval at /admin/news. See jobs/news-ingest.ts.
+
+on:
+  schedule:
+    # Every four hours, at 7 minutes past: GitHub often delays runs scheduled on the hour.
+    - cron: "7 */4 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: fetch and summarise, but save nothing"
+        type: boolean
+        default: false
+  # When the job or its sources change, check every source still responds.
+  pull_request:
+    paths:
+      - content/news-sources.json
+      - jobs/**
+      - .github/workflows/news-ingest.yml
+
+concurrency:
+  group: news-ingest-${{ github.event_name == 'pull_request' && github.ref || 'live' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check-sources:
+    name: Every news source responds
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # No secrets: reads the feeds only, with no database and no summaries.
+      - run: node jobs/news-ingest.ts --dry-run --no-summaries --strict
+
+  ingest:
+    name: Fetch and summarise news
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: node jobs/news-ingest.ts ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Optional repository variables (Settings > Secrets and variables > Actions > Variables).
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          NEWS_MAX_ITEMS: ${{ vars.NEWS_MAX_ITEMS }}

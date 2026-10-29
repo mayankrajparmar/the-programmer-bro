@@ -1,0 +1,75 @@
+{
+  "$comment": "Feeds the news job reads every four hours. Add a source with a pull request: CI fetches every feed to check it works. Fields: kind is rss (RSS or Atom), arxiv or hn (Hacker News search API); defaultTag hints the topic; filterAi keeps only stories that mention AI (use it for general tech feeds); maxItems caps stories per run (default 5).",
+  "sources": [
+    { "name": "OpenAI", "kind": "rss", "url": "https://openai.com/news/rss.xml" },
+    { "name": "Google DeepMind", "kind": "rss", "url": "https://deepmind.google/blog/rss.xml" },
+    {
+      "name": "Google Research",
+      "kind": "rss",
+      "url": "https://research.google/blog/rss/",
+      "defaultTag": "research"
+    },
+    {
+      "name": "Google AI",
+      "kind": "rss",
+      "url": "https://blog.google/innovation-and-ai/technology/ai/rss/"
+    },
+    { "name": "Hugging Face", "kind": "rss", "url": "https://huggingface.co/blog/feed.xml" },
+    { "name": "Mistral AI", "kind": "rss", "url": "https://mistral.ai/news/rss" },
+    {
+      "name": "MIT Technology Review",
+      "kind": "rss",
+      "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed"
+    },
+    {
+      "name": "TechCrunch",
+      "kind": "rss",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/"
+    },
+    {
+      "name": "The Verge",
+      "kind": "rss",
+      "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+    },
+    { "name": "Ars Technica", "kind": "rss", "url": "https://arstechnica.com/ai/feed/" },
+    {
+      "name": "MIT News",
+      "kind": "rss",
+      "url": "https://news.mit.edu/rss/topic/artificial-intelligence2",
+      "defaultTag": "research"
+    },
+    {
+      "name": "Berkeley AI Research",
+      "kind": "rss",
+      "url": "https://bair.berkeley.edu/blog/feed.xml",
+      "defaultTag": "research"
+    },
+    {
+      "name": "Hacker News",
+      "kind": "hn",
+      "url": "https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=points>=100&hitsPerPage=100",
+      "filterAi": true
+    },
+    {
+      "name": "The Hindu",
+      "kind": "rss",
+      "url": "https://www.thehindu.com/sci-tech/technology/feeder/default.rss",
+      "defaultTag": "india",
+      "filterAi": true
+    },
+    {
+      "name": "The Economic Times",
+      "kind": "rss",
+      "url": "https://economictimes.indiatimes.com/tech/rssfeeds/13357270.cms",
+      "defaultTag": "india",
+      "filterAi": true
+    },
+    {
+      "name": "Inc42",
+      "kind": "rss",
+      "url": "https://inc42.com/feed/",
+      "defaultTag": "india",
+      "filterAi": true
+    }
+  ]
+}

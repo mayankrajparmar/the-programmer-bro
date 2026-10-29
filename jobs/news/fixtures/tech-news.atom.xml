@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Example Tech News</title>
+  <link href="https://news.example.in/"/>
+  <updated>2026-10-29T05:00:00Z</updated>
+  <id>https://news.example.in/</id>
+  <entry>
+    <title>Lumen 2: lab releases smaller open model with longer context window</title>
+    <link href="https://news.example.in/tech/lumen-2-open-model#comments"/>
+    <id>https://news.example.in/tech/lumen-2-open-model</id>
+    <updated>2026-10-29T04:00:00Z</updated>
+    <summary>An AI lab has released Lumen 2, an open model that handles very long prompts.</summary>
+  </entry>
+  <entry>
+    <title>Government opens consultation on AI rules for public services</title>
+    <link href="https://news.example.in/policy/ai-public-services-consultation"/>
+    <id>https://news.example.in/policy/ai-public-services-consultation</id>
+    <updated>2026-10-29T03:00:00Z</updated>
+    <summary>The ministry has asked for comments on a draft framework for using AI in government services.</summary>
+  </entry>
+  <entry>
+    <title>New budget smartphone launches with a bigger battery</title>
+    <link href="https://news.example.in/gadgets/budget-phone"/>
+    <id>https://news.example.in/gadgets/budget-phone</id>
+    <updated>2026-10-29T02:00:00Z</updated>
+    <summary>The phone said to cost under Rs 12,000 has a 6,000 mAh battery.</summary>
+  </entry>
+</feed>

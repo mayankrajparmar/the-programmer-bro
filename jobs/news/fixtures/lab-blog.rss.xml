@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Example Lab Blog</title>
+    <link>https://lab.example.com/blog</link>
+    <description>News from an example AI lab</description>
+    <item>
+      <title>Introducing Lumen 2, a smaller open model with a longer context window</title>
+      <link>https://lab.example.com/blog/lumen-2/?utm_source=rss&amp;utm_medium=feed</link>
+      <description>&lt;p&gt;Lumen 2 is an open-weights language model that reads prompts of up to 1 million tokens &amp;amp; runs on a single GPU.&lt;/p&gt;&lt;p&gt;We are releasing it under the Apache 2.0 licence.&lt;/p&gt;</description>
+      <pubDate>Thu, 29 Oct 2026 02:30:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>How we evaluate long-context models</title>
+      <link>https://lab.example.com/blog/evaluating-long-context</link>
+      <description>A look at the benchmarks we use to test whether models find facts buried in long prompts.</description>
+      <pubDate>Wed, 28 Oct 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Our year in review</title>
+      <link>https://lab.example.com/blog/year-in-review</link>
+      <description>Looking back at last year.</description>
+      <pubDate>Mon, 12 Oct 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>An item without a link</title>
+      <description>Feeds sometimes have these.</description>
+      <pubDate>Thu, 29 Oct 2026 01:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
