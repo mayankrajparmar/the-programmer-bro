@@ -28,7 +28,7 @@ export function SiteFooter() {
             <ul className="m-0 list-none p-0">
               {FOOTER_SITE_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} prefetch={false} className={linkClass}>
+                  <Link href={link.href} className={linkClass}>
                     {link.label}
                   </Link>
                 </li>

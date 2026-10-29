@@ -13,6 +13,8 @@ export const site = {
   tagline: "Learn how AI really works",
   description: "Free lessons from the basics to expert level, with quizzes and daily AI news.",
   locale: "en_IN",
+  /** For readers' questions, corrections and data requests. Shown on Contact, Privacy and Terms. */
+  contactEmail: "contact@theprogrammerbro.in",
   /** Credited in every footer. */
   author: {
     name: "Mayank Raj Parmar",

@@ -24,7 +24,6 @@ export function ResourcesPage({ resources }: { resources: ResourceView[] }) {
           Know something better?{" "}
           <Link
             href="/contact"
-            prefetch={false}
             className="text-accent-text underline underline-offset-[3px] hover:text-text"
           >
             Tell us about it

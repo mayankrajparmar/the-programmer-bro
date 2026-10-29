@@ -11,7 +11,7 @@ export const MAIN_NAV: readonly NavLink[] = [
   { label: "Resources", href: "/resources" },
 ];
 
-/** The footer's "The site" column. These pages arrive with the legal step of Stage 1. */
+/** The footer's "The site" column: the pages in content/pages. */
 export const FOOTER_SITE_LINKS: readonly NavLink[] = [
   { label: "About", href: "/about" },
   { label: "Privacy", href: "/privacy" },
