@@ -175,16 +175,19 @@ function Diagram({ layout, className }: { layout: Layout; className?: string }) 
 }
 
 export function TokenDemo({
+  caption,
   className,
   style,
 }: {
+  /** Optional note under the diagram. */
+  caption?: string;
   className?: string;
   style?: React.CSSProperties;
 }) {
   return (
     <figure
       className={cn(
-        "m-0 w-full max-w-[340px] rounded-lg border border-border bg-surface p-3",
+        "m-0 grid w-full max-w-[340px] gap-3 rounded-lg border border-border bg-surface p-3",
         "sm:max-w-[440px] sm:p-4",
         className,
       )}
@@ -192,6 +195,7 @@ export function TokenDemo({
     >
       <Diagram layout={NARROW} className="block sm:hidden" />
       <Diagram layout={WIDE} className="hidden sm:block" />
+      {caption && <figcaption className="text-caption text-text-muted">{caption}</figcaption>}
     </figure>
   );
 }
