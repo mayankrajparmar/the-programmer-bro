@@ -39,20 +39,21 @@ state; run `NEWS_FIXTURES=1 npm run dev` to see it with sample stories, or copy 
 
 ## Scripts
 
-| Command                | What it does                                                   |
-| ---------------------- | -------------------------------------------------------------- |
-| `npm run dev`          | Start the dev server                                           |
-| `npm run build`        | Production build                                               |
-| `npm run start`        | Serve the production build                                     |
-| `npm run check`        | Everything CI checks before the build: run it before a PR      |
-| `npm run lint`         | ESLint                                                         |
-| `npm run typecheck`    | Generate route types, then TypeScript                          |
-| `npm run format`       | Prettier (also sorts Tailwind classes)                         |
-| `npm test`             | Unit tests (Vitest)                                            |
-| `npm run test:e2e`     | Browser tests against the production build (run `build` first) |
-| `npm run tokens`       | Regenerate `src/styles/tokens.css` from `design/tokens.json`   |
-| `npm run tokens:check` | Fail if the generated CSS is out of date                       |
-| `npm run news`         | Run the news job (see [AI News](#ai-news); add `-- --dry-run`) |
+| Command                       | What it does                                                   |
+| ----------------------------- | -------------------------------------------------------------- |
+| `npm run dev`                 | Start the dev server                                           |
+| `npm run build`               | Production build                                               |
+| `npm run start`               | Serve the production build                                     |
+| `npm run check`               | Everything CI checks before the build: run it before a PR      |
+| `npm run lint`                | ESLint                                                         |
+| `npm run typecheck`           | Generate route types, then TypeScript                          |
+| `npm run format`              | Prettier (also sorts Tailwind classes)                         |
+| `npm test`                    | Unit tests (Vitest)                                            |
+| `npm run test:e2e`            | Browser tests against the production build (run `build` first) |
+| `npm run test:e2e:production` | Coming-soon checks on a `VERCEL_ENV=production` build          |
+| `npm run tokens`              | Regenerate `src/styles/tokens.css` from `design/tokens.json`   |
+| `npm run tokens:check`        | Fail if the generated CSS is out of date                       |
+| `npm run news`                | Run the news job (see [AI News](#ai-news); add `-- --dry-run`) |
 
 The first time you run browser tests, install Chromium with `npx playwright install chromium`.
 
@@ -63,12 +64,14 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 ├── content/
 │   ├── learn/<track>/         # track.json (the lesson plan) and NN-slug.mdx lessons
 │   ├── quizzes/               # <lesson-slug>.json, one quiz per lesson
+│   ├── learn/coming-next.json # Tracks listed under "Coming next" on the home page
 │   ├── news-sources.json      # The feeds the news job reads
 │   └── resources.json         # The hand-picked list on /resources
 ├── design/
 │   └── tokens.json            # Design tokens exported from the design system (source of truth)
 ├── e2e/                       # Playwright browser tests
-│   └── fixtures/news.json     # Sample stories for the News page in browser tests
+│   ├── fixtures/news.json     # Sample stories for the News page in browser tests
+│   └── production/            # Tests for a production build before launch (coming-soon only)
 ├── jobs/
 │   ├── news-ingest.ts         # The news job: run by GitHub Actions every four hours
 │   └── news/                  # Fetching, filtering, de-duplicating, summarising, saving; with tests
@@ -85,7 +88,7 @@ The first time you run browser tests, install Chromium with `npx playwright inst
     ├── app/                   # Routes only: layouts, pages, metadata files (icons, robots, sitemap)
     │   ├── (site)/            # The full site, inside the header and footer (hidden until launch)
     │   ├── admin/             # Sign-in and the news approval queue (no site header or footer)
-    │   ├── page.tsx           # The coming-soon page
+    │   ├── page.tsx           # "/": the home page once live, the coming-soon page until then
     │   └── not-found.tsx      # The 404 page
     ├── components/
     │   ├── ui/                # Design-system primitives, reused by every feature
@@ -99,6 +102,7 @@ The first time you run browser tests, install Chromium with `npx playwright inst
     │   │   └── index.ts       # The feature's public surface
     │   ├── design-system/     # Internal preview of every shared component
     │   ├── errors/            # 404 page
+    │   ├── home/              # The home page: hero, where to start, how it works, news, next tracks
     │   ├── learn/             # Tracks, lessons, quizzes and browser-saved progress
     │   │   ├── components/    # Track and lesson pages, MDX components
     │   │   ├── diagrams/      # Lesson diagrams as React components
@@ -278,8 +282,17 @@ launch. `src/config/site-mode.ts` decides:
 | Production (`VERCEL_ENV=production`) | The coming-soon page; every other page answers with a 404 |
 | Preview deployments and local        | The full site                                             |
 
-`SITE_MODE=live` or `SITE_MODE=coming-soon` overrides the default. **To launch,** set
-`SITE_MODE=live` for the Production environment in Vercel and redeploy.
+`SITE_MODE=live` or `SITE_MODE=coming-soon` overrides the default. CI checks both: the browser
+tests run on a preview-style build, and `e2e/production` checks a production build shows only the
+coming-soon page.
+
+**Before launch:**
+
+1. Publish at least lesson 1: a person checks it for accuracy, then sets `draft: false`. In
+   production, drafts are hidden, so until then the home page offers "See the lessons" instead of
+   "Start lesson 1".
+2. Make sure every footer link works (About, Privacy, Terms, AI-content disclaimer, Contact).
+3. Set `SITE_MODE=live` for the Production environment in Vercel and redeploy.
 
 ## Deployment
 

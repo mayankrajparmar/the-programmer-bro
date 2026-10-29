@@ -48,4 +48,7 @@ code. The rules that matter most:
   Next.js. Summaries never copy the source; drafts are only published by a person.
 - **Proxy:** `src/proxy.ts` runs for `/admin` only and imports a feature's `proxy.ts` entry, which
   must stay free of React and Server Actions.
-- **Checks:** `npm run check` and `npm run build && npm run test:e2e` must pass.
+- **Home page:** `src/app/page.tsx` shows the home page when the site is live and the coming-soon
+  page before launch; it isn't under `(site)` because `/` must work in both modes.
+- **Checks:** `npm run check` and `npm run build && npm run test:e2e` must pass, and so must
+  `VERCEL_ENV=production npm run build && npm run test:e2e:production`.
