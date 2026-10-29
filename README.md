@@ -3,9 +3,8 @@
 Free lessons that take you from the basics of AI to expert level, with quizzes, daily AI news,
 resources and a prompt hub. Live at [theprogrammerbro.in](https://theprogrammerbro.in).
 
-**Status:** Stage 1 in progress (the first learning track, quizzes, AI News and Resources).
-Production shows the coming-soon page until launch; preview deployments show the full site as it
-is built (see [Launch switch](#launch-switch)).
+**Status:** Live since 29 October 2026 (Stage 1: the first learning track, quizzes, AI News and
+Resources). New lessons are added as they're reviewed.
 
 ## Tech stack
 
@@ -65,13 +64,14 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 │   ├── learn/<track>/         # track.json (the lesson plan) and NN-slug.mdx lessons
 │   ├── quizzes/               # <lesson-slug>.json, one quiz per lesson
 │   ├── learn/coming-next.json # Tracks listed under "Coming next" on the home page
+│   ├── pages/                 # About, Privacy, Terms, AI-content disclaimer, Contact (MDX)
 │   ├── news-sources.json      # The feeds the news job reads
 │   └── resources.json         # The hand-picked list on /resources
 ├── design/
 │   └── tokens.json            # Design tokens exported from the design system (source of truth)
 ├── e2e/                       # Playwright browser tests
 │   ├── fixtures/news.json     # Sample stories for the News page in browser tests
-│   └── production/            # Tests for a production build before launch (coming-soon only)
+│   └── production/            # Tests for a production build (drafts and internal pages hidden)
 ├── jobs/
 │   ├── news-ingest.ts         # The news job: run by GitHub Actions every four hours
 │   └── news/                  # Fetching, filtering, de-duplicating, summarising, saving; with tests
@@ -86,7 +86,7 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 ├── test/stubs/                # Stand-ins for server-only modules in unit tests
 └── src/
     ├── app/                   # Routes only: layouts, pages, metadata files (icons, robots, sitemap)
-    │   ├── (site)/            # The full site, inside the header and footer (hidden until launch)
+    │   ├── (site)/            # The full site, inside the header and footer
     │   ├── admin/             # Sign-in and the news approval queue (no site header or footer)
     │   ├── page.tsx           # "/": the home page once live, the coming-soon page until then
     │   └── not-found.tsx      # The 404 page
@@ -111,6 +111,7 @@ The first time you run browser tests, install Chromium with `npx playwright inst
     │   │   ├── server/        # Reads and validates content/ at build
     │   │   └── schema.ts      # Zod schemas for every content file
     │   ├── news/              # /news and the admin queue
+    │   ├── pages/             # About, Privacy, Terms, AI-content disclaimer and Contact
     │   │   ├── admin/         # Review cards and the approve/save/reject Server Action
     │   │   ├── components/    # The News page: day groups, topic filter, cards
     │   │   ├── server/        # Approved stories, cached and tagged "news"
@@ -272,27 +273,24 @@ for the Hacker News search API), an `https` `url`, and optionally `defaultTag`, 
 the same story, so list official sources first. A pull request that changes the file runs
 "Every news source responds", which fetches every feed.
 
+## Site pages
+
+About, Privacy, Terms, the AI-content disclaimer and Contact are MDX files in `content/pages/`,
+each with a `title`, a one-sentence `description` and a `lastUpdated` date. Write them in plain
+English. `<Email />` prints the contact address from `src/config/site.ts`, and `<ContactOptions />`
+shows every way to reach us. Change `lastUpdated` whenever Privacy or Terms change in a way readers
+should know about.
+
 ## Launch switch
 
-Stage 1 is merged to `main` piece by piece, but the full site stays hidden in production until
-launch. `src/config/site-mode.ts` decides:
+The site launched on 29 October 2026, so every environment shows the full site.
+`src/config/site-mode.ts` still has a switch for emergencies: set `SITE_MODE=coming-soon` in the
+Vercel Production environment and redeploy to show only the coming-soon page (every other page
+then answers with a 404). Remove it and redeploy to bring the site back.
 
-| Where                                | What visitors see                                         |
-| ------------------------------------ | --------------------------------------------------------- |
-| Production (`VERCEL_ENV=production`) | The coming-soon page; every other page answers with a 404 |
-| Preview deployments and local        | The full site                                             |
-
-`SITE_MODE=live` or `SITE_MODE=coming-soon` overrides the default. CI checks both: the browser
-tests run on a preview-style build, and `e2e/production` checks a production build shows only the
-coming-soon page.
-
-**Before launch:**
-
-1. Publish at least lesson 1: a person checks it for accuracy, then sets `draft: false`. In
-   production, drafts are hidden, so until then the home page offers "See the lessons" instead of
-   "Start lesson 1".
-2. Make sure every footer link works (About, Privacy, Terms, AI-content disclaimer, Contact).
-3. Set `SITE_MODE=live` for the Production environment in Vercel and redeploy.
+Production still differs from previews in two ways: draft lessons are hidden, and internal pages
+such as `/design-system` answer with a 404. CI checks both: the browser tests run on a preview-style
+build, and `e2e/production` checks a production build.
 
 ## Deployment
 

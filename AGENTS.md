@@ -21,8 +21,8 @@ code. The rules that matter most:
 - **Design tokens:** use the token utilities (`bg-surface`, `text-text-muted`, `text-h1`,
   `rounded-md`, ...). Never hard-code colours or font sizes. Don't edit `src/styles/tokens.css`;
   it is generated from `design/tokens.json` by `npm run tokens`.
-- **Full-site pages** go under `src/app/(site)/`, which adds the header and footer and hides them
-  in production until launch (`src/config/site-mode.ts`). Keep those routes static or give them
+- **Full-site pages** go under `src/app/(site)/`, which adds the header and footer (and hides them
+  if `SITE_MODE=coming-soon`, see `src/config/site-mode.ts`). Keep those routes static or give them
   `generateStaticParams`, so the header knows the current section when prerendering.
 - **Components:** reuse `src/components/ui` (Button, Tag, Callout, CodeBlock, Card, ...) before
   writing new markup; see them at `/design-system` on a local build. Style a link as a button with
@@ -48,7 +48,10 @@ code. The rules that matter most:
   Next.js. Summaries never copy the source; drafts are only published by a person.
 - **Proxy:** `src/proxy.ts` runs for `/admin` only and imports a feature's `proxy.ts` entry, which
   must stay free of React and Server Actions.
-- **Home page:** `src/app/page.tsx` shows the home page when the site is live and the coming-soon
-  page before launch; it isn't under `(site)` because `/` must work in both modes.
+- **Home page:** `src/app/page.tsx` shows the home page, or the coming-soon page when
+  `SITE_MODE=coming-soon`; it isn't under `(site)` because `/` must work in both modes.
+- **Site pages** (About, Privacy, Terms, AI-content disclaimer, Contact) are MDX in
+  `content/pages/`. Keep Privacy and Terms true to what the site actually does: if you add
+  cookies, analytics, accounts or ads, update them in the same pull request.
 - **Checks:** `npm run check` and `npm run build && npm run test:e2e` must pass, and so must
   `VERCEL_ENV=production npm run build && npm run test:e2e:production`.
