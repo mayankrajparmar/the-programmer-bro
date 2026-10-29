@@ -4,7 +4,7 @@ import { FooterCredits } from "@/components/layout/footer-credits";
 import { site } from "@/config/site";
 import { delay } from "@/lib/motion";
 import { FollowLinks } from "./follow-links";
-import { TokenDemo } from "./token-demo";
+import { TokenDemo } from "@/components/brand/token-demo";
 
 const HEADLINE: { word: string; mark?: boolean }[] = [
   { word: "Learn" },
@@ -39,7 +39,7 @@ export function ComingSoonPage() {
             ))}
           </h1>
           <p className="tpb-in m-0 max-w-[560px]" style={delay(0.55)}>
-            {site.description}
+            {site.description} Launching soon.
             <span className="tpb-caret" aria-hidden="true" />
           </p>
         </div>

@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:production": "playwright test -c playwright.production.config.ts",
     "tokens": "node scripts/build-tokens.ts",
     "tokens:check": "node scripts/build-tokens.ts --check",
     "news": "node jobs/news-ingest.ts",

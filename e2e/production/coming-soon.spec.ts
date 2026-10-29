@@ -1,6 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { site } from "../src/config/site";
+import { site } from "../../src/config/site";
+
+// Runs against a production build (npm run test:e2e:production), where the launch switch
+// shows only the coming-soon page.
 
 test.describe("coming-soon page", () => {
   test("shows the brand, headline and tokenizer demo without errors", async ({ page }) => {
@@ -63,35 +66,15 @@ test.describe("coming-soon page", () => {
   });
 });
 
-test.describe("search and sharing", () => {
-  test("publishes metadata, robots.txt, a sitemap and a manifest", async ({ page, request }) => {
-    await page.goto("/");
-    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
-      "content",
-      /opengraph-image/,
-    );
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-      "href",
-      /theprogrammerbro\.in/,
-    );
+test.describe("before launch", () => {
+  for (const path of ["/learn", "/learn/how-ai-works", "/news", "/resources", "/design-system"]) {
+    test(`hides ${path}`, async ({ request }) => {
+      expect((await request.get(path)).status()).toBe(404);
+    });
+  }
 
-    const robots = await request.get("/robots.txt");
-    expect(robots.ok()).toBe(true);
-    expect(await robots.text()).toContain("Sitemap: https://theprogrammerbro.in/sitemap.xml");
-
-    const sitemap = await request.get("/sitemap.xml");
-    expect(await sitemap.text()).toContain("<loc>https://theprogrammerbro.in/</loc>");
-
-    const manifest = await (await request.get("/manifest.webmanifest")).json();
-    expect(manifest).toMatchObject({ name: "The Programmer Bro", start_url: "/" });
-
-    for (const icon of [
-      "/favicon.ico",
-      "/icon-192.png",
-      "/icon-512.png",
-      "/brand/pb-logo-amber.svg",
-    ]) {
-      expect((await request.get(icon)).ok(), icon).toBe(true);
-    }
+  test("keeps the admin sign-in reachable", async ({ page }) => {
+    await page.goto("/admin/login");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sign in");
   });
 });

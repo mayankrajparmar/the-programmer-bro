@@ -1,0 +1,11 @@
+{
+  "$comment": "Tracks we're writing next, shown under \"Coming next\" on the home page. Remove a track from this list when its folder (content/learn/<slug>/track.json) is added.",
+  "tracks": [
+    { "title": "Prompt Engineering", "level": "Beginner" },
+    { "title": "Building with LLM APIs", "level": "Intermediate" },
+    { "title": "RAG and Embeddings", "level": "Intermediate" },
+    { "title": "AI Agents", "level": "Advanced" },
+    { "title": "Build AI from Scratch", "level": "Expert" },
+    { "title": "AI for Careers", "level": "All levels" }
+  ]
+}
