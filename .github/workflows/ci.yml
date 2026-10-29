@@ -44,8 +44,8 @@ jobs:
       - run: npm ci
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
-      # Production keeps the full site behind the launch switch and hides drafts, so it builds
-      # different pages: build it and check only the coming-soon page shows.
+      # Production hides drafts and internal pages, so it builds different pages: build it and
+      # check the site as visitors get it.
       - name: Build as production
         run: npm run build
         env:

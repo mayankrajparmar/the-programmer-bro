@@ -1,11 +1,9 @@
 import "server-only";
 
 /*
- * The launch switch. Production shows only the coming-soon page until launch;
- * local development and Vercel preview deployments show the full site, so Stage 1
- * can be merged to main piece by piece without going public early.
- *
- * To launch: set SITE_MODE=live in the Vercel production environment and redeploy.
+ * The launch switch. The site launched on 29 Oct 2026, so every environment shows the
+ * full site. To put production back behind the coming-soon page (for maintenance, say),
+ * set SITE_MODE=coming-soon in the Vercel production environment and redeploy.
  */
 
 export type SiteMode = "coming-soon" | "live";
@@ -15,7 +13,7 @@ export function resolveSiteMode(env: {
   VERCEL_ENV?: string | undefined;
 }): SiteMode {
   if (env.SITE_MODE === "live" || env.SITE_MODE === "coming-soon") return env.SITE_MODE;
-  return env.VERCEL_ENV === "production" ? "coming-soon" : "live";
+  return "live";
 }
 
 export const siteMode: SiteMode = resolveSiteMode({

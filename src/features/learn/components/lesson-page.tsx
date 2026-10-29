@@ -117,7 +117,6 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
 
           <Link
             href={`/contact?about=${encodeURIComponent(lesson.href)}`}
-            prefetch={false}
             className="mt-4 inline-flex min-h-11 items-center gap-2 text-small text-text-muted no-underline hover:text-text hover:underline hover:underline-offset-4"
           >
             <Flag aria-hidden className="size-4" />

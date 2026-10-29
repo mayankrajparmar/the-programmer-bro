@@ -4,8 +4,8 @@ import base from "./playwright.config";
 const PORT = 3001;
 
 /**
- * Browser tests for the production build, before launch: `VERCEL_ENV=production npm run build`,
- * then `npm run test:e2e:production`. Checks the launch switch shows only the coming-soon page.
+ * Browser tests for a production build: `VERCEL_ENV=production npm run build`, then
+ * `npm run test:e2e:production`. Checks the site as visitors get it (no drafts, no internal pages).
  */
 export default defineConfig({
   ...base,
