@@ -90,6 +90,11 @@ describe("learning content", () => {
     expect(second?.number).toBe(2);
     expect(second?.previous?.slug).toBe("what-is-ai");
     expect(second?.next?.slug).toBe("meet-the-llm");
+
+    const third = getLesson("how-ai-works", "meet-the-llm");
+    expect(third?.number).toBe(3);
+    expect(third?.previous?.slug).toBe("history");
+    expect(third?.next?.slug).toBe("next-word");
   });
 });
 
