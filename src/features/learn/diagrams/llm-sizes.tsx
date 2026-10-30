@@ -21,6 +21,12 @@ const MODELS: readonly Model[] = [
 
 const LARGEST = Math.max(...MODELS.map((model) => model.billions));
 
+/** The figure as text, for the Markdown copy of the lesson (llms-full.txt). */
+export const llmSizesMarkdown = MODELS.map(
+  (model) =>
+    `- ${model.name} (${model.maker}, ${model.year}): ${model.billions} billion parameters`,
+).join("\n");
+
 export function LlmSizesDiagram() {
   return (
     <ol aria-label="Parameters in three LLMs" className="m-0 grid list-none gap-5 p-0">

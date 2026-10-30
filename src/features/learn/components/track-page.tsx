@@ -1,8 +1,10 @@
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Tag } from "@/components/ui/tag";
+import { JsonLd } from "@/features/seo";
 import { delay } from "@/lib/motion";
 import { lessonKey } from "../progress/progress-store";
 import type { Track } from "../server/content";
+import { trackJsonLd } from "../server/structured-data";
 import { TrackOverview, type TrackModuleView } from "./track-overview";
 
 /** A track's page: what it covers, your progress, and its lessons module by module. */
@@ -24,6 +26,7 @@ export function TrackPage({ track }: { track: Track }) {
 
   return (
     <div className="mx-auto max-w-page px-4 pt-6 sm:px-6">
+      <JsonLd data={trackJsonLd(track)} />
       <Breadcrumbs
         className="tpb-in"
         items={[{ label: "Learn", href: "/learn" }, { label: track.title }]}

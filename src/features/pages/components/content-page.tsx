@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { seoMetadata } from "@/features/seo";
 import { compileMdx } from "@/lib/mdx";
 import { delay } from "@/lib/motion";
 import type { PageSlug } from "../schema";
@@ -12,14 +13,14 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
   timeZone: "UTC",
 });
 
-/** Title, description and canonical URL for a page, from its frontmatter. */
+/** Title, description, canonical URL and share card for a page, from its frontmatter. */
 export function pageMetadata(slug: PageSlug): Metadata {
   const { frontmatter } = getPage(slug);
-  return {
+  return seoMetadata({
     title: frontmatter.title,
     description: frontmatter.description,
-    alternates: { canonical: `/${slug}` },
-  };
+    path: `/${slug}`,
+  });
 }
 
 /** About, Privacy, Terms, AI-content disclaimer and Contact: a heading, a date and prose. */

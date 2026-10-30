@@ -65,6 +65,8 @@ export const LessonFrontmatterSchema = z
     lastReviewed: z.iso.date(),
     /** Drafts show on local and preview builds only, never in production. */
     draft: z.boolean().default(false),
+    /** The day it first went live (YYYY-MM-DD). Set it together with draft: false. */
+    published: z.iso.date().optional(),
     sources: z
       .array(
         z

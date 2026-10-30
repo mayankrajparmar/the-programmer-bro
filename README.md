@@ -182,6 +182,7 @@ until its file exists.
    inShort: The one or two sentence summary shown at the top of the lesson.
    lastReviewed: 2026-11-10 # the day a person last checked it for accuracy
    draft: true # drafts show on previews only; set false once reviewed
+   # published: 2026-11-12 # add when you set draft: false: the day it goes live
    sources:
      - title: Source title
        url: https://example.com/
@@ -204,7 +205,9 @@ until its file exists.
 A diagram is a React component in `src/features/learn/diagrams/`, registered in
 `src/features/learn/components/mdx-components.tsx`. Draw it with design-token colour classes
 (`fill-surface-raised`, `stroke-amber`, ...) so it works in both themes, and give the SVG an
-`aria-label` that says what it shows.
+`aria-label` that says what it shows. Also export the figure as Markdown and add it to
+`src/features/learn/diagrams/text.ts`, so the plain-text copy of the lesson in `/llms-full.txt`
+keeps the figure (a unit test fails if a diagram is missing there).
 
 ## Adding a resource
 
@@ -280,6 +283,29 @@ each with a `title`, a one-sentence `description` and a `lastUpdated` date. Writ
 English. `<Email />` prints the contact address from `src/config/site.ts`, and `<ContactOptions />`
 shows every way to reach us. Change `lastUpdated` whenever Privacy or Terms change in a way readers
 should know about.
+
+## Search engines and AI answer engines
+
+Everything that helps Google, Bing and AI assistants (ChatGPT, Gemini, Perplexity, Claude) find,
+understand and quote the site lives in `src/features/seo` and is applied automatically:
+
+- **Metadata.** Every public page builds its title, description, canonical URL, Open Graph and X
+  card with `seoMetadata()`. Next.js merges metadata shallowly, so a page that sets only a `title`
+  would share as the home page; always use the helper.
+- **Share cards.** Lessons and tracks get their own 1200×630 card at `<page>/card.png`, drawn at
+  build time in the style of the site-wide card (`src/features/seo/og/share-image.tsx`).
+- **Structured data** (JSON-LD, via `<JsonLd />`): Organization and WebSite on the home page; a
+  Course on each track page; on each lesson an Article and LearningResource with its sources as
+  citations, who reviewed it and when, and breadcrumbs. Check a page with Google's
+  [Rich Results Test](https://search.google.com/test/rich-results) or the
+  [Schema Markup Validator](https://validator.schema.org/).
+- **`/llms.txt` and `/llms-full.txt`** ([llmstxt.org](https://llmstxt.org)): a Markdown map of the
+  site and the full text of every published lesson, for AI tools.
+- **Sitemap** with each lesson's and page's last-changed date. `robots.txt` lets every crawler in,
+  including AI crawlers, except `/admin`.
+
+Lessons also say "Reviewed by" with the review date, and list their sources: both are signals
+search engines and answer engines use to decide what to trust.
 
 ## Launch switch
 

@@ -5,6 +5,7 @@ export { LessonPage } from "./components/lesson-page";
 export { TrackPage } from "./components/track-page";
 export {
   getLearnRoutes,
+  getLearnSitemapEntries,
   getLesson,
   getLessonParams,
   getPublishedLessons,
@@ -17,3 +18,11 @@ export {
   type Track,
 } from "./server/content";
 export type { UpcomingTrack } from "./schema";
+export { lessonMarkdown } from "./server/markdown";
+export {
+  LESSON_SHARE_ALT,
+  lessonShareImage,
+  shareCardImage,
+  TRACK_SHARE_ALT,
+  trackShareImage,
+} from "./server/share-images";

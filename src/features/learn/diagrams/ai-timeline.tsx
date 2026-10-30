@@ -29,6 +29,11 @@ const AI_MOMENTS: readonly Moment[] = [
   { when: "2024 onwards", what: "Reasoning models, then agents" },
 ];
 
+/** The figure as text, for the Markdown copy of the lesson (llms-full.txt). */
+export const aiTimelineMarkdown = AI_MOMENTS.map(({ when, what }) => `- ${when}: ${what}`).join(
+  "\n",
+);
+
 export function AiTimelineDiagram() {
   return (
     <ol aria-label="Timeline of AI from 1950 to today" className="m-0 list-none p-0">
