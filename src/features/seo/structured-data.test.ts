@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { serializeJsonLd } from "./components/json-ld";
 import {
   breadcrumbNode,
+  isoDateTime,
   jsonLdGraph,
   ORGANIZATION_ID,
   organizationNode,
@@ -48,6 +49,11 @@ describe("structured data", () => {
       logo: { url: "https://theprogrammerbro.in/icon-512.png" },
       sameAs: expect.arrayContaining([expect.stringContaining("linkedin.com")]),
     });
+  });
+
+  it("turns content dates into ISO 8601 date-times with India's offset", () => {
+    expect(isoDateTime("2026-10-30")).toBe("2026-10-30T00:00:00+05:30");
+    expect(() => isoDateTime("30 Oct 2026")).toThrow(/YYYY-MM-DD/);
   });
 
   it("escapes < so content can't close the script tag", () => {

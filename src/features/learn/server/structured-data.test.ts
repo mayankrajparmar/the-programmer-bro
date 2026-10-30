@@ -17,8 +17,8 @@ describe("learning structured data", () => {
       "@type": ["Article", "LearningResource"],
       headline: "What is AI, really?",
       url: "https://theprogrammerbro.in/learn/how-ai-works/what-is-ai",
-      datePublished: lesson.frontmatter.published,
-      dateModified: lesson.lastModified,
+      datePublished: `${lesson.frontmatter.published}T00:00:00+05:30`,
+      dateModified: `${lesson.lastModified}T00:00:00+05:30`,
       isPartOf: { "@id": "https://theprogrammerbro.in/learn/how-ai-works#course" },
       position: 1,
     });

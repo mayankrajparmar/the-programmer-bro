@@ -25,6 +25,16 @@ export const FOUNDER_ID = absoluteUrl("/#founder");
 
 export const LANGUAGE = "en-IN";
 
+/**
+ * A content date (YYYY-MM-DD) as a full ISO 8601 date-time: the start of that day in
+ * India, where lessons are reviewed and published. Google asks for a time and a
+ * timezone on article dates; a bare date is flagged as invalid.
+ */
+export function isoDateTime(date: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`Expected YYYY-MM-DD, got "${date}"`);
+  return `${date}T00:00:00+05:30`;
+}
+
 /** The Programmer Bro as a publisher: name, logo, contact and social profiles. */
 export function organizationNode(): JsonLdNode {
   return {
