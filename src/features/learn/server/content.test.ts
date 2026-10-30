@@ -85,6 +85,11 @@ describe("learning content", () => {
     expect(lesson?.previous).toBeNull();
     expect(lesson?.next?.slug).toBe("history");
     expect(lesson?.total).toBe(16);
+
+    const second = getLesson("how-ai-works", "history");
+    expect(second?.number).toBe(2);
+    expect(second?.previous?.slug).toBe("what-is-ai");
+    expect(second?.next?.slug).toBe("meet-the-llm");
   });
 });
 

@@ -1,0 +1,109 @@
+{
+  "lesson": "history",
+  "questions": [
+    {
+      "id": "turing-test",
+      "type": "recall",
+      "prompt": "What does the Turing test check?",
+      "options": [
+        "Whether a computer can solve maths problems faster than a person",
+        "Whether a computer can beat the world champion at chess",
+        "Whether a judge chatting by text can tell a machine from a person",
+        "Whether a computer can follow thousands of rules without a mistake"
+      ],
+      "answer": 2,
+      "explanation": "Turing swapped the hard question \"Can machines think?\" for a practical test: a judge chats by text with a hidden person and a hidden machine. If the judge can't reliably tell which is which, the machine has done well."
+    },
+    {
+      "id": "eliza-understanding",
+      "type": "application",
+      "prompt": "Your friend tells a chatbot she's stressed about her exams. It replies so kindly that she says it \"really understands\" her. What does the story of ELIZA suggest?",
+      "options": [
+        "A caring, human-sounding reply doesn't prove the program understands anything",
+        "The chatbot must have passed the Turing test, so it does understand her",
+        "Only a person typing in secret could have written such a kind reply",
+        "Chatbots couldn't sound human at all until ChatGPT came out in 2022"
+      ],
+      "answer": 0,
+      "explanation": "ELIZA understood nothing. It spotted keywords and turned your words back into questions, yet people opened up to it. Sounding human and understanding are different things, and that's still worth remembering with today's far better chatbots."
+    },
+    {
+      "id": "ai-winter",
+      "type": "recall",
+      "prompt": "What is an AI winter?",
+      "options": [
+        "The months each year when AI labs pause training to save electricity",
+        "A period when AI research moved out of universities and into big companies",
+        "The cold, air-conditioned rooms that early computers had to be kept in",
+        "A period when funding and interest dry up because AI fell short of its promises"
+      ],
+      "answer": 3,
+      "explanation": "There were two big ones: from the mid-1970s to around 1980, and from the late 1980s into the early 1990s. Both came after big promises that the computers and data of the time couldn't keep."
+    },
+    {
+      "id": "brittle-rules",
+      "type": "application",
+      "prompt": "A bank's loan app follows 3,000 rules written by its experts. A farmer applies with a kind of income that none of the rules mention, and the app gives a nonsense answer. Which weakness of 1980s AI does this show?",
+      "options": [
+        "Neural networks need fast GPUs to work properly",
+        "Expert systems are brittle: they break on cases nobody wrote a rule for",
+        "Chatbots can sound human without understanding anything",
+        "Reinforcement learning only works when there's a clear reward"
+      ],
+      "answer": 1,
+      "explanation": "The app is a rule-based expert system, stuck on a case its rule writers never thought of. That brittleness, plus the cost of writing and updating rules by hand, is why the 1980s expert-system boom collapsed."
+    },
+    {
+      "id": "why-2012",
+      "type": "recall",
+      "prompt": "Neural networks have existed since 1958. What finally let deep learning take off around 2012?",
+      "options": [
+        "Governments passed new laws that allowed AI research again",
+        "Researchers wrote far more hand-written rules than ever before",
+        "Big labelled datasets, fast GPUs and better methods arrived together",
+        "Computers finally passed the Turing test, which unlocked new funding"
+      ],
+      "answer": 2,
+      "explanation": "The ideas were old; the ingredients were new. ImageNet supplied millions of labelled photos, GPUs did thousands of small calculations at once, and better methods made good use of both. AlexNet's win in 2012 showed what the mix could do."
+    },
+    {
+      "id": "reinforcement-learning",
+      "type": "application",
+      "prompt": "A robot vacuum tries different paths around your flat and gets a reward whenever it cleans more floor in less time. Over many runs it gets better. Which kind of learning is this closest to?",
+      "options": [
+        "An expert system following rules its makers wrote",
+        "The Turing test, because it's judged only on how it behaves",
+        "Attention, the key step inside the Transformer",
+        "Reinforcement learning, like AlphaGo playing against itself"
+      ],
+      "answer": 3,
+      "explanation": "Learning by trial and error, with a reward for good results, is reinforcement learning. AlphaGo used it to improve by playing against versions of itself, with winning as the reward."
+    },
+    {
+      "id": "transformer",
+      "type": "recall",
+      "prompt": "What did the Transformer, introduced by Google researchers in 2017, do differently?",
+      "options": [
+        "It takes in all the words of a passage together and works out which matter most to each other",
+        "It stores a copy of every web page so that the model can look up the answers",
+        "It follows grammar rules written by language experts to build each sentence",
+        "It checks millions of possible replies every second, the way Deep Blue checked chess positions"
+      ],
+      "answer": 0,
+      "explanation": "The Transformer's key step is attention: working out which words in a passage matter most to each other. It makes good use of GPUs, so it can learn from enormous amounts of text. Nearly every modern LLM is built on it, and the T in GPT stands for Transformer."
+    },
+    {
+      "id": "hype-check",
+      "type": "application",
+      "prompt": "A startup's advert says its AI \"will replace every teacher by next year\". Based on AI's history, what's the most sensible reaction?",
+      "options": [
+        "Believe it, because AI companies have always delivered exactly what they promised",
+        "Ask what it has actually been shown doing, since AI promises have often run ahead of results",
+        "Dismiss AI completely, because every AI boom so far has ended in a winter",
+        "Trust it if the startup has raised a lot of money from well-known investors"
+      ],
+      "answer": 1,
+      "explanation": "Both AI winters followed big promises, starting with Dartmouth's \"one summer\". AI has also made huge, real progress, so dismissing it is a mistake too. The useful habit is to check what has actually been shown working."
+    }
+  ]
+}

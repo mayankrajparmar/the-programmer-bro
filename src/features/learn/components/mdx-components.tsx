@@ -5,6 +5,7 @@ import { CodeBlock, InlineCode } from "@/components/ui/code-block";
 import { isCodeLanguage } from "@/lib/highlight";
 import { cn } from "@/lib/utils";
 import { AiLayersDiagram } from "../diagrams/ai-layers";
+import { AiTimelineDiagram } from "../diagrams/ai-timeline";
 
 /*
  * What lesson MDX can use, following the lesson template (hook, concept,
@@ -123,4 +124,5 @@ export const lessonComponents: MDXComponents = {
   Figure,
   KeyTakeaways,
   AiLayersDiagram,
+  AiTimelineDiagram,
 };
