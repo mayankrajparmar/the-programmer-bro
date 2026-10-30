@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getLesson, getLessonParams, LessonPage } from "@/features/learn";
+import {
+  getLesson,
+  getLessonParams,
+  LESSON_SHARE_ALT,
+  LessonPage,
+  shareCardImage,
+} from "@/features/learn";
+import { seoMetadata } from "@/features/seo";
 
 /*
  * Lessons are fully static. This also makes an unknown slug wait for its
@@ -18,12 +25,18 @@ export async function generateMetadata({
   const { track, lesson: slug } = await params;
   const lesson = getLesson(track, slug);
   if (!lesson) return {};
+  const { frontmatter } = lesson;
   return {
-    title: lesson.title,
-    description: lesson.frontmatter.description,
-    alternates: { canonical: lesson.href },
-    openGraph: { type: "article", url: lesson.href, title: lesson.title },
-    ...(lesson.frontmatter.draft && { robots: { index: false, follow: false } }),
+    ...seoMetadata({
+      title: lesson.title,
+      description: frontmatter.description,
+      path: lesson.href,
+      type: "article",
+      publishedTime: frontmatter.published ?? frontmatter.lastReviewed,
+      modifiedTime: lesson.lastModified ?? frontmatter.lastReviewed,
+      image: shareCardImage(lesson, LESSON_SHARE_ALT),
+    }),
+    ...(frontmatter.draft && { robots: { index: false, follow: false } }),
   };
 }
 

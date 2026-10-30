@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ComingNextSchema, QuizSchema, TrackSchema } from "../schema";
 import {
   getLearnRoutes,
+  getLearnSitemapEntries,
   getLesson,
   getLessonParams,
   getPublishedLessons,
@@ -38,11 +39,19 @@ describe("learning content", () => {
     }
   });
 
-  it("never dates a review in the future", () => {
+  it("never dates a review or a publication in the future", () => {
     const today = new Date().toISOString().slice(0, 10);
     for (const summary of getPublishedLessons()) {
       const lesson = getLesson(summary.trackSlug, summary.slug);
       expect((lesson?.frontmatter.lastReviewed ?? "") <= today, summary.href).toBe(true);
+      expect((lesson?.frontmatter.published ?? "") <= today, summary.href).toBe(true);
+    }
+  });
+
+  it("gives published lessons a publication date", () => {
+    for (const summary of getPublishedLessons().filter((lesson) => !lesson.draft)) {
+      const lesson = getLesson(summary.trackSlug, summary.slug);
+      expect(lesson?.frontmatter.published, summary.href).toBeTruthy();
     }
   });
 
@@ -51,6 +60,23 @@ describe("learning content", () => {
     const params = getLessonParams();
     expect(params.length).toBe(tracks.reduce((sum, track) => sum + track.lessons.length, 0));
     expect(params).toContainEqual({ track: "how-ai-works", lesson: "what-is-ai" });
+  });
+
+  it("dates each sitemap entry by its last change, and a track by its latest lesson", () => {
+    const entries = getLearnSitemapEntries();
+    const lesson = getLesson("how-ai-works", "what-is-ai");
+    expect(lesson?.lastModified).toBe(
+      [lesson?.frontmatter.lastReviewed, lesson?.frontmatter.published].sort().at(-1),
+    );
+    expect(entries).toContainEqual({
+      path: "/learn/how-ai-works/what-is-ai",
+      lastModified: lesson?.lastModified,
+    });
+    const track = entries.find((entry) => entry.path === "/learn/how-ai-works");
+    const lessonDates = entries
+      .filter((entry) => entry.path.startsWith("/learn/how-ai-works/"))
+      .map((entry) => entry.lastModified ?? "");
+    expect(track?.lastModified).toBe(lessonDates.sort().at(-1));
   });
 
   it("keeps drafts out of the sitemap", () => {

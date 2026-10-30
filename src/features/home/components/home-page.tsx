@@ -1,5 +1,6 @@
 import { ContinueLearning, type Track, type UpcomingTrack } from "@/features/learn";
 import type { NewsItem } from "@/features/news";
+import { founderNode, JsonLd, jsonLdGraph, organizationNode, websiteNode } from "@/features/seo";
 import { ComingNext } from "./coming-next";
 import { Hero } from "./hero";
 import { HowItWorks } from "./how-it-works";
@@ -28,6 +29,8 @@ export function HomePage({
 
   return (
     <>
+      {/* Who publishes the site: the home page is where search engines look for it. */}
+      <JsonLd data={jsonLdGraph(organizationNode(), founderNode(), websiteNode())} />
       <Hero start={start} />
       {track && <ContinueLearning track={track} className={`tpb-reveal ${section} py-12`} />}
       <HowItWorks className={`${section} pb-12`} />

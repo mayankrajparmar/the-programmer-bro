@@ -8,9 +8,17 @@ const nextConfig: NextConfig = {
   // page refreshing after a news story is approved) can read them too.
   outputFileTracingIncludes: {
     "/": ["./content/**/*"],
-    "/learn/**": ["./content/**/*"],
+    // The share cards also read the brand fonts, colour tokens and logo.
+    "/learn/**": [
+      "./content/**/*",
+      "./design/tokens.json",
+      "./public/brand/*",
+      "./src/features/seo/og/fonts/*",
+    ],
     "/resources": ["./content/**/*"],
     "/sitemap.xml": ["./content/**/*"],
+    "/llms.txt": ["./content/**/*"],
+    "/llms-full.txt": ["./content/**/*"],
   },
   turbopack: {
     rules: {

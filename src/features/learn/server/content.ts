@@ -39,6 +39,11 @@ export interface LessonSummary {
   published: boolean;
   draft: boolean;
   readingMinutes: number | null;
+  /**
+   * When it last changed (YYYY-MM-DD): the later of its review and publication dates,
+   * or null if it isn't written yet. Used for the sitemap and structured data.
+   */
+  lastModified: string | null;
 }
 
 export interface Track {
@@ -90,6 +95,11 @@ function readJson(file: string): unknown {
   } catch (error) {
     throw new ContentError(file, `not valid JSON (${(error as Error).message})`);
   }
+}
+
+/** The later of a lesson's review and publication dates. */
+export function lastModified({ lastReviewed, published }: LessonFrontmatter): string {
+  return published && published > lastReviewed ? published : lastReviewed;
 }
 
 interface LessonFile {
@@ -170,6 +180,7 @@ function loadTrack(trackSlug: string, includeDrafts: boolean): LoadedTrack {
       published: Boolean(written) && (!draft || includeDrafts),
       draft,
       readingMinutes: written ? readingMinutes(written.body) : null,
+      lastModified: written ? lastModified(written.frontmatter) : null,
     };
   });
 
@@ -282,9 +293,22 @@ export function getLessonParams(): { track: string; lesson: string }[] {
 
 /** Public, indexable learn pages for the sitemap: never drafts. */
 export function getLearnRoutes(): string[] {
+  return getLearnSitemapEntries().map((entry) => entry.path);
+}
+
+/**
+ * The same pages with the day each last changed: a lesson's last review or
+ * publication, and for a track the latest of its published lessons.
+ */
+export function getLearnSitemapEntries(): { path: string; lastModified: string | null }[] {
   return getTrackSlugs().flatMap((slug) => {
     const track = loaded(slug, false)?.track;
     if (!track) return [];
-    return [track.href, ...track.lessons.filter((l) => l.published).map((l) => l.href)];
+    const lessons = track.lessons.filter((lesson) => lesson.published);
+    const dates = lessons.flatMap((lesson) => (lesson.lastModified ? [lesson.lastModified] : []));
+    return [
+      { path: track.href, lastModified: dates.sort().at(-1) ?? null },
+      ...lessons.map((lesson) => ({ path: lesson.href, lastModified: lesson.lastModified })),
+    ];
   });
 }

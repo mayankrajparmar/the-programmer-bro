@@ -11,7 +11,8 @@ export const site = {
   /** Canonical origin. Set NEXT_PUBLIC_SITE_URL on staging so its links point at itself. */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://theprogrammerbro.in",
   tagline: "Learn how AI really works",
-  description: "Free lessons from the basics to expert level, with quizzes and daily AI news.",
+  description:
+    "Free, bite-sized lessons on how AI and LLMs work, from the basics to expert level, with quizzes, daily AI news in plain English and hand-picked resources.",
   locale: "en_IN",
   /** For readers' questions, corrections and data requests. Shown on Contact, Privacy and Terms. */
   contactEmail: "contact@theprogrammerbro.in",

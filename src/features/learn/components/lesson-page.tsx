@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Callout } from "@/components/ui/callout";
 import { InlineCode } from "@/components/ui/code-block";
 import { Tag } from "@/components/ui/tag";
+import { site } from "@/config/site";
+import { JsonLd } from "@/features/seo";
 import { compileMdx } from "@/lib/mdx";
 import { delay } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -11,6 +13,7 @@ import { lessonKey } from "../progress/progress-store";
 import { LessonQuiz } from "../quiz/lesson-quiz";
 import type { Source } from "../schema";
 import type { Lesson, LessonSummary } from "../server/content";
+import { lessonJsonLd } from "../server/structured-data";
 import { lessonComponents } from "./mdx-components";
 import { MobileTableOfContents, TableOfContents } from "./table-of-contents";
 
@@ -28,6 +31,7 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
 
   return (
     <div className="mx-auto max-w-page px-4 pt-6 sm:px-6">
+      <JsonLd data={lessonJsonLd(lesson)} />
       <Breadcrumbs
         className="tpb-in"
         items={[
@@ -63,8 +67,10 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
                 ·
               </span>
               <span>
-                {frontmatter.draft ? "Draft, " : ""}last reviewed{" "}
-                {reviewedFormat.format(new Date(`${frontmatter.lastReviewed}T00:00:00Z`))}
+                {frontmatter.draft ? "Draft, last reviewed" : `Reviewed by ${site.author.name} on`}{" "}
+                <time dateTime={frontmatter.lastReviewed}>
+                  {reviewedFormat.format(new Date(`${frontmatter.lastReviewed}T00:00:00Z`))}
+                </time>
               </span>
             </div>
           </header>

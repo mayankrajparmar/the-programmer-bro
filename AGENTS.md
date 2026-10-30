@@ -50,6 +50,10 @@ code. The rules that matter most:
   must stay free of React and Server Actions.
 - **Home page:** `src/app/page.tsx` shows the home page, or the coming-soon page when
   `SITE_MODE=coming-soon`; it isn't under `(site)` because `/` must work in both modes.
+- **SEO:** every public page builds its metadata with `seoMetadata()` from `@/features/seo` (never a
+  bare `title`, which would inherit the home page's share title and URL). Structured data goes in
+  a `<JsonLd />` and must describe only what the page shows. See "Search engines and AI answer
+  engines" in the README.
 - **Site pages** (About, Privacy, Terms, AI-content disclaimer, Contact) are MDX in
   `content/pages/`. Keep Privacy and Terms true to what the site actually does: if you add
   cookies, analytics, accounts or ads, update them in the same pull request.

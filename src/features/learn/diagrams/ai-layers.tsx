@@ -11,6 +11,11 @@ const LAYERS = [
   { label: "Generative AI", example: "e.g. chatbots, image tools" },
 ];
 
+/** The figure as text, for the Markdown copy of the lesson (llms-full.txt). */
+export const aiLayersMarkdown = LAYERS.map(
+  (layer, i) => `${"  ".repeat(i)}- ${layer.label} (${layer.example})`,
+).join("\n");
+
 const INSET = 16;
 const LAYER_HEIGHT = 64;
 const WIDTH = 360;

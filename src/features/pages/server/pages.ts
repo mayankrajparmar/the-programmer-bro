@@ -2,7 +2,7 @@ import "server-only";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { splitFrontmatter } from "@/lib/mdx";
-import { PageFrontmatterSchema, type PageFrontmatter, type PageSlug } from "../schema";
+import { PAGE_SLUGS, PageFrontmatterSchema, type PageFrontmatter, type PageSlug } from "../schema";
 
 export interface SitePage {
   slug: PageSlug;
@@ -30,4 +30,12 @@ export function getPage(slug: PageSlug): SitePage {
   const page = { slug, frontmatter: parsed.data, body };
   cache.set(slug, page);
   return page;
+}
+
+/** Every site page with the day it last changed, for the sitemap. */
+export function getPageSitemapEntries(): { path: string; lastModified: string }[] {
+  return PAGE_SLUGS.map((slug) => ({
+    path: `/${slug}`,
+    lastModified: getPage(slug).frontmatter.lastUpdated,
+  }));
 }
