@@ -4,7 +4,7 @@ import {
   FOUNDER_ID,
   jsonLdGraph,
   LANGUAGE,
-  ORGANIZATION_ID,
+  publisherRef,
   WEBSITE_ID,
   websiteNode,
   type JsonLdGraph,
@@ -61,9 +61,11 @@ export function lessonJsonLd(lesson: Lesson): JsonLdGraph {
     educationalLevel: lesson.track.level,
     ...(lesson.readingMinutes && { timeRequired: `PT${lesson.readingMinutes}M` }),
     position: lesson.number,
+    // A reference only: the full Course lives on the track page. A Course node here
+    // would be read as a second, incomplete course and fail Google's checks.
     isPartOf: { "@id": courseId(lesson.track.href) },
-    author: { "@id": ORGANIZATION_ID },
-    publisher: { "@id": ORGANIZATION_ID },
+    author: publisherRef(),
+    publisher: publisherRef(),
     datePublished: published,
     dateModified: lesson.lastModified ?? frontmatter.lastReviewed,
     citation: frontmatter.sources.map((source) => ({
@@ -80,12 +82,6 @@ export function lessonJsonLd(lesson: Lesson): JsonLdGraph {
       mainEntity: { "@id": `${url}#lesson` },
     }),
     article,
-    {
-      "@type": "Course",
-      "@id": courseId(lesson.track.href),
-      name: lesson.track.title,
-      url: absoluteUrl(lesson.track.href),
-    },
     trail(lesson.href, [
       { name: "Learn", path: "/learn" },
       { name: lesson.track.title, path: lesson.track.href },
@@ -106,7 +102,7 @@ export function trackJsonLd(track: Track): JsonLdGraph {
       description: track.description,
       url: absoluteUrl(track.href),
       image: absoluteUrl(shareCardPath(track)),
-      provider: { "@id": ORGANIZATION_ID },
+      provider: publisherRef(),
       inLanguage: LANGUAGE,
       educationalLevel: track.level,
       isAccessibleForFree: true,

@@ -11,6 +11,7 @@ export {
   LANGUAGE,
   ORGANIZATION_ID,
   organizationNode,
+  publisherRef,
   WEBSITE_ID,
   websiteNode,
   type JsonLdGraph,
