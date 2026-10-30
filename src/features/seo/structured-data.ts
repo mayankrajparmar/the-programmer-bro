@@ -68,6 +68,20 @@ export function websiteNode(): JsonLdNode {
   };
 }
 
+/**
+ * The publisher, inline: type, name and URL alongside its @id. Google doesn't always
+ * follow @id references, so properties it checks (a course's provider, an article's
+ * author) carry the essentials themselves.
+ */
+export function publisherRef(): JsonLdNode {
+  return {
+    "@type": "Organization",
+    "@id": ORGANIZATION_ID,
+    name: site.name,
+    url: absoluteUrl("/"),
+  };
+}
+
 /** The trail from the home page to this one, matching the visible breadcrumbs. */
 export function breadcrumbNode(items: readonly { name: string; path: string }[]): JsonLdNode {
   return {

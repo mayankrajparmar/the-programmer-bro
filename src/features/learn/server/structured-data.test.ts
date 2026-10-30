@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getLesson, getTrack } from "./content";
+import { getLesson, getPublishedLessons, getTrack, getTracks } from "./content";
 import { lessonJsonLd, trackJsonLd } from "./structured-data";
 
 const node = (graph: { "@graph": Record<string, unknown>[] }, type: string) =>
@@ -41,5 +41,45 @@ describe("learning structured data", () => {
       provider: { "@id": "https://theprogrammerbro.in/#organization" },
     });
     expect(course.hasPart).toHaveLength(track.lessons.filter((l) => l.published).length);
+  });
+});
+
+/*
+ * Google's checks for the types it reads, so the Rich Results Test stays clean. A Course
+ * needs a name and description, and a provider with a name (otherwise it warns). Course
+ * markup belongs on the course's own page only.
+ */
+describe("Google's structured data rules", () => {
+  const typed = (graph: { "@graph": Record<string, unknown>[] }, type: string) =>
+    graph["@graph"].filter((entry) => ([] as unknown[]).concat(entry["@type"]).includes(type));
+
+  it("puts a complete Course only on the track page", () => {
+    for (const summary of getPublishedLessons()) {
+      const lesson = getLesson(summary.trackSlug, summary.slug);
+      if (!lesson) throw new Error(summary.href);
+      expect(typed(lessonJsonLd(lesson), "Course"), summary.href).toEqual([]);
+    }
+    for (const track of getTracks()) {
+      const courses = typed(trackJsonLd(track), "Course");
+      expect(courses).toHaveLength(1);
+      expect(courses[0]).toMatchObject({
+        name: expect.any(String),
+        description: expect.any(String),
+        provider: { "@type": "Organization", name: "The Programmer Bro" },
+      });
+    }
+  });
+
+  it("names each lesson's author and publisher inline", () => {
+    const lesson = getLesson("how-ai-works", "history");
+    if (!lesson) throw new Error("lesson 2 is missing");
+    const [article] = typed(lessonJsonLd(lesson), "Article");
+    for (const role of ["author", "publisher"]) {
+      expect(article?.[role], role).toMatchObject({
+        "@type": "Organization",
+        name: "The Programmer Bro",
+        url: "https://theprogrammerbro.in/",
+      });
+    }
   });
 });
