@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 
 const TRACK = "/learn/how-ai-works";
 const LESSON = `${TRACK}/what-is-ai`;
+const LESSON_2 = `${TRACK}/history`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -56,10 +57,25 @@ test.describe("learning section", () => {
     await expect(toc).toBeVisible();
   });
 
+  test("renders lesson 2 with its timeline, linked from lesson 1", async ({ page }) => {
+    await page.goto(LESSON_2);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "From rules to reasoning: a short history",
+    );
+    const timeline = page.getByRole("list", { name: "Timeline of AI from 1950 to today" });
+    await expect(timeline.getByRole("listitem")).toHaveCount(13);
+    await expect(timeline.getByRole("listitem").first()).toContainText("1950");
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 1/ })).toHaveAttribute(
+      "href",
+      LESSON,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
-      for (const path of ["/learn", TRACK, LESSON]) {
+      for (const path of ["/learn", TRACK, LESSON, LESSON_2]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])

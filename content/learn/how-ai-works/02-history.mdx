@@ -1,0 +1,168 @@
+---
+description: How AI grew from Alan Turing's 1950 question to ChatGPT, reasoning models and agents, through two AI winters, in plain English.
+inShort: AI started in the 1950s with big hopes and rules written by people, then froze through two "AI winters" when it couldn't deliver. It came back by learning from data, took off in 2012 once big data and fast chips arrived, and led to today's chatbots, reasoning models and agents.
+lastReviewed: 2026-10-30
+draft: true
+sources:
+  - title: Computing Machinery and Intelligence
+    url: https://doi.org/10.1093/mind/LIX.236.433
+    type: Paper
+    note: Alan Turing's 1950 paper that asks "Can machines think?" and describes the imitation game. Very readable for a research paper.
+  - title: A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence
+    url: https://ojs.aaai.org/index.php/aimagazine/article/view/1904
+    type: Paper
+    note: The 1955 proposal that named the field. It's short, and you can see how confident the pioneers were.
+  - title: Deep Blue
+    url: https://www.ibm.com/history/deep-blue
+    type: Article
+    note: IBM's history of the chess computer that beat Garry Kasparov in 1997, game by game.
+  - title: ImageNet Classification with Deep Convolutional Neural Networks
+    url: https://papers.nips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
+    type: Paper
+    note: The 2012 AlexNet paper. Heavy going, but the abstract alone shows how far ahead it was.
+  - title: AlphaGo
+    url: https://deepmind.google/research/projects/alphago/
+    type: Article
+    note: DeepMind's story of AlphaGo, its 2016 match against Lee Sedol and Move 37.
+  - title: Attention Is All You Need
+    url: https://arxiv.org/abs/1706.03762
+    type: Paper
+    note: The 2017 paper that introduced the Transformer, the design behind today's LLMs. You'll read it properly in lesson 10.
+---
+
+Today you can type a question in Hinglish into a chatbot and get a sensible answer in seconds. It feels as if this arrived out of nowhere in 2022. It didn't. People have been trying to build thinking machines since 1950, the same year India's Constitution came into force. The road had huge promises, embarrassing failures, two long freezes and a handful of moments that changed everything.
+
+In this lesson you'll walk that road, from Alan Turing's question to today's chatbots and agents. By the end you'll know the big turning points, and you'll be able to explain why AI suddenly got so good after decades of slow progress.
+
+## The big question (1950s and 1960s)
+
+### 1950: "Can machines think?"
+
+In 1950 the British mathematician Alan Turing published a paper that opens with a simple question: "Can machines think?" Arguing about what "think" means could go on forever, so he suggested a practical test instead, which he called the imitation game. Today it's known as the **Turing test**: a judge chats by text with a hidden person and a hidden machine and tries to tell which is which. If the judge can't reliably tell, the machine has done well.
+
+### 1956: AI gets its name
+
+In 1955 four researchers, John McCarthy, Marvin Minsky, Nathaniel Rochester and Claude Shannon, proposed a summer research project at Dartmouth College in the US. Their proposal introduced a new phrase, "artificial intelligence". The workshop held there in the summer of 1956 is usually counted as the birth of AI as a field.
+
+The pioneers were confident. The proposal said a "significant advance" could be made "if a carefully selected group of scientists work on it together for a summer". Seventy years later, the work is still going on.
+
+### The first learning machine and an early chatbot
+
+Two inventions from these early years still matter today.
+
+In 1958 Frank Rosenblatt demonstrated the **perceptron**, a very simple neural network: a program made of connected units that adjust themselves as they learn. Running on a room-sized IBM computer, it learnt to tell cards marked on the left from cards marked on the right after 50 tries. The New York Times headline read "New Navy device learns by doing". Today's deep learning grew from this idea.
+
+In 1966 Joseph Weizenbaum at MIT built **ELIZA**, one of the first chatbots. Its best-known script played a therapist by turning your words back into a question. Type "I am worried about my exams" and it might answer "How long have you been worried about your exams?" It understood nothing. It only spotted keywords and followed rules written by a person. Yet people opened up to it. Weizenbaum later wrote that his own secretary, who had watched him build it for months, asked him to leave the room after only a few lines of chat.
+
+ELIZA taught a lesson that matters more than ever: sounding human isn't the same as understanding. You'll come back to this in lesson 6.
+
+## Two AI winters (1970s to early 1990s)
+
+### The first winter
+
+The early researchers had promised a lot, and the computers of the time couldn't deliver it. They were slow, their memories were tiny and there was very little data to learn from. Tasks that are easy for a child, like understanding a sentence or spotting a cat in a photo, turned out to be extremely hard.
+
+In 1973 a report by the mathematician James Lighthill, written for Britain's Science Research Council, concluded that AI hadn't had the major impact it had promised. Britain then stopped funding AI research at most of its universities, and funding in the US shrank too. A stretch like this is called an **AI winter**: a period when money and interest dry up because AI promised more than it delivered. The first one ran from the mid-1970s to around 1980.
+
+### Rules return, then a second winter
+
+In the 1980s AI came back as **expert systems**, the rule-based programs you met in lesson 1. A famous one was XCON at Digital Equipment Corporation (DEC), an American computer maker. From 1980 it read each customer's order and picked the right parts for their computer. It grew to about 2,500 rules and was estimated to save DEC $25 million a year, so companies rushed to build their own.
+
+But expert systems were expensive to build, expensive to keep up to date and **brittle**: they broke on any case nobody had written a rule for. By the late 1980s the boom had collapsed, and a second AI winter lasted into the early 1990s.
+
+<Analogy>
+
+An expert system is like a new clerk at a railway enquiry counter who has memorised the whole rulebook. Ask anything that's in the book and the answer is perfect. Ask something the book never covered and the clerk is stuck. An experienced clerk who has seen thousands of passengers can handle a new case. Machine learning set out to build that kind of experience.
+
+</Analogy>
+
+## Learning from data (1990s to 2010s)
+
+While the expert-system boom faded, researchers turned to **machine learning**: letting computers learn patterns from examples instead of following hand-written rules. The internet helped by producing data on a scale nobody had seen before: web pages, emails, clicks and photos. Spam filters and search engines began using machine learning, mostly without anyone calling it AI.
+
+### 1997: a computer beats the chess champion
+
+The most famous AI win of the 1990s owed more to speed than to learning. In May 1997 IBM's Deep Blue beat the world chess champion, Garry Kasparov, by 3.5 points to 2.5 over six games in New York. It won mainly through raw speed, checking about 200 million chess positions every second. It was a huge moment, but Deep Blue could only play chess.
+
+### 2012: deep learning takes off
+
+Neural networks had been around since the perceptron. In the 1980s researchers including Geoffrey Hinton found better ways to train networks with several layers, but for decades these networks couldn't show what they were capable of. Two things were missing, and by around 2010 both had arrived:
+
+- **Data:** ImageNet, a collection of millions of photos, each labelled with what's in it. Its yearly contest gave teams about 1.2 million labelled photos in 1,000 categories to learn from.
+- **Computing power:** **GPUs** (graphics processing units), chips built to draw video games, which can do thousands of small calculations at the same time.
+
+In 2012 a deep neural network called AlexNet, built by Alex Krizhevsky, Ilya Sutskever and Geoffrey Hinton at the University of Toronto, entered the ImageNet contest. Its top-5 error was 15.3%, against 26.2% for the next best entry. (Top-5 error is the share of photos where the right answer wasn't among the model's five best guesses.) It was trained on two gaming graphics cards in five to six days.
+
+Within a few years deep learning was behind big jumps in photo recognition, voice typing and translation. In 2024 Hinton shared the Nobel Prize in Physics for his early work on neural networks.
+
+<Analogy>
+
+A GPU works like Mumbai's dabbawalas. One very fast courier delivering every lunchbox in the city, one after another, would never finish in time. Thousands of dabbawalas, each carrying their share at the same time, get every box there by lunch. Training a neural network takes millions of small, simple sums, so a chip that does thousands at once wins.
+
+</Analogy>
+
+### 2016: AlphaGo
+
+Go is an ancient board game with about 10<sup>170</sup> possible board positions: a 1 followed by 170 zeros, which is more than the number of atoms in the known universe. Checking positions one by one, the way Deep Blue did for chess, is hopeless. In March 2016 DeepMind's AlphaGo beat Lee Sedol, the winner of 18 world titles, by 4 games to 1 in Seoul.
+
+AlphaGo first learnt from a large number of games played by strong human players, then got better by playing against versions of itself again and again. Learning by trial and error, with a reward for good results such as winning, is called **reinforcement learning**. In game two AlphaGo played Move 37, a move so unusual it had about a 1 in 10,000 chance of being played, and it helped win the game.
+
+## The age of language models (2017 to today)
+
+### 2017: the Transformer
+
+In 2017 a team of Google researchers published a paper called "Attention Is All You Need". It introduced the **Transformer**, a new design for neural networks that takes in all the words of a passage together, instead of one at a time, and works out which words matter most to each other. That step is called **attention**. Transformers make good use of GPUs, so they can learn from enormous amounts of text. Nearly every modern LLM (large language model) is built on one: the T in GPT stands for Transformer. You'll take one apart in lesson 10.
+
+Over the next few years, labs trained bigger and bigger Transformers on more and more text, and found that they kept getting better.
+
+### 2022: ChatGPT
+
+On 30 November 2022 OpenAI released **ChatGPT**, a free chat app built on one of its GPT models. The model had been trained further with feedback from people, so it would follow instructions and hold a conversation (lesson 12 explains how). People used it to draft emails, explain homework and fix code. About two months later, analysts at the bank UBS estimated it had 100 million monthly users, a record speed for a consumer app at the time. Google, Meta, Anthropic and many others soon released chatbots and models of their own.
+
+### 2024 onwards: reasoning models and agents
+
+Early chatbots started answering straight away. In September 2024 OpenAI released o1, one of the first **reasoning models**: models trained to work through a problem step by step, in what's called a chain of thought, before giving the answer. They do much better on maths and coding problems, and other labs soon released their own. Lesson 13 looks at what they do differently.
+
+The newest step is **agents**: AI systems that don't just answer but take actions, such as searching the web, running code or filling in a form, working through a task one step at a time. That's lesson 14.
+
+## The whole road at a glance
+
+<Figure caption="Figure 1: the big moments in AI since 1950. Both winters came after bursts of big promises.">
+  <AiTimelineDiagram />
+</Figure>
+
+## Why did it take so long?
+
+Many of the core ideas are old: neural networks go back to 1958. What changed was everything around them. Three ingredients had to come together:
+
+1. **Data:** the internet and smartphones produced huge amounts of text, photos and video to learn from.
+2. **Computing power:** GPUs, and later whole data centres full of them, made training fast enough.
+3. **Better methods:** ideas such as the Transformer made good use of all that data and computing power.
+
+<Analogy>
+
+Think of cooking biryani for a big wedding. You need a good recipe, enough ingredients, and a big handi on a strong fire. For decades AI researchers had promising recipes but only a handful of ingredients and a small stove. Around 2012 the ingredients and the fire finally arrived.
+
+</Analogy>
+
+<Callout kind="warn">
+
+Both AI winters came after big promises. The Dartmouth team expected a "significant advance" in one summer. When a headline says AI will do something amazing "next year", ask what has actually been shown working today.
+
+</Callout>
+
+<TryIt>
+
+Play Turing's imitation game. Write three questions that you think would expose a machine. Send them to a friend on WhatsApp and to a chatbot. Then show both sets of answers to someone else without saying which is which. Could they tell? What gave it away?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- AI began as a question in 1950 and got its name in 1956. The pioneers expected quick success.
+- Two AI winters, from the mid-1970s and the late 1980s, followed promises that the computers of the time couldn't keep.
+- AI moved from rules written by people to learning from data, and deep learning took off in 2012.
+- Big data, fast GPUs and better methods, arriving together, explain why AI suddenly got good.
+- The Transformer (2017) led to LLMs and ChatGPT (2022). Reasoning models and agents are the latest steps.
+
+</KeyTakeaways>
