@@ -21,12 +21,18 @@ test.describe("the live site", () => {
     );
   });
 
-  test("publishes lesson 1, without a draft notice", async ({ page }) => {
-    const response = await page.goto("/learn/how-ai-works/what-is-ai");
-    expect(response?.status()).toBe(200);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("What is AI, really?");
-    await expect(page.getByText("Draft: waiting for review")).toHaveCount(0);
-  });
+  for (const [slug, title] of [
+    ["what-is-ai", "What is AI, really?"],
+    ["history", "From rules to reasoning: a short history"],
+    ["meet-the-llm", "Meet the LLM"],
+  ] as const) {
+    test(`publishes ${slug}, without a draft notice`, async ({ page }) => {
+      const response = await page.goto(`/learn/how-ai-works/${slug}`);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
+      await expect(page.getByText("Draft: waiting for review")).toHaveCount(0);
+    });
+  }
 
   test("answers lessons that aren't written yet with a 404", async ({ request }) => {
     expect((await request.get("/learn/how-ai-works/tokens")).status()).toBe(404);
@@ -56,7 +62,15 @@ test.describe("the live site", () => {
     expect(robots).toContain("Allow: /");
     expect(robots).toContain("Disallow: /admin");
     const sitemap = await (await request.get("/sitemap.xml")).text();
-    for (const path of ["/", "/learn/how-ai-works/what-is-ai", "/news", "/privacy", "/contact"]) {
+    for (const path of [
+      "/",
+      "/learn/how-ai-works/what-is-ai",
+      "/learn/how-ai-works/history",
+      "/learn/how-ai-works/meet-the-llm",
+      "/news",
+      "/privacy",
+      "/contact",
+    ]) {
       expect(sitemap).toContain(`<loc>https://theprogrammerbro.in${path}</loc>`);
     }
   });
