@@ -27,8 +27,8 @@ describe("seoMetadata", () => {
     });
     expect(meta.openGraph).toMatchObject({
       type: "article",
-      publishedTime: "2026-10-30",
-      modifiedTime: "2026-10-31",
+      publishedTime: "2026-10-30T00:00:00+05:30",
+      modifiedTime: "2026-10-31T00:00:00+05:30",
     });
     expect(meta.openGraph).not.toHaveProperty("images");
     expect(meta.twitter).not.toHaveProperty("images");

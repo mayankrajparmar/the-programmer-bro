@@ -7,6 +7,7 @@ export {
   breadcrumbNode,
   FOUNDER_ID,
   founderNode,
+  isoDateTime,
   jsonLdGraph,
   LANGUAGE,
   ORGANIZATION_ID,

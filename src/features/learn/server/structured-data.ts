@@ -2,6 +2,7 @@ import {
   absoluteUrl,
   breadcrumbNode,
   FOUNDER_ID,
+  isoDateTime,
   jsonLdGraph,
   LANGUAGE,
   publisherRef,
@@ -66,8 +67,8 @@ export function lessonJsonLd(lesson: Lesson): JsonLdGraph {
     isPartOf: { "@id": courseId(lesson.track.href) },
     author: publisherRef(),
     publisher: publisherRef(),
-    datePublished: published,
-    dateModified: lesson.lastModified ?? frontmatter.lastReviewed,
+    datePublished: isoDateTime(published),
+    dateModified: isoDateTime(lesson.lastModified ?? frontmatter.lastReviewed),
     citation: frontmatter.sources.map((source) => ({
       "@type": "CreativeWork",
       name: source.title,

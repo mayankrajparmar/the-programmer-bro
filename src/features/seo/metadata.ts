@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/config/site";
+import { isoDateTime } from "./structured-data";
 
 /** The site-wide share card (src/app/opengraph-image.png). */
 export const DEFAULT_SHARE_IMAGE = {
@@ -17,7 +18,7 @@ export interface PageSeo {
   /** The canonical path, e.g. "/news". */
   path: string;
   type?: "website" | "article";
-  /** YYYY-MM-DD, for articles. */
+  /** YYYY-MM-DD, for articles; sent as a full date-time in India time. */
   publishedTime?: string;
   modifiedTime?: string;
   /** The share image. Leave it out for the site-wide card; null for none. */
@@ -52,8 +53,8 @@ export function seoMetadata({
       description,
       ...(images && { images }),
       ...(type === "article" && {
-        publishedTime,
-        modifiedTime,
+        publishedTime: publishedTime && isoDateTime(publishedTime),
+        modifiedTime: modifiedTime && isoDateTime(modifiedTime),
         authors: [site.author.url],
       }),
     },
