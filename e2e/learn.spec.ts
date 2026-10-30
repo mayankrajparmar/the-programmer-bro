@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 const TRACK = "/learn/how-ai-works";
 const LESSON = `${TRACK}/what-is-ai`;
 const LESSON_2 = `${TRACK}/history`;
+const LESSON_3 = `${TRACK}/meet-the-llm`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -29,8 +30,8 @@ test.describe("learning section", () => {
     await expect(page.getByRole("heading", { level: 2, name: /^Module [A-D]/ })).toHaveCount(4);
     await expect(page.getByRole("link", { name: /What is AI, really\?/ })).toBeVisible();
     // Lessons that aren't written yet are listed, but not linked.
-    await expect(page.getByText("Meet the LLM")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Meet the LLM/ })).toHaveCount(0);
+    await expect(page.getByText("Predicting the next word")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Predicting the next word/ })).toHaveCount(0);
     if (!isMobile) {
       const nav = page.getByRole("banner").getByRole("navigation", { name: "Main" });
       await expect(nav.getByRole("link", { name: "Learn" })).toHaveAttribute(
@@ -72,10 +73,23 @@ test.describe("learning section", () => {
     );
   });
 
+  test("renders lesson 3 with its model sizes, linked from lesson 2", async ({ page }) => {
+    await page.goto(LESSON_3);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Meet the LLM");
+    const sizes = page.getByRole("list", { name: "Parameters in three LLMs" });
+    await expect(sizes.getByRole("listitem")).toHaveCount(3);
+    await expect(sizes.getByRole("listitem").last()).toContainText("405 billion");
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 2/ })).toHaveAttribute(
+      "href",
+      LESSON_2,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
-      for (const path of ["/learn", TRACK, LESSON, LESSON_2]) {
+      for (const path of ["/learn", TRACK, LESSON, LESSON_2, LESSON_3]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])

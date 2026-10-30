@@ -1,0 +1,109 @@
+{
+  "lesson": "meet-the-llm",
+  "questions": [
+    {
+      "id": "llm-job",
+      "type": "recall",
+      "prompt": "At its core, what is an LLM trained to do?",
+      "options": [
+        "Look up answers in a big database of facts",
+        "Predict the next token, given the text so far",
+        "Follow grammar rules written by language experts",
+        "Copy whole answers it has seen on websites"
+      ],
+      "answer": 1,
+      "explanation": "An LLM predicts the next small piece of text, adds it and repeats. GPT-2 was trained with \"a simple objective: predict the next word\". Facts, grammar and style come along because they help with that one job."
+    },
+    {
+      "id": "parameter",
+      "type": "recall",
+      "prompt": "What is a parameter in an LLM?",
+      "options": [
+        "A setting you choose each time you type a question",
+        "One of the web pages the model was trained on",
+        "A rule the developers wrote to control the model",
+        "One of the adjustable numbers the model learns in training"
+      ],
+      "answer": 3,
+      "explanation": "Parameters are the numbers inside the model. Training nudges each one a tiny bit at a time until the model predicts well, so together they hold everything it has learnt. Big LLMs have billions of them."
+    },
+    {
+      "id": "large-means",
+      "type": "recall",
+      "prompt": "What does \"large\" in \"large language model\" refer to?",
+      "options": [
+        "Billions of parameters and trillions of tokens of training text",
+        "The size of the chat window and how long its answers are",
+        "How many languages the model can translate between",
+        "The number of people who use the app every day"
+      ],
+      "answer": 0,
+      "explanation": "\"Large\" is about the model itself: how many parameters it has and how much text it learnt from. Meta's largest Llama 3.1 model has 405 billion parameters and was trained on 15.6 trillion tokens."
+    },
+    {
+      "id": "capital-fact",
+      "type": "application",
+      "prompt": "An LLM with no web search correctly finishes \"The capital of Karnataka is\" with \"Bengaluru\". Nobody typed that fact into it as a rule. How did it get it right?",
+      "options": [
+        "It quietly searched the internet before answering",
+        "Its developers wrote a rule for every state capital",
+        "Training on lots of text made \"Bengaluru\" the likely next word",
+        "It understands Karnataka's history the way a person does"
+      ],
+      "answer": 2,
+      "explanation": "The fact appeared again and again in its training text, so \"Bengaluru\" became the likely continuation. That's how LLMs pick up facts: as patterns that help predict the next word. It's also why a fact that was rare in the text can come out wrong."
+    },
+    {
+      "id": "model-vs-app",
+      "type": "application",
+      "prompt": "Your college's admissions website has a chat assistant that answers all kinds of questions in fluent sentences. The college never trained an AI model. What's the most likely explanation?",
+      "options": [
+        "The college hired people to type every reply live",
+        "The website sends your questions to an existing LLM through an API",
+        "It's an expert system with a hand-written rule for every question",
+        "Each visitor's browser downloads and trains its own model"
+      ],
+      "answer": 1,
+      "explanation": "Building an LLM costs a fortune, so most apps use an existing one through an API: the app sends your text to the model and shows you its reply. The model is the engine, and the college's chat window is the car built around it."
+    },
+    {
+      "id": "open-weight",
+      "type": "application",
+      "prompt": "A hospital wants to use an LLM, but patient notes must never leave its own computers. Which kind of model fits best?",
+      "options": [
+        "A closed model used through the company's paid API",
+        "Any chatbot app, as long as it has web search turned on",
+        "The biggest model available, whatever the setup",
+        "An open-weight model that it downloads and runs itself"
+      ],
+      "answer": 3,
+      "explanation": "An open-weight model's parameters are published, so the hospital can run it on its own machines and the notes never leave. A closed model can only be reached through the company's app or API, which means sending the notes to that company."
+    },
+    {
+      "id": "small-models",
+      "type": "recall",
+      "prompt": "Why do companies also build small models, such as the 1- and 3-billion-parameter versions of Llama 3.2?",
+      "options": [
+        "Small models always give better answers than big ones",
+        "Small models don't need any training data at all",
+        "They're faster and cheaper to run, and can even fit on a phone",
+        "The law limits how big a language model is allowed to be"
+      ],
+      "answer": 2,
+      "explanation": "Bigger models are usually more capable but cost more to run. Small models give up some ability in return for speed and low cost, and on a phone what you type doesn't have to leave the device."
+    },
+    {
+      "id": "check-the-number",
+      "type": "application",
+      "prompt": "You ask an LLM with no web search for the population of your town, and it confidently gives a precise number. What should you do?",
+      "options": [
+        "Check it against a reliable source before you use it",
+        "Trust it, because LLMs only say things they're sure of",
+        "Ask again, because the second answer is always right",
+        "Ignore it, because LLMs never know any real facts"
+      ],
+      "answer": 0,
+      "explanation": "An LLM predicts what's likely to come next. That's usually, but not always, what's true, and it sounds just as confident either way. Precise numbers about small places are exactly where it can slip. Lesson 6 goes deeper."
+    }
+  ]
+}

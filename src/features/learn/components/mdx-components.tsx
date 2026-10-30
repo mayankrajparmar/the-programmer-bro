@@ -6,6 +6,7 @@ import { isCodeLanguage } from "@/lib/highlight";
 import { cn } from "@/lib/utils";
 import { AiLayersDiagram } from "../diagrams/ai-layers";
 import { AiTimelineDiagram } from "../diagrams/ai-timeline";
+import { LlmSizesDiagram } from "../diagrams/llm-sizes";
 
 /*
  * What lesson MDX can use, following the lesson template (hook, concept,
@@ -125,4 +126,5 @@ export const lessonComponents: MDXComponents = {
   KeyTakeaways,
   AiLayersDiagram,
   AiTimelineDiagram,
+  LlmSizesDiagram,
 };
