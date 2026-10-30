@@ -1,0 +1,129 @@
+---
+description: What a large language model is, what "large" really means, and how LLMs power apps like ChatGPT, Gemini and Claude, in plain English.
+inShort: A large language model (LLM) is a deep learning model trained on a huge amount of text to predict what comes next. "Large" means billions of parameters, the numbers it learns, and trillions of words of training text.
+lastReviewed: 2026-10-30
+draft: true
+sources:
+  - title: Large Language Models explained briefly
+    url: https://www.youtube.com/watch?v=LPZh9BOjkQs
+    type: Video
+    note: 3Blue1Brown's short animated explainer, made for the Computer History Museum. A perfect companion to this lesson.
+  - title: Better language models and their implications
+    url: https://openai.com/index/better-language-models/
+    type: Article
+    note: OpenAI's 2019 post on GPT-2, its 1.5 billion parameters and its "simple objective" of predicting the next word.
+  - title: Language Models are Few-Shot Learners
+    url: https://arxiv.org/abs/2005.14165
+    type: Paper
+    note: The 2020 GPT-3 paper, with its 175 billion parameters and 300 billion training tokens. The abstract is readable on its own.
+  - title: The Llama 3 Herd of Models
+    url: https://arxiv.org/abs/2407.21783
+    type: Paper
+    note: Meta's 2024 report on Llama 3, including the 405-billion-parameter model trained on 15.6 trillion tokens.
+  - title: What are tokens and how to count them?
+    url: https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+    type: Docs
+    note: OpenAI's rule of thumb that a token is about three-quarters of an English word.
+  - title: Sarvam-1
+    url: https://huggingface.co/sarvamai/sarvam-1
+    type: Docs
+    note: The model card for Sarvam AI's 2-billion-parameter model for 10 Indian languages and English.
+---
+
+Open WhatsApp and type "Happy". Your keyboard suggests a next word: "birthday", maybe "Diwali". Tap one and it suggests another. It has learnt which words tend to follow which.
+
+Now imagine that idea grown enormously: billions of adjustable numbers instead of a short word list, trained on trillions of words of text. It no longer suggests one word at a time for you to tap. It writes a whole leave application, explains recursion or translates a recipe into Tamil. That's a **large language model**, and it's the engine inside apps like ChatGPT, Gemini and Claude.
+
+In this lesson you'll learn what an LLM is, what each word in its name means and just how large "large" is. You'll also see why the model isn't the same thing as the chatbot app you use.
+
+## What is an LLM?
+
+A **large language model (LLM)** is a deep learning model trained on a huge amount of text to do one job: predict what comes next. Give it some text and it predicts the next small piece, called a **token** (a word or part of a word; lesson 5 is all about tokens). It adds that piece to the text and predicts the next one, again and again, until the answer is complete. Lesson 4 shows exactly how.
+
+At its core, that's the whole trick. When OpenAI introduced GPT-2 in 2019, it described the training as "a simple objective: predict the next word, given all of the previous words within some text." The chatbots you use get extra training on top so they answer helpfully, which is lesson 12.
+
+## Why predicting the next word goes so far
+
+Predicting the next word sounds like a party trick. But to get really good at it across trillions of words, a model ends up picking up a lot along the way. Look at what it takes to continue each of these well:
+
+| Text so far                                               | What a good continuation needs |
+| --------------------------------------------------------- | ------------------------------ |
+| "The capital of Karnataka is"                             | A fact: Bengaluru              |
+| "She finished the whole plate of biryani because she was" | Common sense: hungry           |
+| "Respected Sir, I request leave for two days as"          | The style of a leave letter    |
+| `def add(a, b): return`                                   | How code works: a + b          |
+
+Nobody programmed these in. The model picked up facts, grammar, style and coding patterns because all of them help it predict the next word.
+
+<Callout kind="warn">
+
+An LLM learns what is likely to come next, which is usually, but not always, what's true. On its own it doesn't look anything up, so it can state a wrong answer just as confidently as a right one. Lesson 6 explains why and what to do about it.
+
+</Callout>
+
+## Breaking down the name
+
+Each word in "large language model" tells you something.
+
+- **Large:** it has a huge number of parameters and learns from a huge amount of text. The next section shows how huge.
+- **Language:** it's trained mainly on text, such as books, websites, articles and code, so words are its home ground. Many newer models also take in images and audio, which is lesson 14.
+- **Model:** as in lesson 1, a model is a bundle of learned patterns that can be applied to new input. In an LLM those patterns are stored as numbers called parameters.
+
+## What "large" really means
+
+### Parameters: the numbers it learns
+
+A **parameter** is one of the adjustable numbers inside a model. During training, each one is nudged a tiny bit at a time until the model gets good at predicting the next token. Together, the parameters hold everything the model has learnt. (How the nudging works is lesson 11.)
+
+<Analogy>
+
+Picture the sound desk at a big wedding sangeet, covered in sliders for the bass, the treble and every microphone. Now imagine it had billions of sliders and nobody set them by hand. Training is like playing millions of songs through it and nudging every slider a little after each one, until what comes out sounds right. An LLM's parameters are those sliders.
+
+</Analogy>
+
+The number of parameters has grown very fast:
+
+- **GPT-2** (OpenAI, 2019) had 1.5 billion parameters.
+- **GPT-3** (OpenAI, 2020) had 175 billion, more than 100 times as many, just a year later.
+- **Llama 3.1** (Meta, 2024) has 405 billion in its largest version.
+
+<Figure caption="Figure 1: parameters in three LLMs whose makers published their size. GPT-2's bar is barely visible next to the others.">
+  <LlmSizesDiagram />
+</Figure>
+
+If you counted the parameters of that largest Llama model at one per second, day and night without a break, you'd need about 12,800 years. And most companies no longer say how big their newest models are. OpenAI's 2023 report on GPT-4, for example, left out the model's size, citing competition and safety.
+
+### Training text: trillions of tokens
+
+GPT-3 was trained on 300 billion tokens of text. Llama 3.1's largest model was trained on 15.6 trillion, about 50 times more. A token is roughly three-quarters of an English word, so that's around 12 trillion words. Reading 300 words a minute for 8 hours a day, every day, you'd need more than 200,000 years to get through it.
+
+### Bigger isn't the only way
+
+Bigger models are usually more capable, but they need expensive computers to run, and every answer costs more. So companies also build small models. Meta's Llama 3.2 includes versions with 1 billion and 3 billion parameters that fit on mobile devices. In Bengaluru, Sarvam AI built Sarvam-1, a 2-billion-parameter model made specially for 10 Indian languages and English. Small models give up some ability in return for speed and low cost. When one runs on your phone, what you type doesn't have to leave the device.
+
+## The model isn't the app
+
+ChatGPT, Gemini and Claude are apps. Each runs on models underneath: ChatGPT on OpenAI's GPT models, the Gemini app on Google's Gemini models and the Claude app on Anthropic's Claude models. The app adds the chat window, your saved conversations, safety checks and extras such as web search. The model is the engine; the app is the car built around it.
+
+The same model can power many other apps too, through an **API** (application programming interface): a way for one program to send text to the model over the internet and get its reply back. When a shopping app's chatbot answers your question, it may well be calling one of these models behind the scenes.
+
+Models also differ in who can run them:
+
+- **Open-weight models** have their parameters published, so anyone can download and run them on their own computers. ("Weights" is another name for parameters.) Meta's Llama and Sarvam-1 are examples.
+- **Closed models** can only be used through the company's own apps and paid API. The main models behind ChatGPT, Gemini and Claude work this way.
+
+<TryIt>
+
+Open your phone's keyboard, type "I will reach" and then tap the middle suggestion ten times in a row. Read what you get. Now give a chatbot the same three words and ask it to finish the sentence. Both are predicting the next word. The difference you see is what "large" buys.
+
+</TryIt>
+
+<KeyTakeaways>
+
+- An LLM is a deep learning model trained on huge amounts of text to predict the next token, again and again.
+- Getting good at that one job makes it pick up facts, grammar, style and code, but it predicts what's likely, not what's true.
+- "Large" means billions of parameters (the numbers it learns) and trillions of tokens of training text.
+- Small models trade some ability for speed and low cost, and some run right on your phone.
+- The model is the engine; apps like ChatGPT, Gemini and Claude are built around it. Some models are open-weight and some are closed.
+
+</KeyTakeaways>
