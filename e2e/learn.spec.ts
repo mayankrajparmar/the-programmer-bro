@@ -6,6 +6,7 @@ const LESSON = `${TRACK}/what-is-ai`;
 const LESSON_2 = `${TRACK}/history`;
 const LESSON_3 = `${TRACK}/meet-the-llm`;
 const LESSON_4 = `${TRACK}/next-word`;
+const LESSON_5 = `${TRACK}/tokens`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -31,8 +32,8 @@ test.describe("learning section", () => {
     await expect(page.getByRole("heading", { level: 2, name: /^Module [A-D]/ })).toHaveCount(4);
     await expect(page.getByRole("link", { name: /What is AI, really\?/ })).toBeVisible();
     // Lessons that aren't written yet are listed, but not linked.
-    await expect(page.getByText("Tokens: the LLM's alphabet")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Tokens: the LLM's alphabet/ })).toHaveCount(0);
+    await expect(page.getByText("Search engine vs LLM")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Search engine vs LLM/ })).toHaveCount(0);
     if (!isMobile) {
       const nav = page.getByRole("banner").getByRole("navigation", { name: "Main" });
       await expect(nav.getByRole("link", { name: "Learn" })).toHaveAttribute(
@@ -101,10 +102,25 @@ test.describe("learning section", () => {
     );
   });
 
+  test("renders lesson 5 with its token splits, linked from lesson 4", async ({ page }) => {
+    await page.goto(LESSON_5);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tokens: the LLM's alphabet");
+    const english = page.getByRole("list", { name: /as 7 tokens, each with its ID/ });
+    await expect(english.getByRole("listitem")).toHaveCount(7);
+    await expect(english.getByRole("listitem").nth(1)).toContainText("space then am, ID 939");
+    const hindi = page.getByRole("list", { name: "The same sentence in Hindi as 23 tokens" });
+    await expect(hindi.getByRole("listitem")).toHaveCount(23);
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 4/ })).toHaveAttribute(
+      "href",
+      LESSON_4,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
-      for (const path of ["/learn", TRACK, LESSON, LESSON_2, LESSON_3, LESSON_4]) {
+      for (const path of ["/learn", TRACK, LESSON, LESSON_2, LESSON_3, LESSON_4, LESSON_5]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])

@@ -1,0 +1,131 @@
+---
+description: What tokens are, how text becomes token IDs, why Hindi can need more tokens than English, and what context windows and token pricing mean.
+inShort: LLMs don't read letters or words. They read tokens, common chunks of text that each have an ID number. Tokens decide how much a model can take in at once, its context window, and how much each answer costs.
+lastReviewed: 2026-10-31
+draft: true
+sources:
+  - title: What are tokens and how to count them?
+    url: https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+    type: Docs
+    note: OpenAI's rule of thumb that a token is about four characters, or three-quarters of an English word.
+  - title: Byte-Pair Encoding tokenization
+    url: https://huggingface.co/learn/llm-course/chapter6/5
+    type: Course
+    note: Hugging Face's step-by-step walk through how a tokenizer learns its vocabulary by merging common pairs.
+  - title: Let's build the GPT Tokenizer
+    url: https://www.youtube.com/watch?v=zduSFxRajkE
+    type: Video
+    note: Andrej Karpathy builds a GPT tokenizer from scratch in about two hours, and explains many of its odd effects.
+  - title: Language Model Tokenizers Introduce Unfairness Between Languages
+    url: https://proceedings.neurips.cc/paper_files/paper/2023/hash/74bb24dca8334adce292883b4b651eda-Abstract.html
+    type: Paper
+    note: The 2023 study showing the same text can need up to 15 times as many tokens in some languages.
+  - title: Hello GPT-4o
+    url: https://openai.com/index/hello-gpt-4o/
+    type: Article
+    note: OpenAI's 2024 announcement, whose "Language tokenization" section shows big token savings for Hindi, Marathi, Tamil, Telugu and Gujarati.
+  - title: Pricing
+    url: https://platform.claude.com/docs/en/about-claude/pricing
+    type: Docs
+    note: An example of an AI company's price list, charged per million input and output tokens.
+---
+
+Type "I am learning how AI works." into the tokenizer that GPT-4o uses, and it cuts the sentence into 7 pieces. Type the same sentence in Hindi, "मैं सीख रहा हूँ कि AI कैसे काम करता है।", and you get 23 pieces. Same meaning, more than three times as many pieces.
+
+Those pieces are **tokens**, and they matter more than you'd think. They decide how much an AI can read at once, how quickly it answers and how much it costs. In this lesson you'll see what tokens are, how text turns into numbers, why some languages need more tokens than others, and what "context window" and "per token" pricing mean.
+
+## What is a token?
+
+A **token** is a chunk of text that a model treats as one unit. It can be a whole word, part of a word, a punctuation mark, or a word with the space before it. Splitting text into tokens is called **tokenization**, and the program that does it is a **tokenizer**. As you saw in lesson 4, the full list of tokens a model knows is its vocabulary. GPT-4o's tokenizer has about 200,000.
+
+Here's how GPT-4o's tokenizer splits a few words:
+
+- " unbelievable" (with a space in front) is a single token, because it's common in English text.
+- "Bengaluru" becomes four tokens: "B", "eng", "al" and "uru".
+- "strawberry" becomes three: "st", "raw" and "berry".
+
+As a rule of thumb, OpenAI says one token is about four characters of English, or three-quarters of a word. So 100 tokens is roughly 75 words.
+
+### Why not just use words, or letters?
+
+Whole words would need a vocabulary with every word, name and typo ever written, and a brand-new word would have no token at all. Single letters would need only a tiny vocabulary, but every sentence would become very long, which makes the model slower and more expensive to run. Tokens sit in between: common words get a token of their own, and rare words are built from pieces, so any text can be written with a vocabulary of a few hundred thousand tokens.
+
+Most tokenizers today learn their vocabulary with **byte-pair encoding (BPE)**: start with single characters, then again and again merge the pair that appears together most often in a huge pile of text, until the vocabulary is big enough. That's why common words end up as one token and rare ones stay in pieces.
+
+## From tokens to numbers
+
+The model never sees text at all. Every token in the vocabulary has an **ID**, a number, and the tokenizer turns your text into a list of these numbers before the model reads it. When the model answers, it picks token IDs (that's the loop from lesson 4), and the tokenizer turns them back into text for you.
+
+<Figure caption="Figure 1: a sentence split by GPT-4o's tokenizer, with each token's ID underneath. A dot marks a space at the start of a token.">
+  <TokenIdsDiagram />
+</Figure>
+
+Notice that most tokens include the space before the word. Small differences matter too: to GPT-4o's tokenizer, "Hello" is token 13225, " hello" with a space in front is token 40617, and "HELLO" is two tokens, "HEL" and "LO". For the model, these are different things.
+
+<Analogy>
+
+Think of PIN codes. A six-digit number like 110001 stands for a whole area of central New Delhi, so the post office can work with short numbers instead of long addresses. Token IDs work the same way: each number stands for a chunk of text, and the model works only with the numbers.
+
+</Analogy>
+
+## Why Hindi needs more tokens
+
+A tokenizer learns its vocabulary from the text it's trained on, and for most tokenizers, much of that text is English. So English words tend to get tokens of their own, while languages in other scripts, such as Hindi in Devanagari, are more often split into small pieces, sometimes a single letter or vowel sign at a time.
+
+<Figure caption="Figure 2: the Hindi sentence split by GPT-4o's tokenizer. Many tokens are a single letter or vowel sign.">
+  <HindiTokensDiagram />
+</Figure>
+
+Here's how many tokens the two sentences take with three generations of OpenAI tokenizers:
+
+| Tokenizer     | English | Hindi |
+| ------------- | ------- | ----- |
+| GPT-2 (2019)  | 7       | 54    |
+| GPT-4 (2023)  | 7       | 37    |
+| GPT-4o (2024) | 7       | 23    |
+
+It's getting better, but the gap is still there. A 2023 study found that the same text can need up to 15 times as many tokens in some languages as in others. When OpenAI introduced GPT-4o's tokenizer, it said a Hindi sample needed 2.9 times fewer tokens than before (31 instead of 90), with similar savings for Marathi, Tamil, Telugu and Gujarati.
+
+This matters because more tokens means a higher bill, slower answers and less room for your text, which brings us to the context window.
+
+## The context window
+
+A model's **context window** is the most tokens it can work with at once: your question, the conversation so far and its own answer, all together. Context windows have grown fast:
+
+- GPT-2 (2019): 1,024 tokens, about two and a half pages.
+- Llama 3.1 (2024): about 128,000 tokens, roughly a 300-page book.
+- Gemini 1.5 Pro (2024): up to 1 million tokens, which Google said is over 700,000 words.
+
+Here's something most people don't know: the model doesn't remember your earlier messages by itself. Behind the scenes, a chat app sends the whole conversation so far along with each new message. So a long chat keeps growing, and once it's bigger than the context window, the app has to drop or summarise the oldest parts. That's why a chatbot can "forget" something you told it at the start of a very long conversation.
+
+<Callout kind="tip">
+
+Starting a new topic? Start a new chat. It keeps the conversation short, so the model focuses on what matters now, and you can paste in the key facts again.
+
+</Callout>
+
+## Tokens and money
+
+AI companies charge developers by the token, usually quoted per million tokens. There's one price for **input** tokens (what you send) and a higher one for **output** tokens (what the model writes). Anthropic's price list, for example, charges five times as much per output token as per input token.
+
+So everything that adds tokens adds cost: a long prompt, a long chat that's sent again with every message, an answer that rambles, or a language that needs more tokens for the same meaning. That's why developers count tokens when they plan an app.
+
+## Odd behaviour that tokens explain
+
+Tokens explain some well-known chatbot slips. Ask a model how many r's are in "strawberry", and it has often got it wrong. It doesn't see ten letters. It sees "st", "raw" and "berry", three IDs, and has to guess what letters are inside them. The same goes for spelling words backwards or counting letters in general: these are easy for you because you see letters, and hard for a model because it sees tokens.
+
+<TryIt>
+
+Open [Tiktokenizer](https://tiktokenizer.vercel.app/), a free tool that shows how text is split, and choose "gpt-4o" (or its tokenizer, "o200k_base"). Type your name, your city and a sentence in English. Then type the same sentence in Hindi, Tamil or your home language and compare the token counts. Which words get split into the most pieces?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- LLMs read and write tokens: chunks of text such as words, parts of words or punctuation.
+- Every token has an ID number, and the model only ever works with those numbers.
+- In English, a token is about three-quarters of a word. Many other languages, including Hindi, need more tokens for the same meaning.
+- The context window is how many tokens a model can handle at once. Long chats eventually spill over it.
+- AI companies charge per token, and output tokens cost more than input tokens.
+
+</KeyTakeaways>
