@@ -8,6 +8,7 @@ import { AiLayersDiagram } from "../diagrams/ai-layers";
 import { AiTimelineDiagram } from "../diagrams/ai-timeline";
 import { LlmSizesDiagram } from "../diagrams/llm-sizes";
 import { NextTokenDiagram } from "../diagrams/next-token";
+import { SearchVsLlmDiagram } from "../diagrams/search-vs-llm";
 import { HindiTokensDiagram, TokenIdsDiagram } from "../diagrams/tokens";
 
 /*
@@ -132,4 +133,5 @@ export const lessonComponents: MDXComponents = {
   NextTokenDiagram,
   TokenIdsDiagram,
   HindiTokensDiagram,
+  SearchVsLlmDiagram,
 };

@@ -2,6 +2,7 @@ import { aiLayersMarkdown } from "./ai-layers";
 import { aiTimelineMarkdown } from "./ai-timeline";
 import { llmSizesMarkdown } from "./llm-sizes";
 import { nextTokenMarkdown } from "./next-token";
+import { searchVsLlmMarkdown } from "./search-vs-llm";
 import { hindiTokensMarkdown, tokenIdsMarkdown } from "./tokens";
 
 /**
@@ -15,4 +16,5 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   NextTokenDiagram: nextTokenMarkdown,
   TokenIdsDiagram: tokenIdsMarkdown,
   HindiTokensDiagram: hindiTokensMarkdown,
+  SearchVsLlmDiagram: searchVsLlmMarkdown,
 };

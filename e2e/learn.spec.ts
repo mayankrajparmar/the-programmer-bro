@@ -7,6 +7,7 @@ const LESSON_2 = `${TRACK}/history`;
 const LESSON_3 = `${TRACK}/meet-the-llm`;
 const LESSON_4 = `${TRACK}/next-word`;
 const LESSON_5 = `${TRACK}/tokens`;
+const LESSON_6 = `${TRACK}/search-vs-llm`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -32,8 +33,8 @@ test.describe("learning section", () => {
     await expect(page.getByRole("heading", { level: 2, name: /^Module [A-D]/ })).toHaveCount(4);
     await expect(page.getByRole("link", { name: /What is AI, really\?/ })).toBeVisible();
     // Lessons that aren't written yet are listed, but not linked.
-    await expect(page.getByText("Search engine vs LLM")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Search engine vs LLM/ })).toHaveCount(0);
+    await expect(page.getByText("Embeddings: meaning as numbers")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Embeddings: meaning as numbers/ })).toHaveCount(0);
     if (!isMobile) {
       const nav = page.getByRole("banner").getByRole("navigation", { name: "Main" });
       await expect(nav.getByRole("link", { name: "Learn" })).toHaveAttribute(
@@ -117,10 +118,33 @@ test.describe("learning section", () => {
     );
   });
 
+  test("renders lesson 6 with its comparison, linked from lesson 5", async ({ page }) => {
+    await page.goto(LESSON_6);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Search engine vs LLM");
+    for (const name of ["How a search engine answers", "How an LLM answers"]) {
+      await expect(page.getByRole("region", { name }).getByRole("listitem")).toHaveCount(3);
+    }
+    await expect(page.getByRole("cell", { name: "Search engine" }).first()).toBeVisible();
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 5/ })).toHaveAttribute(
+      "href",
+      LESSON_5,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
-      for (const path of ["/learn", TRACK, LESSON, LESSON_2, LESSON_3, LESSON_4, LESSON_5]) {
+      for (const path of [
+        "/learn",
+        TRACK,
+        LESSON,
+        LESSON_2,
+        LESSON_3,
+        LESSON_4,
+        LESSON_5,
+        LESSON_6,
+      ]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
