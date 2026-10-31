@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { AiLayersDiagram } from "../diagrams/ai-layers";
 import { AiTimelineDiagram } from "../diagrams/ai-timeline";
 import { LlmSizesDiagram } from "../diagrams/llm-sizes";
+import { NextTokenDiagram } from "../diagrams/next-token";
 
 /*
  * What lesson MDX can use, following the lesson template (hook, concept,
@@ -127,4 +128,5 @@ export const lessonComponents: MDXComponents = {
   AiLayersDiagram,
   AiTimelineDiagram,
   LlmSizesDiagram,
+  NextTokenDiagram,
 };

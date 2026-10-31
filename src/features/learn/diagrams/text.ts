@@ -1,6 +1,7 @@
 import { aiLayersMarkdown } from "./ai-layers";
 import { aiTimelineMarkdown } from "./ai-timeline";
 import { llmSizesMarkdown } from "./llm-sizes";
+import { nextTokenMarkdown } from "./next-token";
 
 /**
  * Every diagram's content as Markdown, keyed by its MDX component name. The Markdown
@@ -10,4 +11,5 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   AiLayersDiagram: aiLayersMarkdown,
   AiTimelineDiagram: aiTimelineMarkdown,
   LlmSizesDiagram: llmSizesMarkdown,
+  NextTokenDiagram: nextTokenMarkdown,
 };
