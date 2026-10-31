@@ -1,10 +1,26 @@
+import * as cl100k from "gpt-tokenizer/encoding/cl100k_base";
+import * as o200k from "gpt-tokenizer/encoding/o200k_base";
+import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
 import { NEXT_WORD_CHOICES } from "../diagrams/next-token";
+import {
+  ENGLISH_SENTENCE,
+  ENGLISH_TOKENS,
+  HINDI_SENTENCE,
+  HINDI_TOKENS,
+  TOKEN_COUNTS,
+} from "../diagrams/token-data";
 import { getLesson } from "./content";
+
+interface Encoder {
+  encode: (text: string) => number[];
+  decode: (ids: number[]) => string;
+}
 
 /*
  * Lessons that show worked numbers get a test that redoes the maths, so a figure
- * and the table built from it can't drift apart.
+ * and the table built from it can't drift apart. Lesson 5's token splits are checked
+ * against the real tokenizers (the gpt-tokenizer package, a dev dependency).
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -66,5 +82,63 @@ describe("worked numbers in lesson 4", () => {
     expect(atLeastOnce(1.5)).toBeCloseTo(0.25, 1); // "about 1 in 4"
     expect(lesson?.body).toContain("about 1 in 10");
     expect(lesson?.body).toContain("about 1 in 4");
+  });
+});
+
+describe("worked numbers in lesson 5", () => {
+  const lesson = getLesson("how-ai-works", "tokens");
+  const pieces = (encoder: Encoder, text: string) =>
+    encoder.encode(text).map((id) => encoder.decode([id]));
+
+  it("shows GPT-4o's real split of the English sentence, with IDs", () => {
+    const ids = o200k.encode(ENGLISH_SENTENCE);
+    expect(ENGLISH_TOKENS.map((token) => token.id)).toEqual(ids);
+    expect(ENGLISH_TOKENS.map((token) => token.text)).toEqual(pieces(o200k, ENGLISH_SENTENCE));
+  });
+
+  it("shows GPT-4o's real split of the Hindi sentence", () => {
+    expect(HINDI_TOKENS).toEqual(pieces(o200k, HINDI_SENTENCE));
+  });
+
+  it("counts both sentences correctly with each tokenizer, in the data and the table", () => {
+    const encoders: Record<string, Encoder> = {
+      r50k_base: r50k,
+      cl100k_base: cl100k,
+      o200k_base: o200k,
+    };
+    for (const row of TOKEN_COUNTS) {
+      const encoder = encoders[row.encoding];
+      if (!encoder) throw new Error(row.encoding);
+      expect(encoder.encode(ENGLISH_SENTENCE), row.tokenizer).toHaveLength(row.english);
+      expect(encoder.encode(HINDI_SENTENCE), row.tokenizer).toHaveLength(row.hindi);
+      expect(lesson?.body).toMatch(
+        new RegExp(
+          `\\| ${row.tokenizer.replace(/[()]/g, "\\$&")} +\\| ${row.english} +\\| ${row.hindi} +\\|`,
+        ),
+      );
+    }
+    expect(lesson?.body).toContain("cuts the sentence into 7 pieces");
+    expect(lesson?.body).toContain("you get 23 pieces");
+  });
+
+  it("gets the example words right", () => {
+    expect(pieces(o200k, " unbelievable")).toEqual([" unbelievable"]);
+    expect(pieces(o200k, "Bengaluru")).toEqual(["B", "eng", "al", "uru"]);
+    expect(pieces(o200k, "strawberry")).toEqual(["st", "raw", "berry"]);
+    expect(o200k.encode("Hello")).toEqual([13225]);
+    expect(o200k.encode(" hello")).toEqual([40617]);
+    expect(pieces(o200k, "HELLO")).toEqual(["HEL", "LO"]);
+  });
+
+  it("puts GPT-4o's vocabulary at about 200,000 tokens", () => {
+    expect(() => o200k.decode([199_999])).not.toThrow();
+    expect(() => o200k.decode([201_000])).toThrow();
+  });
+
+  it("converts context windows to words and pages correctly", () => {
+    const words = (tokens: number) => tokens * 0.75; // OpenAI's rule of thumb
+    expect(words(1024) / 300).toBeCloseTo(2.5, 0); // "about two and a half pages"
+    expect(words(128_000) / 300).toBeGreaterThan(300); // "roughly a 300-page book"
+    expect(words(128_000) / 300).toBeLessThan(350);
   });
 });
