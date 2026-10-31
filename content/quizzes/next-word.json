@@ -1,0 +1,109 @@
+{
+  "lesson": "next-word",
+  "questions": [
+    {
+      "id": "the-loop",
+      "type": "recall",
+      "prompt": "What does an LLM do at each step while it writes an answer?",
+      "options": [
+        "Looks up the finished answer in a database and copies it out",
+        "Scores every possible next token, picks one and adds it to the text",
+        "Writes the whole answer at once, then checks it word by word",
+        "Asks a person to choose the next word from a short list"
+      ],
+      "answer": 1,
+      "explanation": "An LLM reads the text so far, gives every token in its vocabulary a probability of coming next, picks one, adds it and repeats until it picks an \"end\" token or reaches a length limit."
+    },
+    {
+      "id": "vocabulary",
+      "type": "recall",
+      "prompt": "What is a model's vocabulary?",
+      "options": [
+        "The list of topics it is allowed to talk about",
+        "The words it has learnt to spell correctly",
+        "The languages it can translate between",
+        "The full list of tokens it can choose from at each step"
+      ],
+      "answer": 3,
+      "explanation": "The vocabulary is every token the model knows. At each step it gives all of them a probability. GPT-2's vocabulary had 50,257 tokens."
+    },
+    {
+      "id": "probability-meaning",
+      "type": "recall",
+      "prompt": "After \"Dal, chawal aur\", a model gives \"sabzi\" a probability of 35%. What does that mean?",
+      "options": [
+        "The model thinks sabzi has a 35% chance of being the next word",
+        "35% of people in the training data ate sabzi for lunch",
+        "The model is 35% sure that sabzi is a real word",
+        "Sabzi will appear in 35% of the words in the answer"
+      ],
+      "answer": 0,
+      "explanation": "A probability is the model's score for how likely that token is to come next. With sampling, \"sabzi\" would be picked about 35 times in 100."
+    },
+    {
+      "id": "greedy-problem",
+      "type": "application",
+      "prompt": "A developer makes a model always pick the single most likely next token. What are they most likely to notice in long answers?",
+      "options": [
+        "The answers become wildly creative and unpredictable",
+        "The model stops after the first word every time",
+        "The text gets flat and the model starts repeating itself",
+        "The model refuses to answer questions about facts"
+      ],
+      "answer": 2,
+      "explanation": "Always taking the top choice is called greedy picking. It sounds safe, but long text comes out flat, and models that do it often get stuck repeating themselves. Sampling fixes this."
+    },
+    {
+      "id": "low-temperature",
+      "type": "application",
+      "prompt": "You're building a tool that converts recipes from cups to grams, and you want the same answer every time. Which temperature suits it best?",
+      "options": [
+        "A high temperature, so the answers stay fresh and varied",
+        "A low temperature, close to 0, so it nearly always picks the top token",
+        "Any temperature, because it only affects how fast the model writes",
+        "A temperature of exactly 2, the highest OpenAI allows"
+      ],
+      "answer": 1,
+      "explanation": "A low temperature makes the most likely tokens even more likely, so answers are focused and predictable. That's what you want for facts, maths and conversions."
+    },
+    {
+      "id": "high-temperature",
+      "type": "application",
+      "prompt": "You want a model to brainstorm 20 unusual names for a chai stall. What does raising the temperature do?",
+      "options": [
+        "Gives less likely words more of a chance, so the names vary more",
+        "Makes the model check each name on the internet first",
+        "Makes the model write faster, so it can fit in more names",
+        "Makes the model choose only names it saw in its training text"
+      ],
+      "answer": 0,
+      "explanation": "A higher temperature evens out the probabilities, so unusual tokens get picked more often. That's useful for brainstorming. Push it too far, though, and the names turn into nonsense."
+    },
+    {
+      "id": "regenerate",
+      "type": "application",
+      "prompt": "You ask a chatbot the same question twice and get two different answers. What's the most likely reason?",
+      "options": [
+        "The chatbot learnt something new between your two questions",
+        "Someone at the company edited the first answer",
+        "The first answer was wrong, so the chatbot corrected itself",
+        "It picks each token by weighted chance, so different picks lead to a different answer"
+      ],
+      "answer": 3,
+      "explanation": "Chatbots usually sample: each token is picked at random, weighted by its probability. Two runs make different picks, and each pick changes what comes after it."
+    },
+    {
+      "id": "no-take-backs",
+      "type": "recall",
+      "prompt": "Why can't an LLM go back and fix a word it wrote earlier in the same answer?",
+      "options": [
+        "Its memory is too small to hold more than one sentence",
+        "Each token it writes becomes part of the text it continues from",
+        "It is only allowed to use each word once per answer",
+        "The chat app deletes the earlier words as it goes"
+      ],
+      "answer": 1,
+      "explanation": "The model only ever adds the next token to the end. Once a token is written, every later pick builds on it, so an early slip can lead the rest of the answer astray."
+    }
+  ]
+}

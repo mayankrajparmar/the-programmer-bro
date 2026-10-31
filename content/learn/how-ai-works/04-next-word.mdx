@@ -1,0 +1,127 @@
+---
+description: How an LLM writes its answer one token at a time, what the probabilities behind each word mean, and what the temperature setting changes.
+inShort: An LLM writes one token at a time. At each step it gives every possible next token a probability, picks one, adds it to the text and repeats. Temperature decides how adventurous that pick is.
+lastReviewed: 2026-10-31
+draft: true
+sources:
+  - title: What Is ChatGPT Doing … and Why Does It Work?
+    url: https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/
+    type: Article
+    note: Stephen Wolfram's long, friendly explainer. The first few sections cover adding one word at a time and why a little randomness helps.
+  - title: "How to generate text: using different decoding methods for language generation with Transformers"
+    url: https://huggingface.co/blog/how-to-generate
+    type: Article
+    note: Hugging Face's guide to greedy search, sampling and temperature, with real examples of each.
+  - title: "Transformer Explainer: Interactive Learning of Text-Generative Models"
+    url: https://arxiv.org/abs/2408.04619
+    type: Paper
+    note: The paper behind the Transformer Explainer tool in this lesson's "Try it", which runs GPT-2 in your browser.
+  - title: Language Models are Unsupervised Multitask Learners
+    url: https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf
+    type: Paper
+    note: The 2019 GPT-2 paper, including the size of its vocabulary of 50,257 tokens.
+  - title: "API reference: Create chat completion"
+    url: https://platform.openai.com/docs/api-reference/chat/create
+    type: Docs
+    note: OpenAI's description of the temperature setting, from 0 to 2.
+---
+
+Finish these two sentences in your head:
+
+- "The capital of India is \_\_\_."
+- "For lunch I had dal, chawal and \_\_\_."
+
+The first has one obvious answer. The second has lots of good ones: sabzi, achaar, papad, raita. You didn't pick one completely at random, though. Some felt more likely than others. Without noticing, you gave each option a chance of being right.
+
+That's exactly what an LLM does, hundreds of times for a single answer. In this lesson you'll see how it writes one token at a time, what the numbers behind each choice are, and what the "temperature" setting changes. By the end you'll know why the same question can get a different answer every time you ask.
+
+## One token at a time
+
+In lesson 3 you saw that an LLM is trained to predict what comes next. Here's how that one skill turns into a whole answer:
+
+1. The model reads all the text so far: your question, plus anything it has already written.
+2. It gives every token it knows a score for how likely it is to come next. The full list of tokens a model knows is called its **vocabulary**, and it's big: GPT-2's had 50,257.
+3. It picks one token, guided by those scores.
+4. It adds that token to the end of the text and goes back to step 1.
+
+It stops when it picks a special "end" token, which means "I'm done", or when it reaches a length limit set by the app. That's why a chatbot's reply appears bit by bit: it really is being written one piece at a time, and the app shows each piece as soon as it's ready.
+
+<Callout kind="note">
+
+To keep things simple, the examples in this lesson treat each word as one token. Real models often split words into smaller pieces, which is what lesson 5 is about.
+
+</Callout>
+
+## Probabilities, not answers
+
+The scores are **probabilities**: numbers that say how likely something is, from 0% (never) to 100% (certain). For every position in its answer, the model gives each token in its vocabulary a probability, and they all add up to 100%.
+
+<Figure caption="Figure 1: made-up probabilities for the word after “Dal, chawal aur”, to show the idea. A real model would score tens of thousands of tokens, most of them close to 0%.">
+  <NextTokenDiagram />
+</Figure>
+
+So the model doesn't look up an answer. It scores the options. For "The capital of India is", the token "New" (as in New Delhi) gets a very high probability, because that's what nearly always came next in its training text. That's how facts come out of an LLM: as very likely continuations. It's also why a common-sounding but wrong continuation can sometimes win, which lesson 6 looks at.
+
+## Picking the next token
+
+Once every token has a probability, the model has to choose one. There are two basic ways.
+
+- **Greedy:** always pick the most likely token. It sounds safe, but the text comes out flat, and models that do this often start repeating themselves.
+- **Sampling:** pick at random, but weighted by the probabilities. With the numbers in Figure 1, "sabzi" comes up about 35 times in 100, "achaar" about 25 times, and "ice cream" about once.
+
+Most chatbots sample, which is why their writing feels natural instead of robotic.
+
+<Analogy>
+
+Think of a lucky draw at your society's Diwali party, but with 100 chits in the bowl: 35 say "sabzi", 25 say "achaar", 18 say "papad", 12 say "raita", 9 say "roti" and 1 says "ice cream". Shake the bowl and pull one out. Most of the time you get something sensible. Once in a while, you get a surprise. Sampling is that draw, done with numbers instead of chits.
+
+</Analogy>
+
+## Temperature: how adventurous the pick is
+
+**Temperature** is a setting that reshapes the probabilities just before the pick.
+
+- A **low** temperature makes the likely tokens even more likely. At a temperature of 0, the model always picks the top token, just like greedy.
+- A temperature of **1** leaves the model's own probabilities as they are.
+- A **high** temperature evens things out, so unlikely tokens get more of a chance.
+
+Here's what happens to the probabilities from Figure 1:
+
+| Next word | Low (0.5) | Normal (1) | High (1.5) |
+| --------- | --------- | ---------- | ---------- |
+| sabzi     | 51%       | 35%        | 29%        |
+| achaar    | 26%       | 25%        | 23%        |
+| papad     | 14%       | 18%        | 19%        |
+| raita     | 6%        | 12%        | 14%        |
+| roti      | 3%        | 9%         | 12%        |
+| ice cream | under 1%  | 1%         | 3%         |
+
+Ask for the next word 10 times. At a temperature of 1, the chance that "ice cream" turns up at least once is about 1 in 10. At 1.5, it's about 1 in 4.
+
+Low temperatures suit tasks with one right answer, such as facts, code, maths and summaries. Higher temperatures suit brainstorming, stories and slogans, where variety helps. Push it too high, though, and the text drifts into nonsense, because too many unlikely tokens get picked.
+
+In chat apps you usually can't change the temperature, but developers can. OpenAI's API, for example, accepts values from 0 to 2 and describes 0.8 as "more random" and 0.2 as "more focused and deterministic". Some newer models, including several reasoning models, don't let you change it at all.
+
+## What this explains
+
+Knowing that an LLM writes one weighted pick at a time explains a lot about how chatbots behave.
+
+- **The same question can get different answers.** Each answer is a fresh set of picks. Hit "regenerate" and different picks lead the text somewhere else.
+- **It can't take back a word.** Once a token is written, it becomes part of the text the model continues from. An early slip can lead the rest of the answer astray. That's one reason reasoning models (lesson 13) work through a problem step by step before they answer.
+- **Fluent doesn't mean correct.** Every pick is about what's likely to come next, not about what has been checked. Lesson 6 explains what to do about that.
+
+<TryIt>
+
+Open [Transformer Explainer](https://poloclub.github.io/transformer-explainer/), a free tool that runs a small model (GPT-2) right in your browser. Type the start of a sentence, such as "For lunch I had dal, rice and", and look at the probabilities it gives the next word. Then drag the temperature slider up and down and watch the bars change. Afterwards, ask any chatbot to "suggest a name for a chai stall" three times. Then ask it "What is 12 × 12?" three times. Which answers changed, and why?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- An LLM writes one token at a time: it reads the text so far, scores every possible next token, picks one, adds it and repeats.
+- The scores are probabilities: the model's sense of what's likely to come next, not a checked answer.
+- Picking at random, weighted by those probabilities, keeps text natural. Always taking the top choice makes it flat and repetitive.
+- Temperature reshapes the probabilities: low for focused, predictable answers, high for variety and surprises.
+- That's why the same question can get different answers, and why fluent doesn't always mean correct.
+
+</KeyTakeaways>

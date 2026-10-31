@@ -121,6 +121,11 @@ describe("learning content", () => {
     expect(third?.number).toBe(3);
     expect(third?.previous?.slug).toBe("history");
     expect(third?.next?.slug).toBe("next-word");
+
+    const fourth = getLesson("how-ai-works", "next-word");
+    expect(fourth?.number).toBe(4);
+    expect(fourth?.previous?.slug).toBe("meet-the-llm");
+    expect(fourth?.next?.slug).toBe("tokens");
   });
 });
 
