@@ -25,6 +25,9 @@ test.describe("the live site", () => {
     ["what-is-ai", "What is AI, really?"],
     ["history", "From rules to reasoning: a short history"],
     ["meet-the-llm", "Meet the LLM"],
+    ["next-word", "Predicting the next word"],
+    ["tokens", "Tokens: the LLM's alphabet"],
+    ["search-vs-llm", "Search engine vs LLM"],
   ] as const) {
     test(`publishes ${slug}, without a draft notice`, async ({ page }) => {
       const response = await page.goto(`/learn/how-ai-works/${slug}`);
@@ -67,6 +70,9 @@ test.describe("the live site", () => {
       "/learn/how-ai-works/what-is-ai",
       "/learn/how-ai-works/history",
       "/learn/how-ai-works/meet-the-llm",
+      "/learn/how-ai-works/next-word",
+      "/learn/how-ai-works/tokens",
+      "/learn/how-ai-works/search-vs-llm",
       "/news",
       "/privacy",
       "/contact",
