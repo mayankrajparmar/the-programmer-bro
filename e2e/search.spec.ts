@@ -22,6 +22,14 @@ test.describe("search and sharing", () => {
     const manifest = await (await request.get("/manifest.webmanifest")).json();
     expect(manifest).toMatchObject({ name: "The Programmer Bro", start_url: "/" });
 
+    // Google shows a site's icon from <link rel="icon"> on the home page, but only in a
+    // format it supports (not SVG) and ideally larger than 48x48.
+    const png = page.locator('link[rel="icon"][type="image/png"]');
+    await expect(png).toHaveAttribute("sizes", "192x192");
+    await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveCount(0);
+    const pngIcon = await request.get((await png.getAttribute("href")) ?? "");
+    expect(pngIcon.headers()["content-type"]).toBe("image/png");
+
     for (const icon of [
       "/favicon.ico",
       "/icon-192.png",
