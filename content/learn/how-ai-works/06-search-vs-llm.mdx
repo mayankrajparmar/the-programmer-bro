@@ -1,0 +1,136 @@
+---
+description: How a search engine finds pages while an LLM writes new text, what a knowledge cutoff is, why LLMs hallucinate, and when to trust which.
+inShort: A search engine finds pages that already exist and shows where they came from. An LLM writes new text from what it learned before its knowledge cutoff, and it can state false things just as confidently as true ones.
+lastReviewed: 2026-10-31
+draft: true
+sources:
+  - title: In-depth guide to how Google Search works
+    url: https://developers.google.com/search/docs/fundamentals/how-search-works
+    type: Docs
+    note: Google's own explanation of crawling, indexing and serving search results.
+  - title: Why language models hallucinate
+    url: https://openai.com/index/why-language-models-hallucinate/
+    type: Article
+    note: OpenAI's 2025 research summary on why models make things up, and why training rewards guessing.
+  - title: "Dated Data: Tracing Knowledge Cutoffs in Large Language Models"
+    url: https://arxiv.org/abs/2403.12958
+    type: Paper
+    note: A 2024 study showing a model's real knowledge cutoff can differ from the date its makers report.
+  - title: Llama 3.1 model card
+    url: https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md
+    type: GitHub
+    note: Meta's model card, which lists a knowledge cutoff of December 2023 and a release date of July 2024.
+  - title: Phony ChatGPT Brief Leads to $5,000 Fine for NY Lawyers
+    url: https://news.bloomberglaw.com/litigation/chatgpt-phony-legal-filing-case-gets-lawyers-a-5-000-fine
+    type: Article
+    note: Bloomberg Law's report on the 2023 case where a legal brief cited court cases ChatGPT had made up.
+  - title: Introducing ChatGPT search
+    url: https://openai.com/index/introducing-chatgpt-search/
+    type: Article
+    note: OpenAI's 2024 announcement of answers that come with links to web sources.
+---
+
+Type "Who won the IPL this year?" into Google and you get a page of links: news sites, scorecards, maybe a live update from today. Ask the same question to a chatbot with web search switched off, and you get a smooth paragraph naming a team. It might be right. It might also be last season's winner, stated just as confidently.
+
+Both feel like asking a computer a question, but they work in completely different ways. In this lesson you'll see how a search engine finds and an LLM writes, what a "knowledge cutoff" is, why LLMs sometimes make things up, and how to decide which one to trust for what.
+
+## How a search engine answers
+
+Google describes its search in three stages:
+
+1. **Crawling:** programs called crawlers download pages from across the web, and keep coming back for new ones.
+2. **Indexing:** each page is analysed and stored in the Google index, a huge database of what's on the web, a bit like the index at the back of a textbook.
+3. **Serving results:** when you search, it looks up your words in the index and shows the most relevant pages first.
+
+The key thing is that a search engine **finds** pages that already exist and shows you where each one came from. Because it keeps crawling, it can show you something published this morning. What it doesn't do is check whether a page is true. That part is up to you.
+
+## How an LLM answers
+
+An LLM **writes** an answer. As you saw in lesson 4, it predicts one token at a time, picking what's likely to come next, using patterns it learned during training. On its own it doesn't look anything up, and it doesn't keep a list of where each fact came from, so there are no links unless the app adds them.
+
+<Figure caption="Figure 1: a search engine finds pages that already exist; an LLM writes new text from what it learned in training.">
+  <SearchVsLlmDiagram />
+</Figure>
+
+<Analogy>
+
+Asking a search engine is like asking the librarian at your college library. They don't tell you the answer; they hand you the right books, and you read them yourself. Asking an LLM is like asking a well-read senior who answers from memory: quick, clear and usually helpful, but their knowledge stops on the day they last studied, and now and then they mix things up without noticing.
+
+</Analogy>
+
+## The knowledge cutoff
+
+An LLM's **knowledge cutoff** is the date its training text stops. It knows nothing about what happened after that, unless the app gives it new information, for example through web search.
+
+Take Meta's Llama 3.1. Its model card lists a knowledge cutoff of December 2023, and it was released in July 2024. So even on launch day, it was about seven months behind the news, and the gap grows every day it's in use. Researchers have also found that a model's real cutoff can differ from the date its makers report, and can be different for different topics.
+
+So when you ask about anything recent, such as this year's exam dates, a new phone, a cricket result or a change in a rule, an LLM without search is answering from an old memory. It may not even tell you that.
+
+## Hallucinations: when an LLM makes things up
+
+OpenAI's researchers define **hallucinations** as "plausible but false statements generated by language models". They can be wrong facts, dates and numbers, quotes nobody said, or books, research papers and web links that don't exist.
+
+Why does it happen? Remember lesson 4: an LLM writes what's likely to come next. When it doesn't really know an answer, a confident-sounding guess often looks more likely than "I don't know". OpenAI's research says that the way models are trained and tested "rewards guessing over acknowledging uncertainty".
+
+<Analogy>
+
+It's like a multiple-choice test with no negative marking. A guess might score a mark, and a blank answer never does, so the best strategy is always to guess. Models have learned a similar habit.
+
+</Analogy>
+
+In OpenAI's own example, a widely used chatbot was asked for the title of the PhD thesis of one of the paper's authors. It gave three different titles, all wrong. Asked for his birthday, it gave three different dates, also all wrong.
+
+Hallucinations have real costs. In 2023, two lawyers in New York filed a court document that cited six earlier court cases. None of them existed: ChatGPT had made them up, complete with fake quotes. The judge fined the lawyers and their firm $5,000.
+
+## Why confident isn't correct
+
+An LLM's tone is just style. It writes in the same fluent, sure-of-itself voice whether the facts are right or wrong, because it's predicting what an answer usually sounds like, not checking what's true. So a confident answer tells you nothing about whether it's correct.
+
+Be especially careful with:
+
+- exact numbers, dates and prices,
+- names, quotes and who said what,
+- citations, references and links,
+- anything recent, or anything local, such as your college's fees or your city's bus timings,
+- health, legal and money questions.
+
+<Callout kind="warn">
+
+Never copy a citation, quote, statistic or link from an AI answer into an assignment, report or post without opening the source and checking it yourself.
+
+</Callout>
+
+## Chatbots that search the web
+
+Many chatbots can now search the web before they answer, then write a reply with links to the pages they used. ChatGPT added this in October 2024, promising "fast, timely answers with links to relevant web sources". This mixes the two approaches: the search finds fresh pages, and the LLM writes the answer from them. It's the same idea as RAG, which you'll meet in lesson 8.
+
+It helps a lot, especially with recent events. But the model can still misread a page, mix up two sources or add a detail that isn't there, so click through to the source for anything that matters.
+
+## Which one should you use?
+
+| You want to…                                 | Better choice                        | Why                                             |
+| -------------------------------------------- | ------------------------------------ | ----------------------------------------------- |
+| Know today's news, scores, prices or timings | Search engine                        | Its pages are fresh, and you see the source     |
+| Check an exam date or a government rule      | The official website, through search | Only the source itself is the final word        |
+| Understand a concept in simple words         | LLM                                  | It explains, and explains again in another way  |
+| Draft an email, an outline or some code      | LLM                                  | Writing new text is what it's built for         |
+| Find a source you can quote                  | Search engine                        | You need the real page, not a description of it |
+| Summarise a document you've pasted in        | LLM                                  | The facts are right there in its context window |
+
+That last row matters. When you paste a document into the chat, it sits inside the model's context window (lesson 5), so the model works from the real text instead of its memory. That makes it less likely to make things up, though it's still worth checking.
+
+<TryIt>
+
+First, ask a chatbot "What's your knowledge cutoff?", with web search switched off if your app lets you. Then ask it about something that happened last week, and search for the same thing on Google. Second, ask it: "Give me three research papers about AI in Indian agriculture, with links." Open every link. How many of the papers really exist?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- A search engine finds pages that already exist and shows where they came from. An LLM writes new text from patterns it learned in training.
+- An LLM's knowledge stops at its knowledge cutoff, unless the app adds web search.
+- Hallucinations are plausible but false statements. They happen because the model writes what's likely, and guessing has been rewarded.
+- A confident tone is not evidence: check numbers, names, quotes, citations and anything recent.
+- Use search for fresh facts and real sources, and LLMs for explaining and drafting. When a chatbot gives links, open them.
+
+</KeyTakeaways>
