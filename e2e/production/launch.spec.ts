@@ -1,5 +1,24 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+
+const LEARN_CONTENT = fileURLToPath(new URL("../../content/learn/", import.meta.url));
+
+/** Every lesson marked `draft: true`, as its page path (lesson files are NN-<slug>.mdx). */
+function draftLessonPaths(): string[] {
+  return readdirSync(LEARN_CONTENT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .flatMap(({ name: track }) =>
+      readdirSync(join(LEARN_CONTENT, track))
+        .filter((file) => file.endsWith(".mdx"))
+        .filter((file) =>
+          /^draft: true$/m.test(readFileSync(join(LEARN_CONTENT, track, file), "utf8")),
+        )
+        .map((file) => `/learn/${track}/${file.replace(/^\d+-/, "").replace(/\.mdx$/, "")}`),
+    );
+}
 
 // Runs against a production build (VERCEL_ENV=production npm run build, then
 // npm run test:e2e:production): the site as visitors get it, with drafts and internal pages hidden.
@@ -28,6 +47,8 @@ test.describe("the live site", () => {
     ["next-word", "Predicting the next word"],
     ["tokens", "Tokens: the LLM's alphabet"],
     ["search-vs-llm", "Search engine vs LLM"],
+    ["embeddings", "Embeddings: meaning as numbers"],
+    ["rag", "RAG: giving the model an open book"],
   ] as const) {
     test(`publishes ${slug}, without a draft notice`, async ({ page }) => {
       const response = await page.goto(`/learn/how-ai-works/${slug}`);
@@ -42,10 +63,11 @@ test.describe("the live site", () => {
   });
 
   test("hides lessons that are still drafts", async ({ request }) => {
+    const drafts = draftLessonPaths();
+    test.skip(drafts.length === 0, "No lessons are drafts right now");
     const sitemap = await (await request.get("/sitemap.xml")).text();
     const llms = await (await request.get("/llms.txt")).text();
-    for (const slug of ["embeddings", "rag"]) {
-      const draft = `/learn/how-ai-works/${slug}`;
+    for (const draft of drafts) {
       expect((await request.get(draft)).status(), draft).toBe(404);
       expect(sitemap).not.toContain(draft);
       expect(llms).not.toContain(draft);
@@ -84,6 +106,8 @@ test.describe("the live site", () => {
       "/learn/how-ai-works/next-word",
       "/learn/how-ai-works/tokens",
       "/learn/how-ai-works/search-vs-llm",
+      "/learn/how-ai-works/embeddings",
+      "/learn/how-ai-works/rag",
       "/news",
       "/privacy",
       "/contact",
