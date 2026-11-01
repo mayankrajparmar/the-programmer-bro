@@ -2,6 +2,8 @@ import * as cl100k from "gpt-tokenizer/encoding/cl100k_base";
 import * as o200k from "gpt-tokenizer/encoding/o200k_base";
 import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
+import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
+import { MEANING_MAP } from "../diagrams/meaning-map";
 import { NEXT_WORD_CHOICES } from "../diagrams/next-token";
 import {
   ENGLISH_SENTENCE,
@@ -20,7 +22,10 @@ interface Encoder {
 /*
  * Lessons that show worked numbers get a test that redoes the maths, so a figure
  * and the table built from it can't drift apart. Lesson 5's token splits are checked
- * against the real tokenizers (the gpt-tokenizer package, a dev dependency).
+ * against the real tokenizers (the gpt-tokenizer package, a dev dependency). Lesson 7's
+ * numbers are checked against a sample of real GloVe vectors, written by
+ * scripts/lessons/glove-embeddings.py, which also checks the parts that need all
+ * 400,000 words (nearest neighbours, and which words GloVe doesn't have).
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -140,5 +145,120 @@ describe("worked numbers in lesson 5", () => {
     expect(words(1024) / 300).toBeCloseTo(2.5, 0); // "about two and a half pages"
     expect(words(128_000) / 300).toBeGreaterThan(300); // "roughly a 300-page book"
     expect(words(128_000) / 300).toBeLessThan(350);
+  });
+});
+
+describe("worked numbers in lesson 7", () => {
+  const lesson = getLesson("how-ai-works", "embeddings");
+  const body = lesson?.body ?? "";
+  const glove: Record<string, number[]> = GLOVE_SAMPLE;
+
+  const vector = (word: string) => {
+    const found = glove[word];
+    if (!found) throw new Error(`${word} is missing from glove-sample.json`);
+    return found;
+  };
+  const dot = (a: readonly number[], b: readonly number[]) =>
+    a.reduce((sum, value, i) => sum + value * (b[i] ?? 0), 0);
+  const unit = (word: string) => {
+    const v = vector(word);
+    const length = Math.sqrt(dot(v, v));
+    return v.map((value) => value / length);
+  };
+  const similarity = (a: string, b: string) => dot(unit(a), unit(b));
+  /** Two decimals, with a proper minus sign, as the lesson writes them. */
+  const shown = (value: number) => value.toFixed(2).replace("-", "−");
+
+  it("starts dosa's embedding with the numbers the lesson shows", () => {
+    const first = vector("dosa")
+      .slice(0, 6)
+      .map((value) => (Math.abs(value) < 0.005 ? "0.00" : shown(value)));
+    expect(body).toContain(`"Dosa" starts ${first.join(", ")} and carries on for another 94`);
+    expect(vector("dosa")).toHaveLength(100);
+  });
+
+  it("shows the real cosine similarities in the table", () => {
+    const rows = body.match(/^\| [a-z]+ and [a-z]+ +\| −?\d\.\d\d +\|$/gm) ?? [];
+    expect(rows).toHaveLength(6);
+    for (const row of rows) {
+      const [, a = "", b = "", score] = /^\| ([a-z]+) and ([a-z]+) +\| (\S+)/.exec(row) ?? [];
+      expect(shown(similarity(a, b)), `${a} and ${b}`).toBe(score);
+    }
+  });
+
+  it("gets the cheap, expensive and budget scores right", () => {
+    expect(body).toContain(
+      `"cheap" scores ${shown(similarity("cheap", "expensive"))} with "expensive" but only ${shown(similarity("cheap", "budget"))} with "budget"`,
+    );
+  });
+
+  it("finds queen and Tokyo with word sums", () => {
+    const closest = (from: string, minus: string, plus: string) => {
+      const target = unit(from).map(
+        (value, i) => value - (unit(minus)[i] ?? 0) + (unit(plus)[i] ?? 0),
+      );
+      const others = Object.keys(glove).filter((word) => ![from, minus, plus].includes(word));
+      return others.sort((a, b) => dot(unit(b), target) - dot(unit(a), target))[0];
+    };
+    expect(closest("king", "man", "woman")).toBe("queen");
+    expect(closest("delhi", "india", "japan")).toBe("tokyo");
+  });
+
+  it("puts kabaddi nearer kho-kho than cricket, and UPI near Newsweek", () => {
+    expect(similarity("kabaddi", "kho-kho")).toBeGreaterThan(similarity("kabaddi", "cricket"));
+    expect(similarity("kabaddi", "cricket")).toBeLessThan(similarity("cricket", "football"));
+    const others = Object.keys(glove).filter((word) => !["upi", "newsweek"].includes(word));
+    for (const word of others) {
+      expect(similarity("upi", "newsweek"), word).toBeGreaterThan(similarity("upi", word));
+    }
+  });
+
+  it("draws the map from the real two-dimensional squash (PCA)", () => {
+    // Centre the twelve unit vectors, then find the two directions with the most spread
+    // through the 12×12 Gram matrix, by power iteration with deflation.
+    const rows = MEANING_MAP.map((point) => unit(point.word));
+    const mean =
+      rows[0]?.map((_, i) => rows.reduce((sum, row) => sum + (row[i] ?? 0), 0) / rows.length) ?? [];
+    const centred = rows.map((row) => row.map((value, i) => value - (mean[i] ?? 0)));
+    const gram = centred.map((a) => centred.map((b) => dot(a, b)));
+    const total = gram.reduce((sum, row, i) => sum + (row[i] ?? 0), 0);
+
+    const components: { values: number[]; size: number }[] = [];
+    for (let k = 0; k < 2; k++) {
+      let u = gram.map((_, i) => 1 + i / 10);
+      let size = 0;
+      for (let step = 0; step < 2000; step++) {
+        const next = gram.map((row) => dot(row, u));
+        size = Math.sqrt(dot(next, next));
+        u = next.map((value) => value / size);
+      }
+      components.push({ values: u.map((value) => value * Math.sqrt(size)), size });
+      for (let i = 0; i < gram.length; i++) {
+        for (let j = 0; j < gram.length; j++) {
+          (gram[i] as number[])[j] = (gram[i]?.[j] ?? 0) - size * (u[i] ?? 0) * (u[j] ?? 0);
+        }
+      }
+    }
+
+    const [x = [], y = []] = components.map((component) => component.values);
+    const average = (values: number[], from: number) =>
+      values.slice(from, from + 4).reduce((sum, value) => sum + value, 0) / 4;
+    // Food on the left and sport at the top, as the script orients them.
+    const xs = average(x, 0) > 0 ? x.map((value) => -value) : x;
+    const ys = average(y, 4) < 0 ? y.map((value) => -value) : y;
+    const scale = (values: number[]) => {
+      const low = Math.min(...values);
+      const high = Math.max(...values);
+      return values.map((value) => ((value - low) / (high - low)) * 100);
+    };
+    const [sx, sy] = [scale(xs), scale(ys)];
+    MEANING_MAP.forEach((point, i) => {
+      expect(point.x, point.word).toBeCloseTo(sx[i] ?? -1, 0);
+      expect(point.y, point.word).toBeCloseTo(sy[i] ?? -1, 0);
+    });
+
+    const kept = ((components[0]?.size ?? 0) + (components[1]?.size ?? 0)) / total;
+    expect(Math.round(kept * 100)).toBe(60);
+    expect(body).toContain("keeps only about 60% of the differences");
   });
 });

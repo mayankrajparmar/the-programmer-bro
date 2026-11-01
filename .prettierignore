@@ -1,5 +1,6 @@
 # Generated or vendored
 src/styles/tokens.css
+src/features/learn/diagrams/glove-sample.json
 design/tokens.json
 package-lock.json
 next-env.d.ts
