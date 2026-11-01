@@ -3,6 +3,7 @@ import { aiTimelineMarkdown } from "./ai-timeline";
 import { llmSizesMarkdown } from "./llm-sizes";
 import { meaningMapMarkdown } from "./meaning-map";
 import { nextTokenMarkdown } from "./next-token";
+import { ragPipelineMarkdown } from "./rag-pipeline";
 import { searchVsLlmMarkdown } from "./search-vs-llm";
 import { hindiTokensMarkdown, tokenIdsMarkdown } from "./tokens";
 
@@ -19,4 +20,5 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   HindiTokensDiagram: hindiTokensMarkdown,
   SearchVsLlmDiagram: searchVsLlmMarkdown,
   MeaningMapDiagram: meaningMapMarkdown,
+  RagPipelineDiagram: ragPipelineMarkdown,
 };

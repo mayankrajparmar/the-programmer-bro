@@ -1,0 +1,129 @@
+---
+description: How RAG lets an LLM answer from your own documents, what the model actually receives, why it's often better than retraining, and what can still go wrong.
+inShort: RAG, short for retrieval-augmented generation, lets an AI answer from documents it was never trained on. Before the model answers, a search finds the most relevant passages and adds them to the prompt, so the answer is based on them and can point to its sources.
+lastReviewed: 2026-11-01
+draft: true
+sources:
+  - title: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+    url: https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html
+    type: Paper
+    note: The 2020 paper from Facebook AI Research, UCL and NYU that named RAG, including the test with older and newer copies of Wikipedia.
+  - title: "Retrieval Augmented Generation: Streamlining the creation of intelligent natural language processing models"
+    url: https://ai.meta.com/blog/retrieval-augmented-generation-streamlining-the-creation-of-intelligent-natural-language-processing-models/
+    type: Article
+    note: Meta's 2020 blog post introducing RAG, which compares it to an open-book exam.
+  - title: Introducing Contextual Retrieval
+    url: https://www.anthropic.com/engineering/contextual-retrieval
+    type: Article
+    note: Anthropic's 2024 post on why chunks lose their meaning, how to fix it, and when to skip RAG and include everything.
+  - title: Create vector store file
+    url: https://developers.openai.com/api/reference/resources/vector_stores/subresources/files/methods/create
+    type: Docs
+    note: OpenAI's API reference, which gives its default chunk size of 800 tokens, with 400 tokens of overlap.
+  - title: "AI on Trial: Legal Models Hallucinate in 1 out of 6 (or More) Benchmarking Queries"
+    url: https://hai.stanford.edu/news/ai-trial-legal-models-hallucinate-1-out-6-or-more-benchmarking-queries
+    type: Article
+    note: Stanford's 2024 study showing that legal research tools built on RAG still make things up.
+  - title: Use chat in Gemini Notebook
+    url: https://support.google.com/gemininotebook/answer/16179559?hl=en
+    type: Docs
+    note: Google's help page for the tool in this lesson's "Try it", whose answers use only your sources and cite them.
+---
+
+Ask a chatbot "What time do the gates of my college hostel close on Saturdays?" and it can't really know. It has never read your hostel's rulebook. It might say so, or it might guess a time that sounds right, as you saw in lesson 6. Now paste the right page of the rulebook into the chat and ask again. This time it reads the page and gets the answer right.
+
+That's the whole idea behind **RAG**: before the model answers, find the right pages and hand them over. It's how chatbots answer from a company's help pages, a bank's policies or your own PDFs. In this lesson you'll see how RAG works step by step, what the model actually receives, why it's often better than retraining the model, and what can still go wrong.
+
+## What RAG means
+
+**RAG** stands for **retrieval-augmented generation**. Each word is one step:
+
+- **Retrieval:** finding the passages most likely to hold the answer, usually with the semantic search from lesson 7.
+- **Augmented:** adding those passages to the **prompt**, the text the model receives.
+- **Generation:** the LLM writes its answer, now with the right information in front of it.
+
+The name comes from a 2020 paper by researchers at Facebook AI Research (now part of Meta), University College London and New York University. Their system searched Wikipedia, cut into 21 million passages of 100 words each, and wrote answers from what it found. They reported that its answers were more specific and more factual than those of a similar model working from memory alone.
+
+<Analogy>
+
+Think of two kinds of exam. In a closed-book exam, you answer from memory: whatever you studied, as well as you remember it. In an open-book exam, you can look things up, but you still have to find the right page and read it properly. An LLM on its own sits a closed-book exam. RAG turns it into an open-book exam. Meta's own blog post about RAG uses the same comparison.
+
+</Analogy>
+
+## How RAG works, step by step
+
+RAG has two halves. The documents are prepared once, ahead of time. Then every question goes through three steps, which give RAG its name:
+
+<Figure caption="Figure 1: the two halves of RAG. The documents are prepared once; retrieve, augment and generate happen every time someone asks a question.">
+  <RagPipelineDiagram />
+</Figure>
+
+A **chunk** is a short passage cut from a longer document. Chunks keep the search precise and the prompt short: a whole rulebook would match almost any question, while the one paragraph about gate timings matches only the right ones. OpenAI's file search, for example, cuts files into chunks of up to 800 tokens by default, which is about 600 words, or two pages. Each chunk overlaps the one before it by 400 tokens, so an idea that gets cut off at the end of one chunk still appears whole in the next.
+
+The retrieve step is the semantic search from lesson 7: the question becomes an embedding, and the chunks with the closest embeddings win. So a good system can find the gate-timings rule even when a student asks "Can I come back late on a Saturday?" without using the word "gate".
+
+## What the model actually sees
+
+Here's a made-up example. A college puts its 40-page hostel rulebook into a RAG system, and a student asks: "Can I come back at 10:30 pm on a Saturday?" The search finds two chunks, and the app sends the model a prompt like this:
+
+```text
+Answer the question using only the passages below.
+If the answer isn't in them, say you don't know.
+Mention the section you used.
+
+[1] Section 4.2: Hostel gates close at 10:00 pm on weekdays
+and at 11:00 pm on Saturdays and Sundays.
+
+[2] Section 4.3: Students who return after the gates close
+must sign the late-entry register at the security desk.
+
+Question: Can I come back at 10:30 pm on a Saturday?
+```
+
+The model replies: "Yes. On Saturdays the gates close at 11:00 pm (Section 4.2), so at 10:30 pm you're back before closing time and don't need to sign the late-entry register (Section 4.3)."
+
+Nothing about the model changed. It wasn't retrained on the rulebook. It was handed the right two paragraphs and told to stick to them, and the section numbers let the student check the answer.
+
+## Why not retrain the model?
+
+You could train a model further on your own documents, which is called **fine-tuning**. For answering questions from documents, RAG has three big advantages:
+
+- **It works with documents the model never saw.** Your hostel rules, your company's leave policy and yesterday's circular were never in the model's training text. RAG brings them in at the moment they're needed.
+- **Updating is easy.** Change a document and the next answer uses the new version. In the 2020 paper, the team swapped their December 2018 copy of Wikipedia for one from December 2016, without retraining anything, and asked about 82 world leaders who had changed between those dates. With the Wikipedia from the right year, the system named about 70% of them correctly. With the wrong year's Wikipedia, it managed 12% or fewer. The answers followed the documents.
+- **You can check the answer.** Because the answer comes from specific chunks, the app can show which ones it used, like the section numbers above.
+
+## Why not paste in everything?
+
+Lesson 5 showed that context windows are now huge, so why search at all? For a small collection, you often don't need to. Anthropic suggests that if all your material fits in under 200,000 tokens, about 500 pages, you can simply put all of it in the prompt.
+
+But a bank's help centre or a library of court judgements is far bigger than any context window. And every token you send costs money and time (lesson 5), with every single question. Sending only the few chunks that matter is cheaper and faster.
+
+## What can still go wrong
+
+RAG makes answers better grounded in real documents, but it doesn't make them guaranteed. Things go wrong in three places:
+
+1. **The search misses.** If the right chunk isn't found, the model can't use it, and it may guess instead. Chunks can also lose their meaning when they're cut out of a document. Anthropic's example is a chunk that says only "The company's revenue grew by 3% over the previous quarter", without saying which company or which quarter. Anthropic found that adding a line of context to each chunk before storing it, and searching by both meaning and exact keywords, cut the times the search missed the right chunk by 49%. Adding **reranking**, a second, more careful pass that re-sorts the chunks the search found, took that to 67%.
+2. **The model still slips.** It can misread a chunk, mix two together or add things that aren't there. In 2024, Stanford researchers tested legal research tools built on RAG, some of them advertised as "hallucination-free". On more than 200 legal questions, two of the tools gave incorrect information more than 17% of the time, and a third made things up more than 34% of the time.
+3. **The documents are wrong or out of date.** RAG faithfully repeats what's in its library. If the rulebook is last year's, so is the answer.
+
+<Callout kind="warn">
+
+A citation makes an answer checkable, not correct. When the answer matters, for money, health, law or an exam, open the source and read that part yourself.
+
+</Callout>
+
+<TryIt>
+
+Open [Gemini Notebook](https://notebook.google.com/) (called NotebookLM until July 2026), Google's tool for asking questions about your own documents. It's free to use with a Google account. Add a source, such as a PDF of your college prospectus, a company policy or a long article. Then ask three questions: one the document answers, one it answers only partly, and one it doesn't answer at all. Its answers use only your sources and come with citations: click one to see the exact passage it used. What does it do when the answer isn't there?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- RAG, retrieval-augmented generation, finds the passages most likely to hold the answer, adds them to the prompt, then lets the LLM write the answer from them.
+- Documents are cut into chunks, turned into embeddings and stored once. Each question is matched against them with semantic search.
+- The model isn't retrained. It's handed the right text for each question, so updating a document updates the answers.
+- If everything fits in the context window, you can paste it all in. RAG matters when there's too much, or to keep each question cheap and fast.
+- RAG reduces made-up answers but doesn't remove them: the search can miss, the model can slip, and documents can be wrong. Check the sources.
+
+</KeyTakeaways>

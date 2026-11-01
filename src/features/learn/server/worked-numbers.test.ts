@@ -262,3 +262,32 @@ describe("worked numbers in lesson 7", () => {
     expect(body).toContain("keeps only about 60% of the differences");
   });
 });
+
+describe("worked numbers in lesson 8", () => {
+  const body = getLesson("how-ai-works", "rag")?.body ?? "";
+  // Lesson 5's rules of thumb: a token is about three-quarters of a word, a page about 300 words.
+  const words = (tokens: number) => tokens * 0.75;
+  const pages = (tokens: number) => words(tokens) / 300;
+
+  it("converts OpenAI's 800-token chunks to words and pages", () => {
+    expect(words(800)).toBe(600);
+    expect(pages(800)).toBe(2);
+    expect(body).toContain("up to 800 tokens by default, which is about 600 words, or two pages");
+    expect(body).toContain("overlaps the one before it by 400 tokens");
+  });
+
+  it("agrees with Anthropic that 200,000 tokens is about 500 pages", () => {
+    expect(pages(200_000)).toBe(500);
+    expect(body).toContain("under 200,000 tokens, about 500 pages");
+  });
+
+  it("rounds the paper's Wikipedia swap results fairly", () => {
+    // Lewis et al. (2020), section 4.5: right-year index 70% and 68%, wrong-year 12% and 4%.
+    const rightYear = [70, 68];
+    const wrongYear = [12, 4];
+    for (const score of rightYear) expect(Math.round(score / 10) * 10).toBe(70);
+    expect(Math.max(...wrongYear)).toBe(12);
+    expect(body).toContain("named about 70% of them correctly");
+    expect(body).toContain("it managed 12% or fewer");
+  });
+});

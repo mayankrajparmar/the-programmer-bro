@@ -1,0 +1,109 @@
+{
+  "lesson": "rag",
+  "questions": [
+    {
+      "id": "what-rag-does",
+      "type": "recall",
+      "prompt": "What does RAG do before the LLM writes its answer?",
+      "options": [
+        "Retrains the model on the question",
+        "Finds the passages most likely to hold the answer and adds them to the prompt",
+        "Checks the answer against Wikipedia after it's written",
+        "Asks a person to approve the question"
+      ],
+      "answer": 1,
+      "explanation": "Retrieval-augmented generation retrieves relevant passages, adds them to the prompt (augmented), then lets the LLM write the answer (generation). The model itself isn't changed."
+    },
+    {
+      "id": "chunk",
+      "type": "recall",
+      "prompt": "In a RAG system, what is a chunk?",
+      "options": [
+        "A short passage cut from a longer document",
+        "A single token",
+        "A whole document, stored as one piece",
+        "A wrong answer the model has to throw away"
+      ],
+      "answer": 0,
+      "explanation": "Documents are cut into chunks, short passages often a few hundred tokens long, so the search can pick out just the part that answers the question. OpenAI's file search, for example, uses chunks of up to 800 tokens by default."
+    },
+    {
+      "id": "retrieve-step",
+      "type": "recall",
+      "prompt": "How does the retrieve step usually find the right chunks?",
+      "options": [
+        "It picks chunks at random and hopes for the best",
+        "It always uses the first chunk of every document",
+        "It turns the question into an embedding and finds the chunks with the closest embeddings",
+        "It asks the LLM to remember which page the answer was on"
+      ],
+      "answer": 2,
+      "explanation": "That's the semantic search from lesson 7. Because it compares meanings, it can find the right rule even when the question uses different words from the document."
+    },
+    {
+      "id": "updating",
+      "type": "application",
+      "prompt": "A college changes its hostel closing time and updates the rulebook in its RAG system. What happens to the chatbot's answers?",
+      "options": [
+        "Nothing, until the LLM is retrained on the new rulebook",
+        "The chatbot stops answering until a new model is built",
+        "The chatbot gives both times, old and new",
+        "The next answers use the new rule, because they're written from the updated chunks"
+      ],
+      "answer": 3,
+      "explanation": "With RAG, the answers follow the documents. In the 2020 paper, swapping one year's Wikipedia for another changed the system's answers about world leaders, without retraining anything."
+    },
+    {
+      "id": "paste-everything",
+      "type": "application",
+      "prompt": "You want to ask questions about one 30-page policy document. What's the simplest approach?",
+      "options": [
+        "Fine-tune a new model on the document",
+        "Paste the whole document into the prompt, since it easily fits in the context window",
+        "Build a RAG system with a vector database first",
+        "Ask the chatbot without the document and trust its answer"
+      ],
+      "answer": 1,
+      "explanation": "Thirty pages is far below the 200,000 tokens, about 500 pages, that Anthropic suggests can simply go in the prompt. RAG matters when there's too much to fit, or when sending everything with every question would cost too much."
+    },
+    {
+      "id": "lost-context",
+      "type": "application",
+      "prompt": "A chunk says only \"The company's revenue grew by 3% over the previous quarter.\" Why is that a problem?",
+      "options": [
+        "Out of its document, it doesn't say which company or quarter, so the search may match it to the wrong question",
+        "Numbers can't be turned into embeddings",
+        "The chunk is too long to fit in a prompt",
+        "LLMs can't read percentages"
+      ],
+      "answer": 0,
+      "explanation": "Cutting text into chunks can strip away what it's about. Anthropic found that adding a line of context to each chunk, plus keyword search, cut the times the search missed the right chunk by 49%, and by 67% with reranking."
+    },
+    {
+      "id": "still-wrong",
+      "type": "recall",
+      "prompt": "Stanford researchers tested legal research tools built on RAG. What did they find?",
+      "options": [
+        "They never made anything up",
+        "They were wrong about half of the time",
+        "They still gave incorrect or made-up answers, more than 17% of the time for some and more than 34% for one",
+        "They refused to answer legal questions"
+      ],
+      "answer": 2,
+      "explanation": "Even with retrieval, a model can misread or mix up passages, and the search can miss. Some of these tools had been advertised as \"hallucination-free\", so the study is a reminder to check the sources."
+    },
+    {
+      "id": "citations",
+      "type": "application",
+      "prompt": "A RAG chatbot answers your question about a bank's loan rules and cites \"Section 12\". What should you do if the answer matters to you?",
+      "options": [
+        "Nothing: an answer with a citation is always correct",
+        "Ask the same question again until the answer changes",
+        "Ignore the citation, because only the answer matters",
+        "Open Section 12 and check that it really says what the answer claims"
+      ],
+      "answer": 3,
+      "explanation": "A citation makes an answer checkable, not correct. The model might have misread the section, or the search might have found the wrong one, so for money, health, law or exams, read the source yourself."
+    }
+  ]
+}
