@@ -38,7 +38,14 @@ test.describe("the live site", () => {
   }
 
   test("answers lessons that aren't written yet with a 404", async ({ request }) => {
-    expect((await request.get("/learn/how-ai-works/embeddings")).status()).toBe(404);
+    expect((await request.get("/learn/how-ai-works/rag")).status()).toBe(404);
+  });
+
+  test("hides lessons that are still drafts", async ({ request }) => {
+    const draft = "/learn/how-ai-works/embeddings";
+    expect((await request.get(draft)).status()).toBe(404);
+    expect(await (await request.get("/sitemap.xml")).text()).not.toContain(draft);
+    expect(await (await request.get("/llms.txt")).text()).not.toContain(draft);
   });
 
   test("keeps internal pages out of production", async ({ request }) => {

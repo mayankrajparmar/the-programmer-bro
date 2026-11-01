@@ -79,6 +79,7 @@ The first time you run browser tests, install Chromium with `npx playwright inst
 │   └── brand/                 # Logo and wordmark SVGs, app icons
 ├── scripts/
 │   ├── build-tokens.ts        # tokens.json → src/styles/tokens.css
+│   ├── lessons/               # Scripts that work out the real numbers some lessons show
 │   └── tokens/                # Token rendering and contrast helpers, with tests
 ├── supabase/
 │   ├── migrations/            # Database changes, applied in order (0001_news.sql, ...)
@@ -208,6 +209,12 @@ A diagram is a React component in `src/features/learn/diagrams/`, registered in
 `aria-label` that says what it shows. Also export the figure as Markdown and add it to
 `src/features/learn/diagrams/text.ts`, so the plain-text copy of the lesson in `/llms-full.txt`
 keeps the figure (a unit test fails if a diagram is missing there).
+
+When a lesson shows worked numbers (probabilities, token counts, similarity scores), add a test
+to `src/features/learn/server/worked-numbers.test.ts` that works them out again, so the text,
+the tables and the figures can't drift apart. If the numbers come from data too big to keep in
+the repository, put the script that produces them in `scripts/lessons/` and commit a small
+sample for the test (lesson 7 does this with `glove-embeddings.py` and `glove-sample.json`).
 
 ## Adding a resource
 

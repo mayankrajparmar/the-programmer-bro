@@ -88,7 +88,7 @@ describe("learning content", () => {
   it("returns null for lessons and tracks that don't exist", () => {
     expect(getTrack("no-such-track")).toBeNull();
     expect(getLesson("how-ai-works", "no-such-lesson")).toBeNull();
-    expect(getLesson("how-ai-works", "embeddings")).toBeNull(); // planned, not written yet
+    expect(getLesson("how-ai-works", "rag")).toBeNull(); // planned, not written yet
   });
 
   it("lists the tracks coming next, none of which exist yet", () => {
@@ -136,6 +136,11 @@ describe("learning content", () => {
     expect(sixth?.number).toBe(6);
     expect(sixth?.previous?.slug).toBe("tokens");
     expect(sixth?.next?.slug).toBe("embeddings");
+
+    const seventh = getLesson("how-ai-works", "embeddings");
+    expect(seventh?.number).toBe(7);
+    expect(seventh?.previous?.slug).toBe("search-vs-llm");
+    expect(seventh?.next?.slug).toBe("rag");
   });
 });
 

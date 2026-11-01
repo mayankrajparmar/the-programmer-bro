@@ -1,0 +1,104 @@
+{
+  "lesson": "embeddings",
+  "questions": [
+    {
+      "id": "what-is-embedding",
+      "type": "recall",
+      "prompt": "What is an embedding?",
+      "options": [
+        "A short summary of a document, written by a person",
+        "A list of numbers that stands for the meaning of a word, sentence or document",
+        "A picture that shows how a model was trained",
+        "The ID number a tokenizer gives each token"
+      ],
+      "answer": 1,
+      "explanation": "An embedding is a list of numbers, also called a vector, that stands for meaning. Things with similar meanings get similar numbers. A token ID (lesson 5) is just one number that names a chunk of text; it says nothing about meaning."
+    },
+    {
+      "id": "who-decides",
+      "type": "recall",
+      "prompt": "GloVe gives each word a list of 100 numbers. Who decides what each of those numbers means?",
+      "options": [
+        "Language experts, who score every word by hand",
+        "The person typing, who picks the numbers in the settings",
+        "Nobody: a model learns the numbers from huge amounts of text",
+        "Each number is a fixed property, such as how long the word is"
+      ],
+      "answer": 2,
+      "explanation": "Nobody writes the numbers by hand, and no single number has a neat label like \"spicy\". A model learns them from huge amounts of text, so words used in similar sentences end up with similar numbers."
+    },
+    {
+      "id": "cosine",
+      "type": "recall",
+      "prompt": "Two embeddings have a cosine similarity of 0.70. What does that tell you?",
+      "options": [
+        "The two meanings are fairly similar",
+        "The two words are spelled 70% the same",
+        "The two meanings are opposites",
+        "70% of people think the words mean the same thing"
+      ],
+      "answer": 0,
+      "explanation": "Cosine similarity scores how closely two embeddings point the same way: near 1 is very similar, near 0 is unrelated. In GloVe, laptop and computer score 0.70. It has nothing to do with spelling or surveys."
+    },
+    {
+      "id": "pick-the-closest",
+      "type": "application",
+      "prompt": "A word-embedding model gives these scores with \"dosa\": idli 0.63, samosa 0.42, cricket −0.09. Which word does the model treat as closest in meaning to dosa?",
+      "options": [
+        "Cricket, because it's the only negative number",
+        "Samosa",
+        "Idli",
+        "They're all the same, because they're all real words"
+      ],
+      "answer": 2,
+      "explanation": "The highest score means the closest meaning, so idli (0.63) wins. A score below 0, like cricket's, means the two point apart: the model sees them as unrelated."
+    },
+    {
+      "id": "word-sums",
+      "type": "recall",
+      "prompt": "In GloVe, which word is closest to king − man + woman (leaving out the three starting words)?",
+      "options": ["Prince", "Queen", "Woman", "Kingdom"],
+      "answer": 1,
+      "explanation": "The closest word is \"queen\". Nobody taught GloVe about royalty: the pattern falls out of how the words are used. In the same way, Delhi − India + Japan lands nearest \"Tokyo\"."
+    },
+    {
+      "id": "cheap-expensive",
+      "type": "application",
+      "prompt": "In GloVe, \"cheap\" scores 0.77 with \"expensive\" but only 0.28 with \"budget\". What's the best explanation?",
+      "options": [
+        "The numbers are wrong, because cheap and expensive are opposites",
+        "Cheap and expensive mean almost the same thing",
+        "Budget isn't a real English word",
+        "Embeddings track how words are used, and cheap and expensive turn up in the same kinds of sentences"
+      ],
+      "answer": 3,
+      "explanation": "\"The tickets were cheap\" and \"the tickets were expensive\" are the same kind of sentence, so the two words get similar numbers. Embeddings follow how words are used, which usually matches meaning, but not always."
+    },
+    {
+      "id": "semantic-search",
+      "type": "application",
+      "prompt": "A bank's help page uses semantic search. Someone types \"I forgot my UPI PIN, what should I do?\". What does the search do first?",
+      "options": [
+        "Turns the question into an embedding, then finds the stored articles whose embeddings are closest",
+        "Looks only for articles containing the exact words \"forgot\" and \"PIN\"",
+        "Asks an LLM to write a brand-new help article",
+        "Shows the most recently written article"
+      ],
+      "answer": 0,
+      "explanation": "Semantic search turns every article into an embedding ahead of time, then turns the question into an embedding too and returns the closest matches. So it can find \"How do I reset my UPI PIN?\" even though the words differ. Matching exact words is keyword search."
+    },
+    {
+      "id": "limits",
+      "type": "application",
+      "prompt": "A company wants to rank job applicants with word embeddings learned from news articles. What's the biggest worry?",
+      "options": [
+        "Embeddings can't handle names",
+        "The embeddings will be too slow to compute",
+        "Embeddings pick up stereotypes from the text they learned from, which could quietly shape the ranking",
+        "News articles are too short to learn from"
+      ],
+      "answer": 2,
+      "explanation": "A 2016 study found that word embeddings trained on Google News \"exhibit female/male gender stereotypes to a disturbing extent\". Used to rank people, those stereotypes can affect who gets picked, so such a system needs careful checking."
+    }
+  ]
+}

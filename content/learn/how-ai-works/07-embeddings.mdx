@@ -1,0 +1,130 @@
+---
+description: How embeddings turn words and sentences into lists of numbers, why similar meanings land close together, and how that powers semantic search.
+inShort: An embedding is a list of numbers that stands for the meaning of a word, a sentence or a whole document. Similar meanings get similar numbers, so a computer can measure how close two ideas are and search by meaning instead of exact words.
+lastReviewed: 2026-11-01
+draft: true
+sources:
+  - title: "GloVe: Global Vectors for Word Representation"
+    url: https://aclanthology.org/D14-1162/
+    type: Paper
+    note: The 2014 Stanford paper behind the GloVe word embeddings used for every number in this lesson.
+  - title: "Machine Learning Crash Course: Embeddings"
+    url: https://developers.google.com/machine-learning/crash-course/embeddings
+    type: Course
+    note: Google's free, beginner-friendly module on what embeddings are and how they're learned.
+  - title: Vector embeddings
+    url: https://developers.openai.com/api/docs/guides/embeddings
+    type: Docs
+    note: OpenAI's guide to embeddings for search, recommendations and more, including how long its embeddings are.
+  - title: "Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings"
+    url: https://proceedings.neurips.cc/paper/2016/hash/a486cd07e4ac3d270571622f4f316ec5-Abstract.html
+    type: Paper
+    note: The 2016 study showing that word embeddings pick up stereotypes from the text they learn from.
+  - title: "Open sourcing the Embedding Projector"
+    url: https://research.google/blog/open-sourcing-the-embedding-projector-a-tool-for-visualizing-high-dimensional-data/
+    type: Article
+    note: Google's introduction to the Embedding Projector, the free tool in this lesson's "Try it".
+  - title: gensim-data
+    url: https://github.com/RaRe-Technologies/gensim-data
+    type: GitHub
+    note: Where we downloaded the GloVe vectors (glove-wiki-gigaword-100) to work out this lesson's numbers.
+---
+
+Say "dosa" and you'll think of idli and sambar long before you think of cricket. Your brain keeps related ideas close together. Computers can do something similar: they turn every word, sentence or document into a list of numbers, so that things with similar meanings get similar numbers.
+
+Those lists are called **embeddings**, and they're quietly everywhere: in search boxes that understand what you mean, in "you might also like" suggestions, and in the systems that let chatbots answer from your own documents (lesson 8). In this lesson you'll see what embeddings are, how a computer measures "close in meaning", and how that powers search by meaning.
+
+## Describing meaning with numbers
+
+Imagine describing snacks with just three scores out of 10: how spicy, how sweet and how filling.
+
+| Snack (made-up scores) | Spicy | Sweet | Filling |
+| ---------------------- | ----- | ----- | ------- |
+| Pani puri              | 8     | 3     | 2       |
+| Samosa                 | 6     | 1     | 6       |
+| Gulab jamun            | 0     | 10    | 5       |
+| Rasmalai               | 0     | 9     | 3       |
+
+Look at the numbers and you can tell that gulab jamun and rasmalai are alike, and that pani puri is nothing like either, without tasting anything. Each snack has become a list of three numbers. That's the whole idea of an embedding.
+
+An **embedding** is a list of numbers that stands for the meaning of something. Such a list is also called a **vector**, and the number of numbers in it is its number of **dimensions**. Real embeddings are much longer than three numbers, and nobody decides what each number means: a model learns them from huge amounts of text, so that words used in similar sentences end up with similar numbers.
+
+For example, **GloVe**, a set of word embeddings from Stanford University, gives each of 400,000 English words a list of numbers, learned from Wikipedia and news articles. In the version we used, each list has 100 numbers. "Dosa" starts −0.53, −0.51, 0.00, −0.03, −0.61, −0.33 and carries on for another 94. On their own the numbers mean nothing to a person. Their power is in comparing them.
+
+## Close in meaning, close in space
+
+<Analogy>
+
+Think of a map of India. Every city has two numbers, its latitude and longitude, and cities with similar numbers are near each other, like Mumbai and Pune, or Delhi and Gurugram. Embeddings are a map of meaning: each word gets coordinates, just many more than two, and words with similar meanings end up as neighbours.
+
+</Analogy>
+
+You can think of each embedding as a point in a space with as many directions as it has numbers. We can't draw 100 directions, but we can squash them down to two, keeping as much of the shape as possible. Here's what you get for twelve words, using their real GloVe embeddings:
+
+<Figure caption="Figure 1: twelve words placed by their GloVe embeddings, squashed from 100 numbers to 2 so they can be drawn. The groups are real, but squashing keeps only about 60% of the differences between the words, so treat the distances as rough.">
+  <MeaningMapDiagram />
+</Figure>
+
+Nobody told GloVe which words are food, sport or tech. The groups appear because those words turn up in similar sentences. Kabaddi sits a little apart from cricket, hockey and football. GloVe knows it's a sport, but its closest words are kho-kho, pétanque, sepak takraw and netball: in the text GloVe learned from, kabaddi is written about in different sentences from cricket.
+
+## Measuring how similar two meanings are
+
+To compare two embeddings, AI systems usually use **cosine similarity**: a score for how closely two vectors point in the same direction. A score near 1 means very similar meaning, near 0 means unrelated, and below 0 means they point apart. Here are real scores from GloVe:
+
+| Words                | Cosine similarity |
+| -------------------- | ----------------- |
+| laptop and computer  | 0.70              |
+| cricket and football | 0.67              |
+| dosa and idli        | 0.63              |
+| dosa and samosa      | 0.42              |
+| dosa and biryani     | 0.36              |
+| dosa and cricket     | −0.09             |
+
+You can even do sums with meanings. Take the embedding for "king", subtract "man" and add "woman", and apart from the three words you started with, the closest word to the result is "queen". Take "Delhi", subtract "India" and add "Japan", and the closest word is "Tokyo". Nobody taught GloVe about royalty or capital cities. These patterns fall out of how the words are used.
+
+<Callout kind="warn">
+
+"Used in similar sentences" isn't the same as "means the same". In GloVe, "cheap" scores 0.77 with "expensive" but only 0.28 with "budget", because cheap and expensive turn up in the same kinds of sentences: "the tickets were \_\_\_". Embeddings track how words are used, which usually follows meaning, but not always.
+
+</Callout>
+
+## From words to whole sentences
+
+GloVe gives one embedding per word. Modern embedding models go further: they read a whole sentence, paragraph or page and give it one embedding. OpenAI's smaller embedding model, for example, turns each piece of text into a list of 1,536 numbers.
+
+Because they read the whole text, these models are built to place questions that mean the same thing close together, even when the words differ. A good model should put "How do I reset my UPI PIN?" close to "I forgot my UPI PIN, what should I do?", and further from "What's the UPI transaction limit?", even though all three mention UPI.
+
+## Semantic search: searching by meaning
+
+Ordinary **keyword search** looks for the exact words you typed. **Semantic search** looks for meaning instead, using embeddings:
+
+1. Turn every document into an embedding once, and store them. A **vector database** is a database built to store embeddings and find the closest ones quickly.
+2. When someone asks a question, turn the question into an embedding too.
+3. Find the stored embeddings closest to the question's embedding.
+4. Show those documents first.
+
+The same trick powers many other things. OpenAI lists search, recommendations ("more like this"), grouping similar texts, spotting the odd one out and sorting texts into categories. And it's the first step of RAG, the subject of lesson 8: before a chatbot answers from your documents, semantic search finds the passages most likely to hold the answer.
+
+## What embeddings can get wrong
+
+Embeddings learn from text written by people, so they pick up people's biases too. A 2016 study found that word embeddings trained on Google News articles "exhibit female/male gender stereotypes to a disturbing extent". If a system ranks job candidates or search results using embeddings like these, those stereotypes can quietly shape the results.
+
+They also only know the world as it was in their training text. GloVe's text is from 2014 and earlier, so "covid" and "ChatGPT" aren't in it at all. And "UPI" sits closest to news agencies and magazines such as Newsweek: in GloVe's text, UPI is United Press International, an American news agency. The UPI payment system only launched in 2016.
+
+And as the cheap and expensive example shows, close in the embedding doesn't always mean close in meaning.
+
+<TryIt>
+
+Open the [Embedding Projector](https://projector.tensorflow.org/), a free tool from Google that draws embeddings as a cloud of points you can spin around. Choose the "Word2Vec 10K" dataset, embeddings for 10,000 common English words, if it isn't already selected. Type "cricket" into its Search box and click the word to see a list of its nearest points. Then try "india", "king" or "computer". Do the neighbours make sense? Can you find a pair that's close for a surprising reason?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- An embedding is a list of numbers (a vector) that stands for the meaning of a word, sentence or document.
+- Models learn embeddings from huge amounts of text, so things used in similar ways end up with similar numbers.
+- Cosine similarity scores how close two embeddings are: near 1 is similar, near 0 is unrelated.
+- Semantic search turns documents and questions into embeddings and returns the closest matches. It's also the first step of RAG.
+- Embeddings reflect their training text, including its biases and its blind spots, and "used alike" doesn't always mean "means the same".
+
+</KeyTakeaways>
