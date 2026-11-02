@@ -1,0 +1,64 @@
+name: IndexNow
+
+# After each production release, tells Bing and the other IndexNow search engines which
+# pages changed, so they recrawl them soon (jobs/indexnow.ts). Google reads the sitemap
+# instead. Needs no secrets: the key is public, served from public/<key>.txt.
+
+on:
+  # Vercel reports each deployment as a commit status called "Vercel". When it turns
+  # green on a commit on main, that commit is live in production.
+  status:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "Send pages changed on or after this day (YYYY-MM-DD). Leave empty to send every page."
+        type: string
+        required: false
+      dry_run:
+        description: "Dry run: list the pages that would be sent, and send nothing"
+        type: boolean
+        default: false
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    name: Tell search engines what changed
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.context == 'Vercel' && github.event.state == 'success' &&
+      contains(github.event.branches.*.name, 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.sha || github.sha }}
+          # The commit before this one is the previous release.
+          fetch-depth: 2
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Choose which pages to send
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          SINCE: ${{ inputs.since }}
+        run: |
+          if [ "$EVENT" = "status" ]; then
+            previous=$(TZ=Asia/Kolkata git log -1 --format=%cd --date=format-local:%Y-%m-%d HEAD^1)
+            echo "args=--previous-release $previous" >> "$GITHUB_OUTPUT"
+          elif [ -n "$SINCE" ]; then
+            if ! [[ "$SINCE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+              echo "since must look like 2026-11-02"; exit 1
+            fi
+            echo "args=--since $SINCE" >> "$GITHUB_OUTPUT"
+          else
+            echo "args=--all" >> "$GITHUB_OUTPUT"
+          fi
+      - run: node jobs/indexnow.ts ${{ steps.scope.outputs.args }} ${{ inputs.dry_run && '--dry-run' || '' }}
