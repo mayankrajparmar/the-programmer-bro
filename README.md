@@ -311,7 +311,16 @@ understand and quote the site lives in `src/features/seo` and is applied automat
 - **`/llms.txt` and `/llms-full.txt`** ([llmstxt.org](https://llmstxt.org)): a Markdown map of the
   site and the full text of every published lesson, for AI tools.
 - **Sitemap** with each lesson's and page's last-changed date. `robots.txt` lets every crawler in,
-  including AI crawlers, except `/admin`.
+  including AI crawlers, except `/admin`. Google reads the sitemap on its own; submit it once in
+  Search Console (Indexing → Sitemaps) to see what it has indexed.
+- **IndexNow, for Bing and others.** After each production deploy, `.github/workflows/indexnow.yml`
+  runs `jobs/indexnow.ts`, which tells the [IndexNow](https://www.indexnow.org/documentation)
+  search engines (Bing, Yandex, Seznam, Naver and others share one submission) which pages
+  changed: those dated, in the live sitemap, from the day before the previous release. It starts
+  when Vercel's commit status turns green on a commit on `main`. The key is public by design and
+  is served from `public/<key>.txt`; a unit test checks it matches. To send pages by hand, run the
+  workflow from the Actions tab (leave the date empty to send every page), or locally:
+  `node jobs/indexnow.ts --since 2026-11-02 --dry-run`.
 
 Lessons also say "Reviewed by" with the review date, and list their sources: both are signals
 search engines and answer engines use to decide what to trust.

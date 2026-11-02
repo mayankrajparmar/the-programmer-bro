@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { INDEXNOW_KEY } from "../../jobs/indexnow/indexnow.ts";
 
 const LEARN_CONTENT = fileURLToPath(new URL("../../content/learn/", import.meta.url));
 
@@ -74,6 +75,12 @@ test.describe("the live site", () => {
       expect(sitemap).not.toContain(draft);
       expect(llms).not.toContain(draft);
     }
+  });
+
+  test("serves the IndexNow key file, so Bing can check the site is ours", async ({ request }) => {
+    const response = await request.get(`/${INDEXNOW_KEY}.txt`);
+    expect(response.status()).toBe(200);
+    expect((await response.text()).trim()).toBe(INDEXNOW_KEY);
   });
 
   test("keeps internal pages out of production", async ({ request }) => {
