@@ -1,0 +1,129 @@
+---
+description: How a Transformer turns a prompt into the next token, step by step, with real numbers from GPT-2 showing attention at work.
+inShort: A Transformer is the design inside nearly every modern LLM. It turns tokens into embeddings and passes them through a stack of blocks. In each, attention lets every token gather information from earlier tokens, and a small neural network works on each token alone. Then it predicts the next token.
+lastReviewed: 2026-11-02
+draft: true
+sources:
+  - title: Attention Is All You Need
+    url: https://arxiv.org/abs/1706.03762
+    type: Paper
+    note: The 2017 Google paper that introduced the Transformer, "based solely on attention mechanisms".
+  - title: Attention in transformers, step-by-step
+    url: https://www.3blue1brown.com/lessons/attention
+    type: Video
+    note: Grant Sanderson's animated lesson on queries, keys and values, and why later words can't change earlier ones.
+  - title: The Llama 3 Herd of Models
+    url: https://arxiv.org/abs/2407.21783
+    type: Paper
+    note: Meta's 2024 report, whose Table 3 gives Llama 3.1 405B's 126 layers and 128 attention heads.
+  - title: Efficient Streaming Language Models with Attention Sinks
+    url: https://arxiv.org/abs/2309.17453
+    type: Paper
+    note: The 2023 study of why models put so much attention on the first tokens, even when they don't matter.
+  - title: Transformer Explainer
+    url: https://poloclub.github.io/transformer-explainer/
+    type: Tool
+    note: The free tool in this lesson's "Try it", which runs GPT-2 in your browser. Its open-source code holds the copy of GPT-2 we ran for this lesson's numbers.
+  - title: LLM Visualization
+    url: https://bbycroft.net/llm
+    type: Tool
+    note: Brendan Bycroft's 3D walkthrough of a tiny GPT, with GPT-2 and GPT-3 alongside so you can see how much bigger they are.
+---
+
+Read these two sentences: "I sat on the bank of the Ganga" and "I paid my college fees at the bank". You never stop to wonder which "bank" is which. The words around it tell you straight away.
+
+The embeddings from lesson 7 can't do that on their own. They give "bank" the same list of numbers in every sentence. The **Transformer**, the design inside nearly every modern LLM, fixes this: it lets each token look at the tokens around it and update its own numbers, again and again, until "bank" means the right thing. In this lesson you'll follow a prompt through a real Transformer, GPT-2, and see attention at work with real numbers.
+
+## The journey of a prompt
+
+GPT-2 is the smallest version of the model OpenAI released in 2019, the one you met in lesson 4's "Try it". It's tiny by today's standards, with about 124 million parameters, but it's built the same way as much bigger LLMs. Here's what happens to your prompt inside it:
+
+<Figure caption="Figure 1: the journey of a prompt through GPT-2. The Transformer blocks in the middle do most of the work, and bigger models simply stack more of them.">
+  <TransformerPipelineDiagram />
+</Figure>
+
+Why mark each token's position? A Transformer reads all the tokens of your prompt together, not one after another. Without position information, "Dog bites man" and "Man bites dog" would look exactly the same to it.
+
+## Attention: tokens looking at each other
+
+**Attention** is how tokens share information. For each token, the model works out three new lists of numbers from its embedding:
+
+- a **query**: what this token is looking for;
+- a **key**: what this token can offer to others;
+- a **value**: the information it passes on if it's chosen.
+
+Each token compares its query with the keys of the other tokens. A good match gets a high score. The scores are turned into percentages that add up to 100%, and the token takes in a mix of the others' values, in those proportions. That mix updates its numbers.
+
+In GPT-style models there's one rule: a token can only look at itself and the tokens **before** it, never the ones after. The model's job is to predict what comes next, so it mustn't peek.
+
+<Analogy>
+
+Think of a group study session before the board exams. Everyone has a question in mind (the query) and a topic they're good at (the key). When your question matches someone's topic, you listen to their notes (the value) more closely. Then everyone goes home and thinks over what they heard on their own. Next day, the group meets again, a little wiser. A Transformer does this once per block: attention is the group discussion, and the feed-forward step is the thinking alone.
+
+</Analogy>
+
+### Attention in a real model
+
+We ran GPT-2 on two sentences that differ by one word: "Yesterday Riya couldn't lift the suitcase because **it** was too heavy" and "...because **she** was too tired". Then we looked at what one of its attention heads does with "it" and "she":
+
+<Figure caption="Figure 2: real attention from GPT-2 (layer 5, head 4). The same head sends 52.4% of the attention from “it” to “suitcase”, and 31.5% of the attention from “she” to “Riya”, which is two tokens. A dot marks a space at the start of a token.">
+  <AttentionDiagram />
+</Figure>
+
+The same head, given the same sentence with a different pronoun, looks at a different word. Nobody programmed that. It came out of training, which is lesson 11. And notice that at "it", GPT-2 hasn't seen "heavy" or "tired" yet, because those words come later. It's going on other clues, such as "it" usually meaning a thing and "she" a person.
+
+What about the big share on "Yesterday"? For "it", 108 of GPT-2's 144 heads give the first token the biggest share of attention. Researchers call this an **attention sink**: models put a lot of attention on the first tokens "even if they are not semantically important", a kind of resting place when nothing else needs looking at.
+
+### Many heads at once
+
+Each block runs several attention heads side by side, and each one learns to look for different things: one might link pronouns to nouns, another might look at the word just before. GPT-2 has 12 heads in each of its 12 blocks, 144 in total. Llama 3.1 405B, from lesson 3, has 128 heads in each of its 126 layers: 16,128 heads. Many of them don't do anything as easy to put into words as Figure 2.
+
+## The feed-forward network: each token thinks alone
+
+After attention, each token's numbers go through a **feed-forward network**: a small neural network of the kind you met in lesson 9, applied to each token separately. In GPT-2, 768 numbers go in, through a hidden layer of 3,072 neurons, and 768 come out. These networks hold about two-thirds of the parameters in each GPT-2 block.
+
+Two small details keep the stack working. Each part adds its changes on top of the numbers that came in, instead of replacing them, so nothing from earlier gets lost. And a step called **normalisation** keeps the numbers in a sensible range as they pass through. Put together, one GPT-2 block looks like this:
+
+<Figure caption="Figure 3: inside one GPT-2 block, drawn the way you'll see it in papers and videos. The lines down the side add each part's result back to what came in. GPT-2 stacks 12 of these, one after another.">
+  <BlockDiagram />
+</Figure>
+
+You'll often see a different diagram: Figure 1 of the 2017 paper that introduced the Transformer. It has two towers side by side because that Transformer was built for translation. One tower, the **encoder**, reads the sentence to translate, and the other, the **decoder**, writes the translation. GPT-style models use a single stack, much like the decoder, and they normalise at the start of each part rather than the end. The building blocks are the same.
+
+## The prediction
+
+After the last block, the last token's numbers are turned into a score for every token in the vocabulary, and the scores become probabilities, exactly as in lesson 4. We gave GPT-2 "Yesterday Riya couldn't lift the suitcase because it was too" and asked for its top five next tokens:
+
+| Next token | GPT-2's probability |
+| ---------- | ------------------- |
+| heavy      | 45.3%               |
+| big        | 13.0%               |
+| cold       | 3.0%                |
+| hard       | 2.9%                |
+| large      | 2.8%                |
+
+Pick one, add it to the text, and the whole journey starts again for the next token.
+
+## Why the Transformer took over
+
+Before 2017, most of the best language models read text one word at a time, each step waiting for the one before. The paper that introduced the Transformer, "Attention Is All You Need" by Google researchers, dropped that. Because a Transformer handles all the tokens of a text together, training can do many calculations at once, which suits GPUs, the chips from lesson 2. Its authors reported that their Transformers were "more parallelizable" and needed "significantly less time to train" than earlier designs. The paper's biggest model trained in 3.5 days on eight GPUs. And any token can look straight at any earlier token, however far back it is.
+
+There's a cost. Every token compares itself with every token before it, so the work grows faster than the text: 1,000 tokens make 500,500 comparisons in each head, and 2,000 tokens make 2,001,000, about four times as many. That's one reason context windows (lesson 5) have limits, and why long prompts cost more.
+
+<TryIt>
+
+Open [Transformer Explainer](https://poloclub.github.io/transformer-explainer/) again, the tool from lesson 4 that runs GPT-2 in your browser. This time, look inside: you'll see the same parts as Figure 1, from embeddings to attention, the feed-forward step and the probabilities. Type a sentence with a pronoun, such as "My phone was slow because it", then click the attention step to open it, and hover over its grid to see how much each token looks at each earlier one.
+
+Want to see it in 3D? [LLM Visualization](https://bbycroft.net/llm) walks you through a tiny GPT with about 85,000 parameters, one step at a time, then lets you compare it with GPT-2 and GPT-3.
+
+</TryIt>
+
+<KeyTakeaways>
+
+- A Transformer turns tokens into embeddings, passes them through a stack of blocks, and turns the last token's numbers into next-token probabilities.
+- Each block has attention, where every token gathers information from the tokens before it, and a feed-forward network, where each token is worked on alone.
+- Attention uses a query, a key and a value for each token. In a real GPT-2 head, "it" looks mostly at "suitcase" and "she" at "Riya".
+- Many attention heads run side by side: 144 in GPT-2, over 16,000 in Llama 3.1 405B.
+- Transformers train fast on GPUs because they handle all tokens together, but the work grows fast with the length of the text.
+
+</KeyTakeaways>

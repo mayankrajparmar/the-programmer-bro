@@ -53,6 +53,7 @@ export const SOURCE_TYPES = [
   "Course",
   "GitHub",
   "Book",
+  "Tool",
 ] as const;
 
 export const LessonFrontmatterSchema = z

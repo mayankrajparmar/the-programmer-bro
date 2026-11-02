@@ -8,10 +8,12 @@ import { AiLayersDiagram } from "../diagrams/ai-layers";
 import { AiTimelineDiagram } from "../diagrams/ai-timeline";
 import { LlmSizesDiagram } from "../diagrams/llm-sizes";
 import { DigitGuessesDiagram, DigitNetworkDiagram } from "../diagrams/digit-network";
+import { AttentionDiagram, TransformerPipelineDiagram } from "../diagrams/gpt2-attention";
 import { MeaningMapDiagram } from "../diagrams/meaning-map";
 import { NeuronDiagram } from "../diagrams/neuron";
 import { NextTokenDiagram } from "../diagrams/next-token";
 import { RagPipelineDiagram } from "../diagrams/rag-pipeline";
+import { BlockDiagram } from "../diagrams/transformer-block";
 import { SearchVsLlmDiagram } from "../diagrams/search-vs-llm";
 import { HindiTokensDiagram, TokenIdsDiagram } from "../diagrams/tokens";
 
@@ -143,4 +145,7 @@ export const lessonComponents: MDXComponents = {
   NeuronDiagram,
   DigitNetworkDiagram,
   DigitGuessesDiagram,
+  TransformerPipelineDiagram,
+  AttentionDiagram,
+  BlockDiagram,
 };

@@ -1,0 +1,76 @@
+{
+  "model": {
+    "vocab": 50257,
+    "context": 1024,
+    "width": 768,
+    "layers": 12,
+    "mlp": 3072,
+    "parameters": 124439808,
+    "heads": 12
+  },
+  "blockOrder": ["normalise", "attention", "add", "normalise", "feed-forward", "add"],
+  "head": {
+    "layer": 5,
+    "head": 4
+  },
+  "sentences": {
+    "it": {
+      "text": "Yesterday Riya couldn't lift the suitcase because it was too heavy.",
+      "tokens": [
+        "Yesterday",
+        " R",
+        "iya",
+        " couldn",
+        "'t",
+        " lift",
+        " the",
+        " suitcase",
+        " because",
+        " it"
+      ],
+      "percent": [26.7, 6.1, 3.1, 1.2, 0.5, 1.7, 1.5, 52.4, 3.2, 3.6]
+    },
+    "she": {
+      "text": "Yesterday Riya couldn't lift the suitcase because she was too tired.",
+      "tokens": [
+        "Yesterday",
+        " R",
+        "iya",
+        " couldn",
+        "'t",
+        " lift",
+        " the",
+        " suitcase",
+        " because",
+        " she"
+      ],
+      "percent": [43.9, 14.9, 16.6, 4.7, 1.5, 2.4, 1.4, 3.3, 4.8, 6.5]
+    }
+  },
+  "firstTokenTop": 108,
+  "next": {
+    "prompt": "Yesterday Riya couldn't lift the suitcase because it was too",
+    "tokens": [
+      {
+        "text": " heavy",
+        "percent": 45.3
+      },
+      {
+        "text": " big",
+        "percent": 13.0
+      },
+      {
+        "text": " cold",
+        "percent": 3.0
+      },
+      {
+        "text": " hard",
+        "percent": 2.9
+      },
+      {
+        "text": " large",
+        "percent": 2.8
+      }
+    ]
+  }
+}

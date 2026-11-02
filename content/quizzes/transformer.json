@@ -1,0 +1,109 @@
+{
+  "lesson": "transformer",
+  "questions": [
+    {
+      "id": "bank",
+      "type": "recall",
+      "prompt": "Why can't word embeddings on their own tell the two meanings of \"bank\" apart?",
+      "options": [
+        "Because \"bank\" isn't in their vocabulary",
+        "Because they give \"bank\" the same list of numbers in every sentence",
+        "Because they only work for Hindi words",
+        "Because embeddings can't store more than one word"
+      ],
+      "answer": 1,
+      "explanation": "A word embedding is looked up from a table, so \"bank\" gets the same numbers whether it's by the Ganga or where you pay your fees. A Transformer updates each token's numbers using the tokens around it."
+    },
+    {
+      "id": "position",
+      "type": "recall",
+      "prompt": "Why does a Transformer add position information to each token?",
+      "options": [
+        "To make the text shorter",
+        "To count how many tokens the prompt has",
+        "Because it reads all the tokens together, so it wouldn't otherwise know their order",
+        "To translate the text into another language"
+      ],
+      "answer": 2,
+      "explanation": "A Transformer handles all the tokens of a prompt together, not one after another. Without position information, \"Dog bites man\" and \"Man bites dog\" would look the same to it."
+    },
+    {
+      "id": "query-key-value",
+      "type": "recall",
+      "prompt": "In attention, what is a token's query?",
+      "options": [
+        "What the token is looking for in the other tokens",
+        "The information it passes on to other tokens",
+        "Its ID number in the vocabulary",
+        "The question the user typed"
+      ],
+      "answer": 0,
+      "explanation": "Each token's query is compared with the other tokens' keys (what they can offer). Good matches get more attention, and the token takes in a mix of their values (the information they pass on)."
+    },
+    {
+      "id": "no-peeking",
+      "type": "application",
+      "prompt": "In GPT-2, the token \"it\" in \"...because it was too heavy\" is being processed. Which tokens can it look at?",
+      "options": [
+        "Every token, including \"heavy\"",
+        "Only \"heavy\"",
+        "Only the token just before it",
+        "Itself and the tokens before it, but not \"was\", \"too\" or \"heavy\""
+      ],
+      "answer": 3,
+      "explanation": "In GPT-style models a token can only look at itself and earlier tokens, because the model's job is to predict what comes next. So at \"it\", GPT-2 hasn't seen \"heavy\" yet."
+    },
+    {
+      "id": "real-head",
+      "type": "recall",
+      "prompt": "In the real GPT-2 head from this lesson, where does \"it\" in \"...lift the suitcase because it was too heavy\" put the most attention, apart from the first word?",
+      "options": [
+        "On \"suitcase\"",
+        "On \"Riya\"",
+        "On \"because\"",
+        "It spreads its attention equally over every token"
+      ],
+      "answer": 0,
+      "explanation": "That head sends 52.4% of the attention from \"it\" to \"suitcase\". With \"she\" in the same place, the same head sends 31.5% to \"Riya\" instead. Nobody programmed this: it came out of training."
+    },
+    {
+      "id": "feed-forward",
+      "type": "recall",
+      "prompt": "What does the feed-forward network in each Transformer block do?",
+      "options": [
+        "It decides which token to pick next",
+        "It splits the text into tokens",
+        "It works on each token's numbers on their own, like the small neural network in lesson 9",
+        "It sends each token's numbers to every other token"
+      ],
+      "answer": 2,
+      "explanation": "After attention mixes information between tokens, the feed-forward network works on each token separately. In GPT-2 these networks hold about two-thirds of the parameters in each block."
+    },
+    {
+      "id": "longer-prompt",
+      "type": "application",
+      "prompt": "Your prompt doubles in length, from 1,000 tokens to 2,000. Roughly how much more work does each attention head do?",
+      "options": [
+        "The same amount",
+        "About twice as much",
+        "About four times as much",
+        "About ten times as much"
+      ],
+      "answer": 2,
+      "explanation": "Every token compares itself with every token before it: 1,000 tokens make 500,500 comparisons, and 2,000 make 2,001,000. Doubling the text roughly quadruples the work, one reason long prompts cost more."
+    },
+    {
+      "id": "why-it-won",
+      "type": "application",
+      "prompt": "A team wants to train a language model quickly on thousands of GPUs. Why would they choose a Transformer over an older model that reads one word at a time?",
+      "options": [
+        "Transformers don't need any training data",
+        "A Transformer handles all the tokens together, so training can do many calculations at once on GPUs",
+        "Transformers never make mistakes",
+        "Older models can't run on computers at all"
+      ],
+      "answer": 1,
+      "explanation": "Reading one word at a time means each step waits for the last. A Transformer handles the whole text together, which suits GPUs: its authors found it \"more parallelizable\", needing \"significantly less time to train\". That's a big reason it took over."
+    }
+  ]
+}
