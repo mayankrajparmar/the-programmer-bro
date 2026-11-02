@@ -214,7 +214,8 @@ When a lesson shows worked numbers (probabilities, token counts, similarity scor
 to `src/features/learn/server/worked-numbers.test.ts` that works them out again, so the text,
 the tables and the figures can't drift apart. If the numbers come from data too big to keep in
 the repository, put the script that produces them in `scripts/lessons/` and commit a small
-sample for the test (lesson 7 does this with `glove-embeddings.py` and `glove-sample.json`).
+sample for the test (lesson 7 does this with `glove-embeddings.py` and `glove-sample.json`, and
+lesson 9 with `digit-network.py`, which trains a small network and saves its results).
 
 ## Adding a resource
 

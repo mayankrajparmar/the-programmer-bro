@@ -1,0 +1,144 @@
+---
+description: What a neural network is, built up from one neuron, with weights, biases, activation functions and layers, and a real network that reads handwritten digits.
+inShort: A neural network is made of simple units called neurons. Each one multiplies its inputs by weights, adds them up and passes the total on. Stacked in layers, thousands or billions of them can learn to read handwriting or write text, once training has set the weights.
+lastReviewed: 2026-11-02
+draft: true
+sources:
+  - title: But what is a Neural Network?
+    url: https://3blue1brown.com/lessons/neural-networks
+    type: Video
+    note: Grant Sanderson's animated lesson on a network that reads handwritten digits, with its 13,002 weights and biases.
+  - title: "Neural networks: Nodes and hidden layers"
+    url: https://developers.google.com/machine-learning/crash-course/neural-networks/nodes-hidden-layers
+    type: Course
+    note: Google's free course module on neurons, weights, biases and hidden layers, with small networks you can play with.
+  - title: Using neural nets to recognize handwritten digits
+    url: https://neuralnetworksanddeeplearning.com/chap1.html
+    type: Book
+    note: Chapter 1 of Michael Nielsen's online book, which builds up from a single neuron to a network that reads digits.
+  - title: Learning representations by back-propagating errors
+    url: https://doi.org/10.1038/323533a0
+    type: Paper
+    note: The 1986 Nature paper by Rumelhart, Hinton and Williams showing that hidden layers learn useful features on their own.
+  - title: Optical Recognition of Handwritten Digits
+    url: https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits
+    type: Docs
+    note: The 1998 collection of handwritten digits (CC BY 4.0) that our small network learned from.
+  - title: TensorFlow Playground
+    url: https://github.com/tensorflow/playground
+    type: GitHub
+    note: The open-source code behind the in-browser neural network in this lesson's "Try it".
+---
+
+Write the number 3 on a piece of paper, as messily as you like. Anyone can read it. Now try writing rules a computer could follow to recognise every possible 3: curly ones, slanted ones, ones with a gap, thick pen, thin pen. You'd never finish.
+
+In lesson 1 you met the alternative: let the computer learn from examples. Behind most of the AI in the news today, from voice typing to chatbots, the thing doing that learning is a **neural network**. In this lesson you'll build one up from its smallest part, a single neuron, with pictures and simple sums instead of equations. Then you'll meet a real network that we trained to read handwritten digits.
+
+## One neuron: a tiny decision-maker
+
+An artificial **neuron** takes in a few numbers and gives out one number. It works in three steps:
+
+1. Multiply each input by its **weight**, a number for how much that input matters. A big positive weight pushes towards "yes", and a negative weight pushes towards "no".
+2. Add the results together, plus a **bias**: a number that shifts the total up or down whatever the inputs are, like a built-in lean.
+3. Pass the total through an **activation function**, a simple rule that decides what the neuron sends on.
+
+Here's a made-up neuron that decides whether you'll buy chai. Its inputs are yes-or-no questions, written as 1 for yes and 0 for no. Its rule: if the total is above 0, buy chai.
+
+<Figure caption="Figure 1: a made-up neuron. Each input is multiplied by its weight, and the results are added to the bias. The total, 4, is above 0, so the answer is yes.">
+  <NeuronDiagram />
+</Figure>
+
+The same neuron gives different answers on different days:
+
+| Raining, tired, short of cash | Total              | Buy chai? |
+| ----------------------------- | ------------------ | --------- |
+| 1, 1, 0                       | 2 + 3 + 0 − 1 = 4  | Yes       |
+| 0, 1, 0                       | 0 + 3 + 0 − 1 = 2  | Yes       |
+| 0, 0, 0                       | 0 + 0 + 0 − 1 = −1 | No        |
+| 1, 1, 1                       | 2 + 3 − 4 − 1 = 0  | No        |
+
+The weights give the neuron its personality. Being short of cash, with a weight of −4, cancels out rain and tiredness together. Change the weights and you get a different decision-maker, without changing anything else.
+
+A real neuron isn't told what its inputs mean, and nobody picks its weights by hand. That's the point of training, which you'll get to below.
+
+## From neurons to a network
+
+One neuron can only make a simple decision. The power comes from connecting lots of them in **layers**:
+
+- The **input layer** is just the data, as numbers. It doesn't calculate anything.
+- **Hidden layers** sit in the middle. Each neuron takes in every output of the layer before, weighs them up and passes its own output on. They're called hidden because you only ever see the input and the final answer, not these numbers in between.
+- The **output layer** gives the answer.
+
+"Deep learning", from lesson 1, just means a network with many hidden layers.
+
+<Analogy>
+
+Think of how a cricket team gets picked. Scouts watch for small things: a firm grip, quick feet, a steady head. Coaches combine the scouts' notes into bigger judgements, like "solid opening batter". Selectors combine those to pick the eleven. Each level builds on the one before. Layers in a neural network work in a similar way, with one big difference: nobody tells a hidden neuron what to look for. It learns that during training, and what it ends up responding to often isn't anything a person would have a name for.
+
+</Analogy>
+
+## A real network that reads handwriting
+
+To see this for real, we trained a small network ourselves. It learned from 1,797 handwritten digits, part of a free collection published in 1998. Each image is tiny: 8 × 8 pixels, and each pixel is a number from 0 (blank) to 16 (fully inked). Here's how one handwritten 3 looks to the computer:
+
+```text
+ 0  2 11 14 10  1  0  0
+ 0  6 12  8 15 10  0  0
+ 0  0  0  0 10 11  0  0
+ 0  0  0  8 14  2  0  0
+ 0  0  0  7 16 15  1  0
+ 0  0  0  0  2 13  8  0
+ 0  2  5  1  2 12  7  0
+ 0  1 12 16 16 10  0  0
+```
+
+Look at where the big numbers are and you can see the 3. The network has 64 inputs, one per pixel, then one hidden layer of 16 neurons, and 10 outputs, one for each digit from 0 to 9. The outputs are turned into percentages that add up to 100%, and the biggest one is the network's answer.
+
+<Figure caption="Figure 2: our network reading a handwritten 3. Every pixel connects to every hidden neuron (only one line per row of pixels is drawn), and every hidden neuron connects to every output.">
+  <DigitNetworkDiagram />
+</Figure>
+
+The hidden neurons use a very common activation function called **ReLU**: if the total is negative, send on 0; otherwise, send on the total unchanged. That small rule matters. Without one, stacking layers would add nothing, because adding up sums of sums still just gives one big sum. With it, each layer can build something new from the layer before.
+
+## Where do the weights come from?
+
+Count every connection and every bias in our little network: 64 × 16 weights into the hidden layer, plus 16 biases, plus 16 × 10 weights into the outputs, plus 10 biases. That's 1,210 numbers, and nobody typed any of them in. These are the **parameters** from lesson 3, the sliders on the sound desk.
+
+Training sets them. It starts with random weights, shows the network examples, checks its answers and nudges every weight a little towards better ones, over and over. Lesson 11 shows how the nudging works. We kept 359 images aside, which the network never saw during training, to test it fairly:
+
+- **Before training**, with random weights, it read 11.4% of the test images correctly: about 1 in 10, no better than guessing.
+- **After 20 passes** through the other 1,438 images, which meant 900 rounds of nudging, it read 96.9% correctly. It got only 11 of the 359 wrong.
+
+<Figure caption="Figure 3: the network's ten outputs for the same handwritten 3. Before training, its top guess is 5. After training, it's 99.8% sure the image is a 3.">
+  <DigitGuessesDiagram />
+</Figure>
+
+A 1986 paper by David Rumelhart, Geoffrey Hinton and Ronald Williams described what happens inside: during training, the hidden neurons "come to represent important features of the task domain". Nobody tells them to look for a curve or a straight stroke. They find whatever helps.
+
+Our network is tiny. 3Blue1Brown's well-known example network reads bigger 28 × 28 images, with two hidden layers of 16 neurons, and has 13,002 weights and biases. Llama 3.1, from lesson 3, has 405 billion: about 335 million times as many as ours.
+
+## LLMs are neural networks too
+
+Every LLM in this course is a neural network, built from these same parts: weights, biases, activation functions and layers. Instead of pixels, its inputs are tokens (lesson 5) turned into embeddings (lesson 7), and its outputs are the chances for each possible next token (lesson 4). Its layers are arranged in a particular design called a Transformer, which you'll take apart in lesson 10.
+
+<Callout kind="warn">
+
+"Neural" doesn't mean it works like your brain. Artificial neurons were loosely inspired by brain cells, but each one only multiplies, adds and applies a simple rule. And even though you can read every one of a network's weights, they don't come with labels, so it's hard to say exactly why it gave a particular answer.
+
+</Callout>
+
+<TryIt>
+
+Open [TensorFlow Playground](https://playground.tensorflow.org/), a free tool from Google that trains a small neural network right in your browser. Press the play button and watch it learn to separate the orange dots from the blue ones. The lines between neurons are coloured by their weights: blue for positive, orange for negative. Then pick the spiral dataset. Can a network with one small hidden layer learn it? Add hidden layers and neurons, and press play again. Hover over a neuron to see what it has learned to respond to.
+
+</TryIt>
+
+<KeyTakeaways>
+
+- A neuron multiplies each input by a weight, adds them up with a bias, and passes the total through an activation function such as ReLU.
+- Neurons are stacked in layers: an input layer, one or more hidden layers and an output layer. Deep learning means many hidden layers.
+- The weights and biases are the network's parameters. Nobody sets them by hand: training does.
+- Our tiny network has 1,210 parameters and learned to read handwritten digits, going from 11.4% to 96.9% correct. LLMs use the same parts, with billions of parameters.
+- Neural networks are only loosely inspired by brains, and their weights are hard to interpret.
+
+</KeyTakeaways>

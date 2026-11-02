@@ -59,7 +59,7 @@ test.describe("the live site", () => {
   }
 
   test("answers lessons that aren't written yet with a 404", async ({ request }) => {
-    expect((await request.get("/learn/how-ai-works/neural-networks")).status()).toBe(404);
+    expect((await request.get("/learn/how-ai-works/transformer")).status()).toBe(404);
   });
 
   test("hides lessons that are still drafts", async ({ request }) => {
