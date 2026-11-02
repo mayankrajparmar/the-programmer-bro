@@ -103,7 +103,7 @@
         "Older models can't run on computers at all"
       ],
       "answer": 1,
-      "explanation": "Reading one word at a time means each step waits for the last. A Transformer handles the whole text together, which suits GPUs: Google said it \"requires less computation to train\". That's a big reason it took over."
+      "explanation": "Reading one word at a time means each step waits for the last. A Transformer handles the whole text together, which suits GPUs: its authors found it \"more parallelizable\", needing \"significantly less time to train\". That's a big reason it took over."
     }
   ]
 }

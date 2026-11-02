@@ -9,6 +9,7 @@ import { nextTokenMarkdown } from "./next-token";
 import { ragPipelineMarkdown } from "./rag-pipeline";
 import { searchVsLlmMarkdown } from "./search-vs-llm";
 import { hindiTokensMarkdown, tokenIdsMarkdown } from "./tokens";
+import { blockMarkdown } from "./transformer-block";
 
 /**
  * Every diagram's content as Markdown, keyed by its MDX component name. The Markdown
@@ -29,4 +30,5 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   DigitGuessesDiagram: digitGuessesMarkdown,
   TransformerPipelineDiagram: transformerPipelineMarkdown,
   AttentionDiagram: attentionMarkdown,
+  BlockDiagram: blockMarkdown,
 };

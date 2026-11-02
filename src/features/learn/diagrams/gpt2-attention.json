@@ -8,6 +8,7 @@
     "parameters": 124439808,
     "heads": 12
   },
+  "blockOrder": ["normalise", "attention", "add", "normalise", "feed-forward", "add"],
   "head": {
     "layer": 5,
     "head": 4

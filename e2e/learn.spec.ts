@@ -209,6 +209,18 @@ test.describe("learning section", () => {
     await expect(fromIt.getByRole("listitem")).toHaveCount(10);
     await expect(fromIt).toContainText("To suitcase: 52.4%");
     await expect(page.getByRole("cell", { name: "heavy" })).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: /^One GPT-2 block, from top to bottom/ }),
+    ).toBeVisible();
+    const sources = page.getByRole("region", { name: "Sources and further reading" });
+    await expect(sources.getByRole("link", { name: /Transformer Explainer/ })).toHaveAttribute(
+      "href",
+      "https://poloclub.github.io/transformer-explainer/",
+    );
+    await expect(sources.getByRole("link", { name: /LLM Visualization/ })).toHaveAttribute(
+      "href",
+      "https://bbycroft.net/llm",
+    );
     await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
     await expect(page.getByRole("link", { name: /^Previous · Lesson 9/ })).toHaveAttribute(
       "href",

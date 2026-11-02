@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
 import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
 import { GPT2, targetShare } from "../diagrams/gpt2-attention";
+import { BLOCK_ORDER, BLOCK_PARTS } from "../diagrams/transformer-block";
 import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
 import { MEANING_MAP } from "../diagrams/meaning-map";
 import { buysChai, CHAI_EXAMPLE, chaiTotal, signed } from "../diagrams/neuron";
@@ -449,6 +450,24 @@ describe("worked numbers in lesson 10", () => {
         ),
       ),
     );
+  });
+
+  it("draws the block in the order GPT-2's own graph runs it", () => {
+    // Read from the model by the script: normalise, attention, add, normalise, feed-forward, add.
+    expect(BLOCK_ORDER).toEqual(GPT2.blockOrder);
+    expect(BLOCK_ORDER).toEqual([
+      "normalise",
+      "attention",
+      "add",
+      "normalise",
+      "feed-forward",
+      "add",
+    ]);
+    expect(BLOCK_PARTS.attention.detail).toBe(`${model.heads} heads side by side`);
+    expect(BLOCK_PARTS["feed-forward"].detail).toBe(
+      `${model.width} → ${grouped(model.mlp)} → ${model.width}`,
+    );
+    expect(body).toContain(`GPT-2 stacks ${model.layers} of these, one after another`);
   });
 
   it("counts attention's comparisons for longer prompts", () => {

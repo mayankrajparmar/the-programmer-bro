@@ -12,7 +12,8 @@ GPT-2's tokenizer, r50k_base, via the gpt-tokenizer dev dependency, so run it fr
 repository root after npm install. Needs numpy, onnx and onnxruntime.
 
 It prints and saves to src/features/learn/diagrams/gpt2-attention.json:
-- GPT-2's size, read from the model's own weights;
+- GPT-2's size, read from the model's own weights, and the order of the parts inside
+  each block, read from its graph;
 - the attention head that best links "it" to "suitcase" and "she" to "Riya" in two
   sentences, with that head's full attention from the pronoun to every earlier token;
 - how many of the 144 heads give the first token the biggest share from "it";
@@ -84,6 +85,22 @@ def size(model_path: Path) -> dict:
             "parameters": learned}
 
 
+def block_order(model_path: Path) -> list[str]:
+    """The order of the parts inside GPT-2's first block, read from the model's graph."""
+    graph = onnx.load(str(model_path), load_external_data=False).graph
+    kinds = {"ln": "normalise", "attn": "attention", "Add": "add", "mlp": "feed-forward"}
+    order: list[str] = []
+    last = None
+    for node in graph.node:
+        if "/h.0/" not in node.name:
+            continue
+        part = node.name.split("/h.0/")[1].split("/")[0]  # ln_1, attn, Add, ln_2, mlp, Add_1
+        if part != last:
+            order.append(kinds[part.split("_")[0]])
+            last = part
+    return order
+
+
 def main(folder: str) -> None:
     model_path = load_model(Path(folder))
     shape = size(model_path)
@@ -123,6 +140,7 @@ def main(folder: str) -> None:
 
     data = {
         "model": shape,
+        "blockOrder": block_order(model_path),
         "head": {"layer": int(block) + 1, "head": int(head) + 1},
         "sentences": {
             pronoun: {
@@ -140,6 +158,7 @@ def main(folder: str) -> None:
     }
 
     print(f"GPT-2: {shape}")
+    print("Inside each block:", " -> ".join(data["blockOrder"]))
     print(f"Best head: layer {data['head']['layer']}, head {data['head']['head']} (counting from 1)")
     for pronoun, sentence in data["sentences"].items():
         print(f"  from '{pronoun}':", list(zip(sentence["tokens"], sentence["percent"])))

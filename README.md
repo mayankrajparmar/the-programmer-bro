@@ -187,7 +187,7 @@ until its file exists.
    sources:
      - title: Source title
        url: https://example.com/
-       type: Article # Article, Paper, Docs, Video, Course, GitHub or Book
+       type: Article # Article, Paper, Docs, Video, Course, GitHub, Book or Tool
        note: What the reader gets from it.
    ---
    ```
