@@ -2,6 +2,7 @@ import { aiLayersMarkdown } from "./ai-layers";
 import { aiTimelineMarkdown } from "./ai-timeline";
 import { llmSizesMarkdown } from "./llm-sizes";
 import { digitGuessesMarkdown, digitNetworkMarkdown } from "./digit-network";
+import { attentionMarkdown, transformerPipelineMarkdown } from "./gpt2-attention";
 import { meaningMapMarkdown } from "./meaning-map";
 import { neuronMarkdown } from "./neuron";
 import { nextTokenMarkdown } from "./next-token";
@@ -26,4 +27,6 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   NeuronDiagram: neuronMarkdown,
   DigitNetworkDiagram: digitNetworkMarkdown,
   DigitGuessesDiagram: digitGuessesMarkdown,
+  TransformerPipelineDiagram: transformerPipelineMarkdown,
+  AttentionDiagram: attentionMarkdown,
 };

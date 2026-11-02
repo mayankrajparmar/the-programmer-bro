@@ -4,6 +4,7 @@ import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
 import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
 import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
+import { GPT2, targetShare } from "../diagrams/gpt2-attention";
 import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
 import { MEANING_MAP } from "../diagrams/meaning-map";
 import { buysChai, CHAI_EXAMPLE, chaiTotal, signed } from "../diagrams/neuron";
@@ -29,7 +30,8 @@ interface Encoder {
  * numbers are checked against a sample of real GloVe vectors, written by
  * scripts/lessons/glove-embeddings.py, which also checks the parts that need all
  * 400,000 words (nearest neighbours, and which words GloVe doesn't have). Lesson 9's
- * network numbers come from scripts/lessons/digit-network.py, via digit-network.json.
+ * network numbers come from scripts/lessons/digit-network.py, via digit-network.json, and
+ * lesson 10's GPT-2 numbers from scripts/lessons/gpt2-attention.py, via gpt2-attention.json.
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -381,5 +383,82 @@ describe("worked numbers in lesson 9", () => {
   it("gets the quiz's parameter count right", () => {
     const question = NEURAL_NETWORKS_QUIZ.questions.find((q) => q.id === "count-parameters");
     expect(question?.options[question.answer]).toBe(String(parameters([4, 3, 2])));
+  });
+});
+
+describe("worked numbers in lesson 10", () => {
+  const body = getLesson("how-ai-works", "transformer")?.body ?? "";
+  const { model } = GPT2;
+  const grouped = (value: number) => value.toLocaleString("en-US");
+  // GPT-2's weights, from its design: Q, K and V together, the attention output, the
+  // feed-forward network's two layers, and two normalisation steps.
+  const attention =
+    model.width * 3 * model.width + 3 * model.width + model.width ** 2 + model.width;
+  const feedForward = model.width * model.mlp + model.mlp + model.mlp * model.width + model.width;
+  const perBlock = attention + feedForward + 2 * 2 * model.width;
+
+  it("adds up GPT-2's parameters from its design", () => {
+    const embeddings = model.vocab * model.width + model.context * model.width;
+    expect(embeddings + model.layers * perBlock + 2 * model.width).toBe(model.parameters);
+    expect(Math.round(model.parameters / 1e6)).toBe(124);
+    expect(body).toContain("with about 124 million parameters");
+    expect(feedForward / perBlock).toBeCloseTo(2 / 3, 1);
+    expect(body).toContain("hold about two-thirds of the parameters in each GPT-2 block");
+    expect(body).toContain(
+      `${model.width} numbers go in, through a hidden layer of ${grouped(model.mlp)} neurons`,
+    );
+  });
+
+  it("counts the attention heads", () => {
+    expect(model.layers * model.heads).toBe(144);
+    expect(body).toContain(
+      `GPT-2 has ${model.heads} heads in each of its ${model.layers} blocks, 144 in total`,
+    );
+    expect(126 * 128).toBe(16_128); // Llama 3.1 405B: 126 layers, 128 heads each
+    expect(body).toContain("128 heads in each of its 126 layers: 16,128 heads");
+    expect(body).toContain(`${GPT2.firstTokenTop} of GPT-2's 144 heads`);
+  });
+
+  it("shows the head's real attention, on GPT-2's real tokens", () => {
+    for (const sentence of Object.values(GPT2.sentences)) {
+      const tokens = r50k.encode(sentence.text).map((id) => r50k.decode([id]));
+      expect(sentence.tokens).toEqual(tokens.slice(0, sentence.tokens.length));
+      const total = sentence.percent.reduce((sum, value) => sum + value, 0);
+      expect(Math.abs(total - 100)).toBeLessThan(0.3); // each value rounded to 0.1
+    }
+    const it = targetShare("it").toFixed(1);
+    const she = targetShare("she").toFixed(1);
+    const head = `layer ${GPT2.head.layer}, head ${GPT2.head.head}`;
+    expect(body).toContain(
+      `real attention from GPT-2 (${head}). The same head sends ${it}% of the attention from “it” to “suitcase”, and ${she}% of the attention from “she” to “Riya”`,
+    );
+    expect(body).toContain(`In a real GPT-2 head, "it" looks mostly at "suitcase"`);
+    // "Mostly", leaving aside the first token (the attention sink).
+    const itSentence = GPT2.sentences.it;
+    const rest = itSentence.percent.slice(1);
+    expect(itSentence.tokens[1 + rest.indexOf(Math.max(...rest))]).toBe(" suitcase");
+  });
+
+  it("shows GPT-2's real next-token probabilities", () => {
+    expect(body).toContain(`We gave GPT-2 "${GPT2.next.prompt}"`);
+    const rows = body.match(/^\| [a-z]+ +\| \d+\.\d% +\|$/gm) ?? [];
+    expect(rows).toEqual(
+      GPT2.next.tokens.map((token) =>
+        expect.stringMatching(
+          new RegExp(`^\\| ${token.text.trim()} +\\| ${token.percent.toFixed(1)}% +\\|$`),
+        ),
+      ),
+    );
+  });
+
+  it("counts attention's comparisons for longer prompts", () => {
+    // Each token compares itself with itself and every earlier token.
+    const comparisons = (tokens: number) => (tokens * (tokens + 1)) / 2;
+    expect(comparisons(1000)).toBe(500_500);
+    expect(comparisons(2000)).toBe(2_001_000);
+    expect(Math.round(comparisons(2000) / comparisons(1000))).toBe(4);
+    expect(body).toContain(
+      "1,000 tokens make 500,500 comparisons in each head, and 2,000 tokens make 2,001,000, about four times as many",
+    );
   });
 });
