@@ -49,6 +49,8 @@ test.describe("the live site", () => {
     ["search-vs-llm", "Search engine vs LLM"],
     ["embeddings", "Embeddings: meaning as numbers"],
     ["rag", "RAG: giving the model an open book"],
+    ["neural-networks", "Neural networks without the scary maths"],
+    ["transformer", "The Transformer, step by step"],
   ] as const) {
     test(`publishes ${slug}, without a draft notice`, async ({ page }) => {
       const response = await page.goto(`/learn/how-ai-works/${slug}`);
@@ -108,6 +110,8 @@ test.describe("the live site", () => {
       "/learn/how-ai-works/search-vs-llm",
       "/learn/how-ai-works/embeddings",
       "/learn/how-ai-works/rag",
+      "/learn/how-ai-works/neural-networks",
+      "/learn/how-ai-works/transformer",
       "/news",
       "/privacy",
       "/contact",
