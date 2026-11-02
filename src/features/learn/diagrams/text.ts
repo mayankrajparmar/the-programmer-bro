@@ -1,7 +1,9 @@
 import { aiLayersMarkdown } from "./ai-layers";
 import { aiTimelineMarkdown } from "./ai-timeline";
 import { llmSizesMarkdown } from "./llm-sizes";
+import { digitGuessesMarkdown, digitNetworkMarkdown } from "./digit-network";
 import { meaningMapMarkdown } from "./meaning-map";
+import { neuronMarkdown } from "./neuron";
 import { nextTokenMarkdown } from "./next-token";
 import { ragPipelineMarkdown } from "./rag-pipeline";
 import { searchVsLlmMarkdown } from "./search-vs-llm";
@@ -21,4 +23,7 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   SearchVsLlmDiagram: searchVsLlmMarkdown,
   MeaningMapDiagram: meaningMapMarkdown,
   RagPipelineDiagram: ragPipelineMarkdown,
+  NeuronDiagram: neuronMarkdown,
+  DigitNetworkDiagram: digitNetworkMarkdown,
+  DigitGuessesDiagram: digitGuessesMarkdown,
 };
