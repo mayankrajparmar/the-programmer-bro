@@ -2,8 +2,11 @@ import * as cl100k from "gpt-tokenizer/encoding/cl100k_base";
 import * as o200k from "gpt-tokenizer/encoding/o200k_base";
 import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
+import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
+import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
 import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
 import { MEANING_MAP } from "../diagrams/meaning-map";
+import { buysChai, CHAI_EXAMPLE, chaiTotal, signed } from "../diagrams/neuron";
 import { NEXT_WORD_CHOICES } from "../diagrams/next-token";
 import {
   ENGLISH_SENTENCE,
@@ -25,7 +28,8 @@ interface Encoder {
  * against the real tokenizers (the gpt-tokenizer package, a dev dependency). Lesson 7's
  * numbers are checked against a sample of real GloVe vectors, written by
  * scripts/lessons/glove-embeddings.py, which also checks the parts that need all
- * 400,000 words (nearest neighbours, and which words GloVe doesn't have).
+ * 400,000 words (nearest neighbours, and which words GloVe doesn't have). Lesson 9's
+ * network numbers come from scripts/lessons/digit-network.py, via digit-network.json.
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -289,5 +293,93 @@ describe("worked numbers in lesson 8", () => {
     expect(Math.max(...wrongYear)).toBe(12);
     expect(body).toContain("named about 70% of them correctly");
     expect(body).toContain("it managed 12% or fewer");
+  });
+});
+
+describe("worked numbers in lesson 9", () => {
+  const body = getLesson("how-ai-works", "neural-networks")?.body ?? "";
+  const net = DIGIT_NETWORK;
+  /** Weights and biases in a fully connected network with these layer sizes. */
+  const parameters = (layers: readonly number[]) =>
+    layers.slice(1).reduce((sum, size, i) => sum + (layers[i] ?? 0) * size + size, 0);
+  const grouped = (value: number) => value.toLocaleString("en-US");
+
+  it("adds up every row of the chai table", () => {
+    const rows = body.match(/^\| [01], [01], [01] +\|.*\|$/gm) ?? [];
+    expect(rows).toHaveLength(4);
+    for (const row of rows) {
+      const cells = row
+        .split("|")
+        .slice(1, -1)
+        .map((cell) => cell.trim());
+      const values = (cells[0] ?? "").split(", ").map(Number);
+      const total = chaiTotal(values);
+      expect(cells[1], row).toMatch(new RegExp(`= ${signed(total)}$`));
+      // The written sum: each input times its weight, then the bias.
+      const terms = cells[1]
+        ?.split(" = ")[0]
+        ?.replaceAll("−", "-")
+        .split(/ (?=[+-] )/);
+      const written = terms?.reduce((sum, term) => sum + Number(term.replace(/\s/g, "")), 0);
+      expect(written, row).toBe(total);
+      expect(cells[2], row).toBe(buysChai(values) ? "Yes" : "No");
+    }
+    expect(body).toContain(`The total, ${chaiTotal(CHAI_EXAMPLE)}, is above 0`);
+  });
+
+  it("counts the parameters in our network, 3Blue1Brown's and Llama 3.1's comparison", () => {
+    expect(net.parameters).toBe(parameters([net.inputs, net.hidden, net.outputs]));
+    expect(net.parameters).toBe(64 * 16 + 16 + 16 * 10 + 10);
+    expect(body).toContain(`That's ${grouped(net.parameters)} numbers`);
+    expect(28 * 28).toBe(784);
+    expect(parameters([784, 16, 16, 10])).toBe(13_002);
+    expect(body).toContain("has 13,002 weights and biases");
+    expect(Math.round(405e9 / net.parameters / 1e6)).toBe(335);
+    expect(body).toContain("about 335 million times as many as ours");
+  });
+
+  it("reports the training run as the script recorded it", () => {
+    expect(net.trainImages + net.testImages).toBe(net.images);
+    expect(net.updates).toBe(net.passes * Math.ceil(net.trainImages / net.batch));
+    const [before, ...rest] = net.accuracy;
+    const after = rest.at(-1) ?? 0;
+    expect(rest).toHaveLength(net.passes);
+    expect(Math.round(((net.testImages - net.wrong) / net.testImages) * 1000) / 10).toBe(after);
+    for (const text of [
+      `${grouped(net.images)} handwritten digits`,
+      `${net.testImages} images aside`,
+      `read ${before}% of the test images correctly`,
+      `After ${net.passes} passes`,
+      `other ${grouped(net.trainImages)} images`,
+      `${net.updates} rounds of nudging`,
+      `read ${after}% correctly`,
+      `only ${net.wrong} of the ${net.testImages} wrong`,
+      `from ${before}% to ${after}% correct`,
+    ]) {
+      expect(body).toContain(text);
+    }
+  });
+
+  it("shows the example image's real pixels and outputs", () => {
+    const grid = net.example.pixels
+      .map((row) => row.map((value) => String(value).padStart(2)).join(" "))
+      .join("\n");
+    expect(body).toContain(grid);
+    const top = (percents: number[]) => percents.indexOf(Math.max(...percents));
+    expect(top(net.example.before)).not.toBe(net.example.digit);
+    expect(top(net.example.after)).toBe(net.example.digit);
+    expect(body).toContain(`its top guess is ${top(net.example.before)}`);
+    expect(body).toContain(
+      `it's ${outputPercent(net.example.after[net.example.digit] ?? 0)} sure the image is a ${net.example.digit}`,
+    );
+    for (const percents of [net.example.before, net.example.after]) {
+      const total = percents.reduce((sum, value) => sum + value, 0);
+      expect(Math.abs(total - 100)).toBeLessThan(0.3); // each value rounded to 0.1
+    }
+  });
+
+  it("gets the quiz's parameter count right", () => {
+    const question = NEURAL_NETWORKS_QUIZ.questions.find((q) => q.id === "count-parameters");
+    expect(question?.options[question.answer]).toBe(String(parameters([4, 3, 2])));
   });
 });

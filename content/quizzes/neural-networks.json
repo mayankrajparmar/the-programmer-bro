@@ -1,0 +1,104 @@
+{
+  "lesson": "neural-networks",
+  "questions": [
+    {
+      "id": "what-a-neuron-does",
+      "type": "recall",
+      "prompt": "What does one artificial neuron do with its inputs?",
+      "options": [
+        "Looks them up in a table of right answers",
+        "Stores them so the network can remember them later",
+        "Multiplies each by a weight, adds them up with a bias, and passes the total through a simple rule",
+        "Sends them straight to the output without changing them"
+      ],
+      "answer": 2,
+      "explanation": "A neuron multiplies each input by its weight, adds the results and its bias, then applies its activation function to decide what to send on. That's all one neuron does."
+    },
+    {
+      "id": "chai-sum",
+      "type": "application",
+      "prompt": "The chai neuron has weights of 2 for rain, 3 for tired and −4 for short of cash, and a bias of −1. It isn't raining, but you're tired and short of cash. What does it decide?",
+      "options": [
+        "The total is −2, which isn't above 0, so no chai",
+        "The total is 2, so buy chai",
+        "The total is 5, so buy chai",
+        "The total is 0, so buy chai"
+      ],
+      "answer": 0,
+      "explanation": "0 × 2 + 1 × 3 + 1 × (−4) − 1 = −2. That's not above 0, so the answer is no. Being short of cash outweighs being tired."
+    },
+    {
+      "id": "weight",
+      "type": "recall",
+      "prompt": "What does a neuron's weight tell you?",
+      "options": [
+        "How heavy the computer running the network is",
+        "How much an input matters, and whether it pushes towards yes or towards no",
+        "How many layers the network has",
+        "How long the neuron takes to calculate"
+      ],
+      "answer": 1,
+      "explanation": "Each input is multiplied by its weight. A big positive weight pushes the total up, a negative one pushes it down, and a weight near 0 means that input hardly matters."
+    },
+    {
+      "id": "hidden",
+      "type": "recall",
+      "prompt": "Why are hidden layers called \"hidden\"?",
+      "options": [
+        "They're switched off until the network is finished",
+        "They're kept secret by the company that made the network",
+        "They only run at night",
+        "You only see the input and the final answer, not the numbers in between"
+      ],
+      "answer": 3,
+      "explanation": "Hidden layers sit between the input layer and the output layer. Their numbers are real and anyone running the network can read them, but they aren't the input or the answer, and they don't come with labels."
+    },
+    {
+      "id": "relu",
+      "type": "recall",
+      "prompt": "What does the ReLU activation function do?",
+      "options": [
+        "Turns a negative total into 0 and passes a positive total on unchanged",
+        "Turns every total into 1",
+        "Doubles every total",
+        "Rounds every total to the nearest whole number"
+      ],
+      "answer": 0,
+      "explanation": "ReLU keeps positive totals and turns negative ones into 0. Without a rule like this, stacking layers would add nothing, because sums of sums are still just one big sum."
+    },
+    {
+      "id": "count-parameters",
+      "type": "application",
+      "prompt": "A network has 4 inputs, one hidden layer of 3 neurons and 2 outputs. Every neuron takes in every output of the layer before, and every neuron has a bias. How many weights and biases does it have?",
+      "options": ["9", "18", "23", "24"],
+      "answer": 2,
+      "explanation": "4 × 3 = 12 weights into the hidden layer, plus 3 biases, plus 3 × 2 = 6 weights into the outputs, plus 2 biases: 23. It's the same counting that gives our digit network its 1,210."
+    },
+    {
+      "id": "where-weights-come-from",
+      "type": "recall",
+      "prompt": "Where do a neural network's weights come from?",
+      "options": [
+        "Programmers type them in, one by one",
+        "Training sets them: they start random and get nudged, example after example",
+        "They're copied from the human brain",
+        "Each one is the number of times a word appears in the training text"
+      ],
+      "answer": 1,
+      "explanation": "Nobody sets the weights by hand. Training starts them at random values and nudges them towards better answers, over and over. Our digit network went from 11.4% to 96.9% correct this way."
+    },
+    {
+      "id": "test-images",
+      "type": "application",
+      "prompt": "We tested our digit network on 359 images it never saw during training. Why not test it on the images it trained on?",
+      "options": [
+        "Because the training images were deleted after training",
+        "Because testing on training images is slower",
+        "Because a network can't read the same image twice",
+        "To check it learned to read digits in general, not just the particular images it practised on"
+      ],
+      "answer": 3,
+      "explanation": "Like an exam with questions you haven't seen before, new images show whether the network learned what a 3 looks like, rather than remembering the exact images it practised on."
+    }
+  ]
+}
