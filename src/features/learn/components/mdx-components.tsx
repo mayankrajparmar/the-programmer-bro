@@ -9,6 +9,7 @@ import { AiTimelineDiagram } from "../diagrams/ai-timeline";
 import { LlmSizesDiagram } from "../diagrams/llm-sizes";
 import { DigitGuessesDiagram, DigitNetworkDiagram } from "../diagrams/digit-network";
 import { AttentionDiagram, TransformerPipelineDiagram } from "../diagrams/gpt2-attention";
+import { LossCurveDiagram, SamosaHillDiagram } from "../diagrams/how-models-learn";
 import { MeaningMapDiagram } from "../diagrams/meaning-map";
 import { NeuronDiagram } from "../diagrams/neuron";
 import { NextTokenDiagram } from "../diagrams/next-token";
@@ -148,4 +149,6 @@ export const lessonComponents: MDXComponents = {
   TransformerPipelineDiagram,
   AttentionDiagram,
   BlockDiagram,
+  SamosaHillDiagram,
+  LossCurveDiagram,
 };

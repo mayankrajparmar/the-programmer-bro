@@ -3,6 +3,7 @@ import { aiTimelineMarkdown } from "./ai-timeline";
 import { llmSizesMarkdown } from "./llm-sizes";
 import { digitGuessesMarkdown, digitNetworkMarkdown } from "./digit-network";
 import { attentionMarkdown, transformerPipelineMarkdown } from "./gpt2-attention";
+import { lossCurveMarkdown, samosaHillMarkdown } from "./how-models-learn";
 import { meaningMapMarkdown } from "./meaning-map";
 import { neuronMarkdown } from "./neuron";
 import { nextTokenMarkdown } from "./next-token";
@@ -31,4 +32,6 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   TransformerPipelineDiagram: transformerPipelineMarkdown,
   AttentionDiagram: attentionMarkdown,
   BlockDiagram: blockMarkdown,
+  SamosaHillDiagram: samosaHillMarkdown,
+  LossCurveDiagram: lossCurveMarkdown,
 };
