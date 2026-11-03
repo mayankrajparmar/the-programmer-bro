@@ -88,7 +88,7 @@ describe("learning content", () => {
   it("returns null for lessons and tracks that don't exist", () => {
     expect(getTrack("no-such-track")).toBeNull();
     expect(getLesson("how-ai-works", "no-such-lesson")).toBeNull();
-    expect(getLesson("how-ai-works", "base-model-to-assistant")).toBeNull(); // planned, not written yet
+    expect(getLesson("how-ai-works", "can-ai-reason")).toBeNull(); // planned, not written yet
   });
 
   it("lists the tracks coming next, none of which exist yet", () => {
@@ -161,6 +161,11 @@ describe("learning content", () => {
     expect(eleventh?.number).toBe(11);
     expect(eleventh?.previous?.slug).toBe("transformer");
     expect(eleventh?.next?.slug).toBe("base-model-to-assistant");
+
+    const twelfth = getLesson("how-ai-works", "base-model-to-assistant");
+    expect(twelfth?.number).toBe(12);
+    expect(twelfth?.previous?.slug).toBe("how-models-learn");
+    expect(twelfth?.next?.slug).toBe("can-ai-reason");
   });
 });
 

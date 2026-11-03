@@ -7,9 +7,9 @@ ONNX copy in Transformer Explainer's repository, which reports every attention h
     git clone --depth 1 https://github.com/poloclub/transformer-explainer /tmp/tx
     python3 scripts/lessons/gpt2-attention.py /tmp/tx
 
-(The model is about 660 MB, split into 63 parts in static/model-v2/.) Tokens come from
-GPT-2's tokenizer, r50k_base, via the gpt-tokenizer dev dependency, so run it from the
-repository root after npm install. Needs numpy, onnx and onnxruntime.
+(The model is about 660 MB, split into 63 parts in static/model-v2/.) Running the model and
+its tokenizer is in gpt2_runtime.py, shared with lesson 12; run it from the repository root
+after npm install. Needs numpy, onnx and onnxruntime.
 
 It prints and saves to src/features/learn/diagrams/gpt2-attention.json:
 - GPT-2's size, read from the model's own weights, and the order of the parts inside
@@ -21,15 +21,14 @@ It prints and saves to src/features/learn/diagrams/gpt2-attention.json:
 """
 
 import json
-import subprocess
 import sys
 from pathlib import Path
 
-import numpy as np
-import onnx
-import onnxruntime as ort
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import numpy as np  # noqa: E402
+import onnx  # noqa: E402
+from gpt2_runtime import GPT2, ROOT, encode, load_model  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "src/features/learn/diagrams/gpt2-attention.json"
 
 SENTENCES = {
@@ -38,32 +37,6 @@ SENTENCES = {
 }
 PROMPT = "Yesterday Riya couldn't lift the suitcase because it was too"
 TOP_NEXT = 5
-
-
-def encode(texts: list[str]) -> list[dict]:
-    """Token IDs and pieces from GPT-2's tokenizer (r50k_base), via gpt-tokenizer."""
-    script = (
-        "import * as r from 'gpt-tokenizer/encoding/r50k_base';"
-        "const texts = JSON.parse(process.argv[1]);"
-        "console.log(JSON.stringify(texts.map((t) => {"
-        "  const ids = r.encode(t); return { ids, pieces: ids.map((id) => r.decode([id])) };"
-        "})));"
-    )
-    out = subprocess.run(
-        ["node", "--input-type=module", "-e", script, json.dumps(texts)],
-        cwd=ROOT, check=True, capture_output=True, text=True,
-    )
-    return json.loads(out.stdout)
-
-
-def load_model(folder: Path) -> Path:
-    parts = folder / "static/model-v2"
-    model = folder / "gpt2.onnx"
-    if not model.exists():
-        with model.open("wb") as joined:
-            for i in range(len(list(parts.glob("gpt2.onnx.part*")))):
-                joined.write((parts / f"gpt2.onnx.part{i}").read_bytes())
-    return model
 
 
 def size(model_path: Path) -> dict:
@@ -104,7 +77,8 @@ def block_order(model_path: Path) -> list[str]:
 def main(folder: str) -> None:
     model_path = load_model(Path(folder))
     shape = size(model_path)
-    session = ort.InferenceSession(str(model_path))
+    gpt2 = GPT2(model_path)
+    session = gpt2.session
     heads = [o.name for o in session.get_outputs() if o.name.endswith("_attn_softmax")]
     shape["heads"] = len(heads) // shape["layers"]
 
@@ -131,12 +105,6 @@ def main(folder: str) -> None:
     _, block, _, _, head, *_ = best.split("_")  # block_<b>_attn_head_<h>_attn_softmax
     first_token_top = sum(int(np.argmax(rows[name]["it"][0]) == 0) for name in heads)
 
-    logits = session.run(["linear_output"], {"input": np.array([prompt["ids"]], dtype=np.int64)})[0]
-    last = np.asarray(logits).reshape(-1, shape["vocab"])[-1]  # scores for the next token
-    chances = np.exp(last - last.max())
-    chances /= chances.sum()
-    top = np.argsort(-chances)[:TOP_NEXT]
-    pieces = encode_ids([int(i) for i in top])
 
     data = {
         "model": shape,
@@ -153,7 +121,7 @@ def main(folder: str) -> None:
         "firstTokenTop": first_token_top,
         "next": {
             "prompt": PROMPT,
-            "tokens": [{"text": p, "percent": round(float(chances[i]) * 100, 1)} for p, i in zip(pieces, top)],
+            "tokens": gpt2.top_next(prompt["ids"], TOP_NEXT),
         },
     }
 
@@ -166,18 +134,6 @@ def main(folder: str) -> None:
     print("Next token after the prompt:", [(t["text"], t["percent"]) for t in data["next"]["tokens"]])
     OUT.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
     print(f"Wrote {OUT}")
-
-
-def encode_ids(ids: list[int]) -> list[str]:
-    script = (
-        "import * as r from 'gpt-tokenizer/encoding/r50k_base';"
-        "console.log(JSON.stringify(JSON.parse(process.argv[1]).map((id) => r.decode([id]))));"
-    )
-    out = subprocess.run(
-        ["node", "--input-type=module", "-e", script, json.dumps(ids)],
-        cwd=ROOT, check=True, capture_output=True, text=True,
-    )
-    return json.loads(out.stdout)
 
 
 if __name__ == "__main__":

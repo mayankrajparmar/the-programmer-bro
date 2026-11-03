@@ -1,5 +1,6 @@
 import { aiLayersMarkdown } from "./ai-layers";
 import { aiTimelineMarkdown } from "./ai-timeline";
+import { baseModelMarkdown, basePatternMarkdown, trainingStagesMarkdown } from "./base-model";
 import { llmSizesMarkdown } from "./llm-sizes";
 import { digitGuessesMarkdown, digitNetworkMarkdown } from "./digit-network";
 import { attentionMarkdown, transformerPipelineMarkdown } from "./gpt2-attention";
@@ -34,4 +35,7 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   BlockDiagram: blockMarkdown,
   SamosaHillDiagram: samosaHillMarkdown,
   LossCurveDiagram: lossCurveMarkdown,
+  BaseModelDiagram: baseModelMarkdown,
+  BasePatternDiagram: basePatternMarkdown,
+  TrainingStagesDiagram: trainingStagesMarkdown,
 };
