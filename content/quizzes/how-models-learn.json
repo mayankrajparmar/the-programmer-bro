@@ -1,0 +1,104 @@
+{
+  "lesson": "how-models-learn",
+  "questions": [
+    {
+      "id": "what-is-loss",
+      "type": "recall",
+      "prompt": "What is a model's loss?",
+      "options": [
+        "The training data it threw away",
+        "One number for how wrong its answers are: 0 is perfect, and bigger is worse",
+        "How much money training cost",
+        "The number of weights it has"
+      ],
+      "answer": 1,
+      "explanation": "The loss compares the model's answers with the right ones and boils it down to one number. Training is all about making that number smaller."
+    },
+    {
+      "id": "practice-questions",
+      "type": "application",
+      "prompt": "A sentence is split into 12 tokens. How many next-token practice questions does it give an LLM?",
+      "options": ["1", "6", "12", "11"],
+      "answer": 3,
+      "explanation": "Every token after the first is the right answer to \"what comes next?\" given the tokens before it, so 12 tokens give 11 questions. \"Mumbai gets heavy rain every monsoon.\" is 9 tokens and gives 8."
+    },
+    {
+      "id": "self-supervised",
+      "type": "recall",
+      "prompt": "Why doesn't an LLM need people to write the answers for its training text?",
+      "options": [
+        "The text supplies its own answers: each next token is the right answer",
+        "It copies the answers from a search engine",
+        "It doesn't use answers at all",
+        "Other chatbots write the answers for it"
+      ],
+      "answer": 0,
+      "explanation": "This is self-supervised learning. Our handwriting network needed a person to label every image, but in text, whatever comes next is already the answer."
+    },
+    {
+      "id": "cross-entropy",
+      "type": "application",
+      "prompt": "The right next token is \"chai\". Model A gave \"chai\" a 90% chance and model B gave it 10%. Which has the lower cross-entropy loss?",
+      "options": [
+        "Model B, because it's less sure of itself",
+        "Both are the same, because they both included \"chai\"",
+        "Model A, because it gave the right answer a much higher chance",
+        "Neither: cross-entropy only counts wrong answers"
+      ],
+      "answer": 2,
+      "explanation": "Cross-entropy looks at the chance given to the right answer: 90% gives a loss of about 0.11, while 10% gives about 2.30. The less likely a model thought the right answer was, the bigger its loss."
+    },
+    {
+      "id": "gradient",
+      "type": "recall",
+      "prompt": "In gradient descent, what does the gradient tell the model?",
+      "options": [
+        "Which way the loss goes up, and how steeply, so it can step the other way",
+        "The right answer to every training example",
+        "How many passes are left",
+        "Which examples to delete"
+      ],
+      "answer": 0,
+      "explanation": "The gradient is the slope of the loss. Each step moves the weights the opposite way, downhill, like feeling the slope under your feet in fog."
+    },
+    {
+      "id": "learning-rate-too-big",
+      "type": "application",
+      "prompt": "While training, the loss jumps up and down and gets worse with every step. What's the most likely fix?",
+      "options": [
+        "Add more layers to the network",
+        "Train for more passes",
+        "Use fewer training examples",
+        "Lower the learning rate, so each step is smaller"
+      ],
+      "answer": 3,
+      "explanation": "A learning rate that's too big makes each step overshoot the valley, like the samosa example at 0.11, whose guesses swung from ₹26.45 to ₹1.89 and further out. Smaller steps let it settle."
+    },
+    {
+      "id": "backpropagation",
+      "type": "recall",
+      "prompt": "What does backpropagation do?",
+      "options": [
+        "It checks the training data for mistakes",
+        "It runs the network backwards to write text",
+        "It works out, for every weight, which way to nudge it, starting from the loss and working back through the layers",
+        "It removes the weights the model doesn't need"
+      ],
+      "answer": 2,
+      "explanation": "With thousands or billions of weights, the model needs the gradient for each one. Backpropagation finds them all in one go, from the loss backwards. It was made famous by a 1986 paper."
+    },
+    {
+      "id": "overfitting",
+      "type": "application",
+      "prompt": "A model gets 100% of its practice examples right but only 60% of new ones. What's going on?",
+      "options": [
+        "It's working perfectly",
+        "It's overfitting: it has mugged up its practice examples instead of learning the general pattern",
+        "Its learning rate is exactly right",
+        "The new examples must all be wrong"
+      ],
+      "answer": 1,
+      "explanation": "Our network did exactly this when trained on only 30 images: 100% on those, 62.4% on new ones. More, and more varied, examples help, and testing on unseen examples is how you catch it."
+    }
+  ]
+}

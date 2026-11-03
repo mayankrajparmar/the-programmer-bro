@@ -2,9 +2,11 @@ import * as cl100k from "gpt-tokenizer/encoding/cl100k_base";
 import * as o200k from "gpt-tokenizer/encoding/o200k_base";
 import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
+import HOW_MODELS_LEARN_QUIZ from "../../../../content/quizzes/how-models-learn.json";
 import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
 import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
 import { GPT2, targetShare } from "../diagrams/gpt2-attention";
+import { LEARN, samosaLoss } from "../diagrams/how-models-learn";
 import { BLOCK_ORDER, BLOCK_PARTS } from "../diagrams/transformer-block";
 import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
 import { MEANING_MAP } from "../diagrams/meaning-map";
@@ -32,7 +34,8 @@ interface Encoder {
  * scripts/lessons/glove-embeddings.py, which also checks the parts that need all
  * 400,000 words (nearest neighbours, and which words GloVe doesn't have). Lesson 9's
  * network numbers come from scripts/lessons/digit-network.py, via digit-network.json, and
- * lesson 10's GPT-2 numbers from scripts/lessons/gpt2-attention.py, via gpt2-attention.json.
+ * lesson 10's GPT-2 numbers from scripts/lessons/gpt2-attention.py, via gpt2-attention.json,
+ * and lesson 11's training runs from scripts/lessons/how-models-learn.py.
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -479,5 +482,134 @@ describe("worked numbers in lesson 10", () => {
     expect(body).toContain(
       "1,000 tokens make 500,500 comparisons in each head, and 2,000 tokens make 2,001,000, about four times as many",
     );
+  });
+});
+
+describe("worked numbers in lesson 11", () => {
+  const body = getLesson("how-ai-works", "how-models-learn")?.body ?? "";
+  const tableRows = (firstCell: RegExp) =>
+    body
+      .split("\n")
+      .filter((line) => line.startsWith("| ") && firstCell.test(line.split("|")[1]?.trim() ?? ""))
+      .map((line) =>
+        line
+          .split("|")
+          .slice(1, -1)
+          .map((cell) => cell.trim()),
+      );
+  /** Rupees as the lesson writes them: two decimals, a proper minus sign before the ₹. */
+  const rupees = (value: number) => `${value < 0 ? "−" : ""}₹${Math.abs(value).toFixed(2)}`;
+  const crossEntropy = (percent: number) => -Math.log(percent / 100);
+
+  it("turns a real sentence into next-token practice questions with GPT-2's tokenizer", () => {
+    const sentence = "Mumbai gets heavy rain every monsoon.";
+    const tokens = r50k.encode(sentence).map((id) => r50k.decode([id]));
+    const rows = tableRows(/^M/);
+    expect(rows).toHaveLength(tokens.length - 1);
+    rows.forEach(([seen, next], i) => {
+      expect(seen).toBe(tokens.slice(0, i + 1).join(""));
+      expect(next).toBe((tokens[i + 1] ?? "").replace(/^ /, "·"));
+    });
+    expect(body).toContain(
+      `A sentence of ${tokens.length} tokens gives ${tokens.length - 1} practice questions`,
+    );
+  });
+
+  it("works out the cross-entropy loss for GPT-2's real chances", () => {
+    const rows = tableRows(/^(heavy|big|cold)$/);
+    expect(rows).toHaveLength(3);
+    for (const [word, given, loss] of rows) {
+      const token = GPT2.next.tokens.find((t) => t.text.trim() === word);
+      expect(given).toBe(`${token?.percent.toFixed(1)}%`);
+      expect(loss).toBe(crossEntropy(token?.percent ?? 0).toFixed(2));
+    }
+    expect(crossEntropy(100)).toBeCloseTo(0);
+    const start = LEARN.network.testLoss[0] ?? 0;
+    expect(start).toBeGreaterThan(Math.log(10));
+    expect(body).toContain(`started with a loss of ${start.toFixed(2)} on its test images`);
+    expect(body).toContain(`which scores ${Math.log(10).toFixed(2)}`);
+  });
+
+  it("matches lesson 9's run, and counts its rounds of nudging", () => {
+    const { network } = LEARN;
+    expect(network.testAccuracy).toEqual(DIGIT_NETWORK.accuracy);
+    expect(network.trainImages).toBe(DIGIT_NETWORK.trainImages);
+    const perPass = Math.ceil(network.trainImages / DIGIT_NETWORK.batch);
+    expect(network.updates).toBe(perPass * network.passes);
+    expect(body).toContain(
+      `${perPass} nudges per pass through its ${network.trainImages.toLocaleString("en-US")} images, and ${network.updates} over ${network.passes} passes`,
+    );
+    expect(body).toContain(
+      `real loss of our handwriting network on ${network.testImages} test images`,
+    );
+  });
+
+  it("runs gradient descent on the samosa price, as the table shows", () => {
+    const { receipts, start, steps, runs } = LEARN.samosa;
+    expect(receipts).toEqual([
+      [1, 15],
+      [2, 30],
+      [3, 45],
+      [5, 75],
+    ]);
+    const slope = (price: number) =>
+      receipts.reduce((sum, [n = 0, bill = 0]) => sum + 2 * (price * n - bill) * n, 0) /
+      receipts.length;
+    // One row per step, one column per learning rate: too small, about right, too big.
+    const rows = tableRows(/^[0-5]$/).filter((row) => row.length === 4);
+    expect(rows).toHaveLength(6);
+    expect(body).toContain("| Step | 0.005 (too small) | 0.04 (about right) | 0.11 (too big) |");
+    Object.values(runs).forEach((run, column) => {
+      const prices = [start];
+      for (let i = 0; i < steps; i++) {
+        prices.push((prices.at(-1) ?? 0) - run.rate * slope(prices.at(-1) ?? 0));
+      }
+      prices.forEach((price, i) => expect(run.prices[i]).toBeCloseTo(price, 2));
+      rows.forEach((row, step) => expect(row[column + 1]).toBe(rupees(prices[step] ?? 0)));
+    });
+    expect(samosaLoss(start)).toBe(runs["about right"].losses[0]);
+    expect(samosaLoss(15)).toBe(0);
+    expect(body).toContain(
+      `after 8 steps it has only reached ${rupees(runs["too small"].prices[8] ?? 0)}`,
+    );
+    expect(rupees(runs["about right"].prices[6] ?? 0)).toBe("₹15.00");
+    expect(body).toContain("it's at ₹15.00 by step 6");
+    expect(body).toContain(
+      `to ${rupees(runs["about right"].prices[1] ?? 0)}, then ${rupees(runs["about right"].prices[2] ?? 0)}, then ${rupees(runs["about right"].prices[3] ?? 0)}`,
+    );
+  });
+
+  it("reports the network's learning rates and overfitting runs as recorded", () => {
+    const rates = tableRows(/^\d+(\.\d+)?$/).filter((row) => row.length === 2);
+    expect(rates).toEqual(
+      LEARN.learningRates.map((r) => [String(r.rate), `${r.accuracy.toFixed(1)}%`]),
+    );
+    const few = tableRows(/^[\d,]+ \(\d+ passes\)$/);
+    expect(few).toEqual(
+      LEARN.fewImages.map((run) => [
+        `${run.images.toLocaleString("en-US")} (${run.passes} passes)`,
+        `${run.train.toFixed(1)}%`,
+        `${run.test.toFixed(1)}%`,
+      ]),
+    );
+    expect(body).toContain(`but only ${LEARN.fewImages[0]?.test}% of new ones`);
+  });
+
+  it("states Llama 3's training scale correctly", () => {
+    expect(3.8e25).toBe(38 * 1e24);
+    expect(body).toContain("3.8 × 10²⁵ calculations (that's 38 followed by 24 zeros)");
+  });
+
+  it("gets the quiz's sums right", () => {
+    const answer = (id: string) => {
+      const q = HOW_MODELS_LEARN_QUIZ.questions.find((question) => question.id === id);
+      return q?.options[q.answer];
+    };
+    expect(answer("practice-questions")).toBe(String(12 - 1));
+    const explanation = HOW_MODELS_LEARN_QUIZ.questions.find(
+      (q) => q.id === "cross-entropy",
+    )?.explanation;
+    expect(explanation).toContain(`about ${crossEntropy(90).toFixed(2)}`);
+    expect(explanation).toContain(`about ${crossEntropy(10).toFixed(2)}`);
   });
 });

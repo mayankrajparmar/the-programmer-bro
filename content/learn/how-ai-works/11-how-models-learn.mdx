@@ -1,0 +1,159 @@
+---
+description: How a model learns from training data, measures its mistakes with a loss, and fixes them with gradient descent, with real numbers from a small network.
+inShort: A model learns by guessing, measuring how wrong it was with a number called the loss, and nudging every weight a little in the direction that makes the loss smaller. Repeated millions of times over lots of examples, this is called gradient descent, and it's how every LLM is trained.
+lastReviewed: 2026-11-03
+draft: true
+sources:
+  - title: Gradient descent, how neural networks learn
+    url: https://www.3blue1brown.com/lessons/gradient-descent
+    type: Video
+    note: Grant Sanderson's animated lesson on the cost of a network's mistakes and rolling downhill to reduce it.
+  - title: "Linear regression: Gradient descent exercise"
+    url: https://developers.google.com/machine-learning/crash-course/linear-regression/gradient-descent-exercise
+    type: Course
+    note: Google's free interactive exercise in this lesson's "Try it", where you run gradient descent with different learning rates.
+  - title: Using neural nets to recognize handwritten digits
+    url: https://neuralnetworksanddeeplearning.com/chap1.html
+    type: Book
+    note: Chapter 1 of Michael Nielsen's online book, which explains gradient descent and learning in small batches step by step.
+  - title: Learning representations by back-propagating errors
+    url: https://doi.org/10.1038/323533a0
+    type: Paper
+    note: The 1986 Nature paper by Rumelhart, Hinton and Williams that made backpropagation the standard way to train networks.
+  - title: The Llama 3 Herd of Models
+    url: https://arxiv.org/abs/2407.21783
+    type: Paper
+    note: Meta's 2024 report on training Llama 3, with its 15.6 trillion tokens, data mix and computing power.
+  - title: Optical Recognition of Handwritten Digits
+    url: https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits
+    type: Docs
+    note: The handwritten digits (CC BY 4.0) that our small network learned from in lesson 9 and in this lesson.
+---
+
+In lesson 9, our small network went from reading 11.4% of handwritten digits correctly to 96.9%, after 900 rounds of nudging its weights. In lesson 10, one of GPT-2's attention heads had learned to link "it" to "suitcase", and nobody programmed that either. So what actually happens when a model "learns"?
+
+It comes down to three things: examples to learn from, a number for how wrong the model is, and a way to make that number smaller. In this lesson you'll meet all three, with real numbers from the same small network, and then see how the very same loop trains an LLM.
+
+## Training data: examples with answers
+
+A model learns from examples that come with the right answer. Our handwriting network practised on 1,438 images of digits, each labelled by a person with the digit it shows.
+
+LLMs don't need anyone to write the answers. The text itself provides them: in any sentence, each token is the right answer to "what comes next?", given the tokens before it. This is called **self-supervised learning**. Here's one sentence cut into GPT-2's tokens (lesson 5), and the practice questions it gives:
+
+| What the model sees                  | The right next token |
+| ------------------------------------ | -------------------- |
+| M                                    | umbai                |
+| Mumbai                               | ·gets                |
+| Mumbai gets                          | ·heavy               |
+| Mumbai gets heavy                    | ·rain                |
+| Mumbai gets heavy rain               | ·every               |
+| Mumbai gets heavy rain every         | ·mon                 |
+| Mumbai gets heavy rain every mon     | soon                 |
+| Mumbai gets heavy rain every monsoon | .                    |
+
+A sentence of 9 tokens gives 8 practice questions (a dot marks a space at the start of a token). Meta trained Llama 3 on 15.6 trillion tokens of text: roughly 50% general knowledge, 25% maths and reasoning, 17% code and 8% other languages. Before training, it removed websites with lots of personal information and took out repeated copies of the same text.
+
+## The loss: one number for how wrong
+
+For each example, the model's answer is compared with the right one, and the result is a single number called the **loss**: 0 means perfect, and bigger means worse. The training loss is the average over many examples.
+
+When a model gives chances, as LLMs and our handwriting network do, the usual loss looks only at the chance it gave the right answer. This is called **cross-entropy**. In lesson 10, after "...because it was too", GPT-2 gave these chances. Here's the loss it would get for each, if that word were the right answer:
+
+| If the right next token was | GPT-2 gave it | Loss |
+| --------------------------- | ------------- | ---- |
+| heavy                       | 45.3%         | 0.79 |
+| big                         | 13.0%         | 2.04 |
+| cold                        | 3.0%          | 3.51 |
+
+A model that gave the right answer 100% would score 0. The less likely it thought the right answer was, the bigger the loss, so confidently wrong answers are punished the most.
+
+Our handwriting network started with a loss of 2.54 on its test images. That's slightly worse than spreading its chances evenly over the ten digits, 10% each, which scores 2.30.
+
+## Gradient descent: walking downhill
+
+Training means changing the weights to make the loss smaller. Nearly every neural network is trained with a method called **gradient descent**, or a close variant of it.
+
+<Analogy>
+
+Imagine walking down a ghat road in thick monsoon fog. You can't see the valley, but you can feel which way the ground slopes under your feet. So you take a small step downhill, feel the slope again, and take another. You never see the whole mountain, yet step by step you reach the bottom. Gradient descent does the same with the loss.
+
+</Analogy>
+
+Here's the smallest possible example. A model has one weight: the price of a samosa, which it doesn't know. It guesses each bill as price × samosas, and learns from four made-up receipts: 1 samosa for ₹15, 2 for ₹30, 3 for ₹45 and 5 for ₹75. Its loss is the average of the squared errors: how far each guessed bill was from the real one, multiplied by itself, so bigger mistakes count for much more.
+
+It starts by guessing ₹5. For every possible price there's a loss, and together they make a valley with its lowest point at the right price:
+
+<Figure caption="Figure 1: the loss for every guessed price of a samosa. The model starts at ₹5, high up the slope. The slope there, called the gradient, says the loss falls as the price rises, so each step moves the price up, to ₹12.80, then ₹14.52, then ₹14.89.">
+  <SamosaHillDiagram />
+</Figure>
+
+The **gradient** is the slope: which way the loss goes up, and how steeply. Each step moves the weight the opposite way, downhill. How far it moves is set by the **learning rate**, a number chosen before training starts. Here's the guessed price after each step, with three learning rates:
+
+| Step | 0.005 (too small) | 0.04 (about right) | 0.11 (too big) |
+| ---- | ----------------- | ------------------ | -------------- |
+| 0    | ₹5.00             | ₹5.00              | ₹5.00          |
+| 1    | ₹5.97             | ₹12.80             | ₹26.45         |
+| 2    | ₹6.85             | ₹14.52             | ₹1.89          |
+| 3    | ₹7.65             | ₹14.89             | ₹30.01         |
+| 4    | ₹8.37             | ₹14.98             | −₹2.19         |
+| 5    | ₹9.01             | ₹14.99             | ₹34.68         |
+
+Too small, and it creeps: after 8 steps it has only reached ₹10.60. About right, and it's at ₹15.00 by step 6. Too big, and every step overshoots the valley and lands higher up the other side, so the guesses get worse and worse.
+
+## Many weights at once: backpropagation
+
+Real networks have far more than one weight: 1,210 in our handwriting network and 405 billion in Llama 3.1. Gradient descent works the same way, but now the gradient says, for every single weight, which way and how far to move it. **Backpropagation** works all of that out in one go, starting from the loss and working backwards through the layers. It was made famous by a 1986 paper by David Rumelhart, Geoffrey Hinton and Ronald Williams, and it's how networks have been trained ever since.
+
+Models also don't wait to see every example before taking a step. Our network nudged its weights after every batch of 32 images, picked at random: 45 nudges per pass through its 1,438 images, and 900 over 20 passes. Learning from small random batches like this is called **stochastic gradient descent** ("stochastic" means random). Here's its loss on test images it never trained on:
+
+<Figure caption="Figure 2: the real loss of our handwriting network on 359 test images, after each pass through its training images. It falls fast at first, then levels off.">
+  <LossCurveDiagram />
+</Figure>
+
+The learning rate matters here too. We trained the same network, from the same starting weights, with five learning rates:
+
+| Learning rate | Test images read correctly after 20 passes |
+| ------------- | ------------------------------------------ |
+| 0.001         | 15.3%                                      |
+| 0.01          | 82.5%                                      |
+| 0.1           | 96.9%                                      |
+| 1             | 91.1%                                      |
+| 3             | 9.2%                                       |
+
+Too small, and 20 passes aren't nearly enough. Too big, and the network jumps about so wildly that it ends up worse than guessing.
+
+## Learning, or mugging up?
+
+The test images matter because a model can do brilliantly on its practice examples without learning anything general. We trained the same network on far fewer images, going over them hundreds of times:
+
+| Training images   | Practice images right | New test images right |
+| ----------------- | --------------------- | --------------------- |
+| 30 (400 passes)   | 100.0%                | 62.4%                 |
+| 100 (300 passes)  | 100.0%                | 90.0%                 |
+| 1,438 (20 passes) | 97.6%                 | 96.9%                 |
+
+With only 30 images, it got all of them right but only 62.4% of new ones. It had mugged up its practice examples, quirks and all, like a student who memorises last year's answers and is lost when the questions change. This is called **overfitting**. More examples, and more varied ones, help prevent it, and testing on examples the model has never seen is how you catch it.
+
+## Training an LLM: the same loop, at a huge scale
+
+An LLM is trained with exactly this loop. It reads a batch of text, predicts every next token, measures the cross-entropy loss, uses backpropagation to find the gradient for every weight, and nudges them all downhill. Then it does it again, and again.
+
+The scale is the difference. Llama 3.1 405B nudged 405 billion weights while working through 15.6 trillion tokens. Meta says its training took 3.8 × 10²⁵ calculations (that's 38 followed by 24 zeros) on up to 16,000 H100 GPUs, the same kind of chip as in lesson 2.
+
+This first, enormous stage is called **pre-training**, and it produces a **base model**: one that's very good at continuing text, but isn't yet a helpful chatbot. Turning it into one is lesson 12.
+
+<TryIt>
+
+Open Google's [gradient descent exercise](https://developers.google.com/machine-learning/crash-course/linear-regression/gradient-descent-exercise), part of its free Machine Learning Crash Course. It runs gradient descent on a small set of data about cars' fuel efficiency, and lets you change the learning rate. Try 0.03 first and watch the loss fall. Then try a tiny learning rate, and then 1. Which one gets stuck, and which one never settles down?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- Models learn from examples with answers. For LLMs, the text supplies its own answers: every token is the right answer to "what comes next?".
+- The loss is one number for how wrong the model is. Cross-entropy punishes confidently wrong answers the most.
+- Gradient descent nudges every weight a little downhill, again and again. Backpropagation works out which way each weight should move.
+- The learning rate sets the size of each step: too small is slow, too big never settles.
+- A model can mug up its practice examples without learning anything general (overfitting), so it's always tested on examples it hasn't seen.
+
+</KeyTakeaways>

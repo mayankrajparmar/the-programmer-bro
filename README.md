@@ -215,8 +215,9 @@ to `src/features/learn/server/worked-numbers.test.ts` that works them out again,
 the tables and the figures can't drift apart. If the numbers come from data too big to keep in
 the repository, put the script that produces them in `scripts/lessons/` and commit a small
 sample for the test (lesson 7 does this with `glove-embeddings.py` and `glove-sample.json`, and
-lesson 9 with `digit-network.py`, which trains a small network and saves its results, and lesson
-10 with `gpt2-attention.py`, which runs the real GPT-2).
+lesson 9 with `digit-network.py`, which trains a small network and saves its results, lesson 10
+with `gpt2-attention.py`, which runs the real GPT-2, and lesson 11 with `how-models-learn.py`,
+which reuses lesson 9's network from `tiny_network.py`).
 
 ## Adding a resource
 

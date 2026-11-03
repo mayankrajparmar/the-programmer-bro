@@ -12,6 +12,7 @@ const LESSON_7 = `${TRACK}/embeddings`;
 const LESSON_8 = `${TRACK}/rag`;
 const LESSON_9 = `${TRACK}/neural-networks`;
 const LESSON_10 = `${TRACK}/transformer`;
+const LESSON_11 = `${TRACK}/how-models-learn`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -37,8 +38,8 @@ test.describe("learning section", () => {
     await expect(page.getByRole("heading", { level: 2, name: /^Module [A-D]/ })).toHaveCount(4);
     await expect(page.getByRole("link", { name: /What is AI, really\?/ })).toBeVisible();
     // Lessons that aren't written yet are listed, but not linked.
-    await expect(page.getByText("How models learn", { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: /How models learn/ })).toHaveCount(0);
+    await expect(page.getByText("From base model to assistant", { exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: /From base model to assistant/ })).toHaveCount(0);
     if (!isMobile) {
       const nav = page.getByRole("banner").getByRole("navigation", { name: "Main" });
       await expect(nav.getByRole("link", { name: "Learn" })).toHaveAttribute(
@@ -228,6 +229,20 @@ test.describe("learning section", () => {
     );
   });
 
+  test("renders lesson 11 with its loss figures, linked from lesson 10", async ({ page }) => {
+    await page.goto(LESSON_11);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("How models learn");
+    await expect(page.getByRole("img", { name: /loss for every guessed price/ })).toBeVisible();
+    await expect(page.getByRole("img", { name: /handwriting network's loss/ })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "₹26.45" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "62.4%" })).toBeVisible();
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 10/ })).toHaveAttribute(
+      "href",
+      LESSON_10,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
@@ -244,6 +259,7 @@ test.describe("learning section", () => {
         LESSON_8,
         LESSON_9,
         LESSON_10,
+        LESSON_11,
       ]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })
