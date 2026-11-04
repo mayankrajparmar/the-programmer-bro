@@ -6,6 +6,11 @@ import { isCodeLanguage } from "@/lib/highlight";
 import { cn } from "@/lib/utils";
 import { AiLayersDiagram } from "../diagrams/ai-layers";
 import { AiTimelineDiagram } from "../diagrams/ai-timeline";
+import {
+  BaseModelDiagram,
+  BasePatternDiagram,
+  TrainingStagesDiagram,
+} from "../diagrams/base-model";
 import { LlmSizesDiagram } from "../diagrams/llm-sizes";
 import { DigitGuessesDiagram, DigitNetworkDiagram } from "../diagrams/digit-network";
 import { AttentionDiagram, TransformerPipelineDiagram } from "../diagrams/gpt2-attention";
@@ -151,4 +156,7 @@ export const lessonComponents: MDXComponents = {
   BlockDiagram,
   SamosaHillDiagram,
   LossCurveDiagram,
+  BaseModelDiagram,
+  BasePatternDiagram,
+  TrainingStagesDiagram,
 };

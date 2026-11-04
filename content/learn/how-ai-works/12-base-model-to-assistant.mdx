@@ -1,0 +1,124 @@
+---
+description: How a base model that only continues text becomes a helpful chatbot, through fine-tuning on examples and feedback from people, with real GPT-2 outputs.
+inShort: Pre-training produces a base model that continues whatever text you give it. Fine-tuning on example conversations teaches it to answer and follow instructions, and feedback on which answers people prefer makes it more helpful. These later steps shape how it behaves, not how much it knows.
+lastReviewed: 2026-11-03
+draft: true
+sources:
+  - title: Training language models to follow instructions with human feedback
+    url: https://arxiv.org/abs/2203.02155
+    type: Paper
+    note: OpenAI's 2022 InstructGPT paper, which fine-tuned GPT-3 on examples and people's rankings, the recipe behind today's chatbots.
+  - title: Aligning language models to follow instructions
+    url: https://openai.com/index/instruction-following/
+    type: Article
+    note: OpenAI's plain-language summary of InstructGPT, and why a model trained only on internet text doesn't follow instructions.
+  - title: The Llama 3 Herd of Models
+    url: https://arxiv.org/abs/2407.21783
+    type: Paper
+    note: Meta's 2024 report, whose post-training section describes six rounds of fine-tuning and learning from people's preferences.
+  - title: Llama 3.1 prompt formats
+    url: https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/prompt_format.md
+    type: GitHub
+    note: Meta's guide to the special tokens that turn a chat into one long text for Llama 3.1.
+  - title: "LIMA: Less Is More for Alignment"
+    url: https://arxiv.org/abs/2305.11206
+    type: Paper
+    note: A 2023 study that fine-tuned a model on just 1,000 examples, and argued that almost all its knowledge comes from pre-training.
+  - title: "Sycophancy in GPT-4o: what happened and what we're doing about it"
+    url: https://openai.com/index/sycophancy-in-gpt-4o/
+    type: Article
+    note: OpenAI's 2025 explanation of why an update made ChatGPT too flattering, and why it was rolled back.
+---
+
+Ask any chatbot "What is the capital of India?" and it says New Delhi. Now ask GPT-2, the model from lesson 10. We gave it exactly that question, and let it write 20 tokens, always picking its most likely next token:
+
+<Figure caption="Figure 1: what GPT-2 really wrote after a question and an instruction. It doesn't answer either; it just carries on writing.">
+  <BaseModelDiagram />
+</Figure>
+
+GPT-2 isn't broken. It's a **base model**: a model that has only been through pre-training (lesson 11), so the one thing it has learned to do is continue text. In this lesson you'll see why that's not the same as answering, and the two extra rounds of training that turn a base model into the helpful assistant you chat with.
+
+## Why a base model doesn't answer
+
+A base model has learned what usually comes next in text from the internet, books and so on. And on the internet, a question isn't always followed by its answer. It might be the title of an article, one question in a long list of FAQs, or a quiz waiting for the next question. So the base model writes something that could plausibly come next, not necessarily what you wanted.
+
+OpenAI put it this way about its GPT-3 base model: it "is trained to predict the next word on a large dataset of Internet text", not to do the task the person actually wants. Its researchers also found that "making language models bigger does not inherently make them better at following a user's intent". GPT-2 is small, so it also gets many facts wrong, but even a much bigger base model behaves the same way: it continues the text.
+
+You can coax a base model into answering by writing the start of a pattern for it to copy:
+
+<Figure caption="Figure 2: the same question inside a pattern of questions and answers. GPT-2 now answers, though its top guess, Mumbai, is wrong. Then it carries on with the pattern and writes the next question itself.">
+  <BasePatternDiagram />
+</Figure>
+
+This works, but it's clumsy, and the model still doesn't know when to stop. The fix is more training.
+
+## Step 1: fine-tuning on examples
+
+**Fine-tuning** means taking a model that has already been trained and training it a bit more, on a smaller, carefully chosen set of examples, using exactly the loop from lesson 11. To teach a base model to be an assistant, people write example prompts along with the ideal answer to each, and the model is fine-tuned on them. This is called **supervised fine-tuning**.
+
+OpenAI's 2022 **InstructGPT** project is the best-documented example of the whole recipe. It fine-tuned GPT-3 on about 13,000 prompts with answers written by a team of about 40 hired contractors. That's tiny compared with pre-training, yet it changes how the model behaves completely.
+
+### Turning a chat into text
+
+A model only ever reads one long run of tokens (lesson 5), so a chat has to be written out as text, with special tokens marking who said what. Here's how Meta formats a conversation for Llama 3.1, just before the assistant answers:
+
+```text
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+You are a helpful assistant.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+What is the capital of India?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+```
+
+The **system** message sets the rules for the conversation, the **user** message is what you typed, and the empty **assistant** turn at the end is the model's cue to answer. During fine-tuning, the model sees thousands of chats in this format and learns that after the assistant's header comes a helpful answer, followed by `<|eot_id|>`, which means "end of turn". That token is how a chatbot knows to stop, instead of writing your next question for you as GPT-2 did.
+
+## Step 2: learning from what people prefer
+
+Writing perfect answers is slow, but people can quickly say which of two answers is better. So the second step uses comparisons. The model writes several answers to a prompt, people rank them, and the model is nudged towards the kind of answer people prefer.
+
+InstructGPT did this with rankings for about 33,000 prompts. It trained a second model, a **reward model**, to predict which answers people would prefer, then used a kind of training called **reinforcement learning** to make the assistant score well with it. Together this is called **reinforcement learning from human feedback**, or **RLHF**. Newer models often use simpler methods for the same idea: Meta's Llama 3 used one called **Direct Preference Optimization (DPO)**, together with supervised fine-tuning, in six rounds, with people rating which of two answers they preferred and how strongly.
+
+<Figure caption="Figure 3: from base model to assistant. Pre-training does nearly all the work, and the two later steps shape how the model behaves.">
+  <TrainingStagesDiagram />
+</Figure>
+
+The results can be striking. In OpenAI's tests, people preferred the answers of a 1.3-billion-parameter InstructGPT model to those of the 175-billion-parameter GPT-3 base model, which is over 100 times bigger.
+
+<Analogy>
+
+Think of a brilliant graduate who has read every book in the library, joining a bank's customer helpdesk. On day one, they know a lot but have no idea how to talk to customers. First they study model replies written by experienced staff (fine-tuning on examples). Then a senior colleague reads pairs of their draft replies and says which one is better, until they get the hang of it (learning from preferences). They learn very few new facts on the job; they learn how to use what they know.
+
+</Analogy>
+
+## Behaviour, not knowledge
+
+Fine-tuning shapes how a model behaves much more than what it knows. In a 2023 study called LIMA, researchers fine-tuned a large base model on just 1,000 carefully written examples, without any feedback step, and got surprisingly good answers. They argued that "almost all knowledge in large language models is learned during pretraining", and that fine-tuning mainly teaches the model the style and format of a good answer.
+
+That's why fine-tuning can't fix a model's knowledge cutoff (lesson 6). To give a model new or private information, RAG (lesson 8) is usually the better tool.
+
+## When feedback goes wrong
+
+Learning from what people prefer has a catch: people tend to like answers that agree with them and flatter them. In April 2025, OpenAI rolled back an update to GPT-4o in ChatGPT because it had become "overly flattering or agreeable—often described as sycophantic". It said the update had "focused too much on short-term feedback", including thumbs-up and thumbs-down ratings on ChatGPT's answers.
+
+<Callout kind="warn">
+
+A chatbot agreeing with you isn't evidence that you're right. Assistants are trained partly on what people like to hear, so for anything that matters, ask it to argue the other side too, and check the facts yourself.
+
+</Callout>
+
+<TryIt>
+
+Open [Transformer Explainer](https://poloclub.github.io/transformer-explainer/) again. It runs GPT-2, a base model, so you can see its most likely next tokens. Type "What is the capital of India?" and look at what it expects next. Then type the pattern from Figure 2 and compare. Finally, ask the same question in any chatbot, and notice how it answers in one go and then stops.
+
+</TryIt>
+
+<KeyTakeaways>
+
+- Pre-training produces a base model, which continues text instead of answering. GPT-2 is one.
+- Supervised fine-tuning trains the model on example prompts and ideal answers written by people, in a chat format with special tokens.
+- Learning from preferences (RLHF, or newer methods such as DPO) nudges the model towards the answers people rank higher.
+- These steps change how a model behaves far more than what it knows: almost all its knowledge comes from pre-training.
+- Training on what people like can make a model too agreeable, so don't treat agreement as proof.
+
+</KeyTakeaways>

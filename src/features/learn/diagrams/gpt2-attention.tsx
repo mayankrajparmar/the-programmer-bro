@@ -1,4 +1,4 @@
-import { ArrowDown } from "lucide-react";
+import { Flow, type FlowStage, flowMarkdown } from "./flow";
 import GPT2 from "./gpt2-attention.json";
 
 /*
@@ -32,7 +32,7 @@ const grouped = (value: number) => value.toLocaleString("en-US");
 const { model } = GPT2;
 const HEAD = `layer ${GPT2.head.layer}, head ${GPT2.head.head}`;
 
-const STEPS = [
+const STEPS: readonly FlowStage[] = [
   {
     name: "Text to tokens",
     detail: `Your prompt is split into tokens, each with an ID (lesson 5). GPT-2 knows ${grouped(model.vocab)} different tokens.`,
@@ -43,6 +43,8 @@ const STEPS = [
   },
   {
     name: "Transformer blocks",
+    badge: `× ${model.layers}`,
+    highlight: true,
     detail: `The same kind of block, repeated ${model.layers} times in GPT-2. Each one has two parts:`,
     parts: [
       {
@@ -59,56 +61,10 @@ const STEPS = [
     name: "Scores to the next token",
     detail: `The last token's numbers become a probability for each of the ${grouped(model.vocab)} tokens, and one is picked (lesson 4). It's added to the text, and the journey starts again.`,
   },
-] as const;
+];
 
 export function TransformerPipelineDiagram() {
-  return (
-    <ol aria-label="The journey of a prompt through GPT-2" className="m-0 grid list-none gap-2 p-0">
-      {STEPS.map((step, index) => {
-        const block = "parts" in step;
-        return (
-          <li key={step.name} className="grid gap-2">
-            {index > 0 && (
-              <ArrowDown
-                aria-hidden
-                className="mx-auto size-5 text-text-muted"
-                strokeWidth={1.75}
-              />
-            )}
-            <div
-              className={
-                block
-                  ? "grid gap-2 rounded-md border border-amber bg-amber-subtle p-4"
-                  : "grid gap-1 rounded-md border border-border bg-surface-raised p-4"
-              }
-            >
-              <h3 className="m-0 flex flex-wrap items-baseline gap-x-2 font-display text-label">
-                <span>
-                  {index + 1}. {step.name}
-                </span>
-                {block && (
-                  <span className="font-body text-small text-text-muted">× {model.layers}</span>
-                )}
-              </h3>
-              <p className="m-0 text-small">{step.detail}</p>
-              {block && (
-                <ul className="m-0 grid list-none gap-2 p-0">
-                  {step.parts.map((part) => (
-                    <li
-                      key={part.name}
-                      className="rounded-sm border border-border bg-surface-raised px-3 py-2 text-small"
-                    >
-                      <strong className="font-semibold">{part.name}:</strong> {part.detail}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  );
+  return <Flow label="The journey of a prompt through GPT-2" stages={STEPS} />;
 }
 
 /** A token as lesson 5 draws it: a faint dot for a space at the start. */
@@ -173,12 +129,7 @@ export function AttentionDiagram() {
 }
 
 /** Figure 1 as text, for the Markdown copy of the lesson (llms-full.txt). */
-export const transformerPipelineMarkdown = STEPS.map((step, index) =>
-  [
-    `${index + 1}. ${step.name}: ${step.detail}`,
-    ...("parts" in step ? step.parts.map((part) => `   - ${part.name}: ${part.detail}`) : []),
-  ].join("\n"),
-).join("\n");
+export const transformerPipelineMarkdown = flowMarkdown(STEPS);
 
 /** Figure 2 as text. */
 export const attentionMarkdown = (Object.keys(GPT2.sentences) as Pronoun[])

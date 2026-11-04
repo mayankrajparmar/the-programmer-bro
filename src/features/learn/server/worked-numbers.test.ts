@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import HOW_MODELS_LEARN_QUIZ from "../../../../content/quizzes/how-models-learn.json";
 import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
 import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
+import { BASE, TRAINING_STAGES } from "../diagrams/base-model";
 import { GPT2, targetShare } from "../diagrams/gpt2-attention";
 import { LEARN, samosaLoss } from "../diagrams/how-models-learn";
 import { BLOCK_ORDER, BLOCK_PARTS } from "../diagrams/transformer-block";
@@ -35,7 +36,8 @@ interface Encoder {
  * 400,000 words (nearest neighbours, and which words GloVe doesn't have). Lesson 9's
  * network numbers come from scripts/lessons/digit-network.py, via digit-network.json, and
  * lesson 10's GPT-2 numbers from scripts/lessons/gpt2-attention.py, via gpt2-attention.json,
- * and lesson 11's training runs from scripts/lessons/how-models-learn.py.
+ * lesson 11's training runs from scripts/lessons/how-models-learn.py, and lesson 12's GPT-2
+ * outputs from scripts/lessons/base-model.py.
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -611,5 +613,64 @@ describe("worked numbers in lesson 11", () => {
     )?.explanation;
     expect(explanation).toContain(`about ${crossEntropy(90).toFixed(2)}`);
     expect(explanation).toContain(`about ${crossEntropy(10).toFixed(2)}`);
+  });
+});
+
+describe("worked numbers in lesson 12", () => {
+  const body = getLesson("how-ai-works", "base-model-to-assistant")?.body ?? "";
+  const { question, instruction, pattern } = BASE.prompts;
+
+  it("shows what GPT-2 really wrote, and describes it fairly", () => {
+    expect(BASE.tokens).toBe(20);
+    expect(body).toContain(
+      `let it write ${BASE.tokens} tokens, always picking its most likely next token`,
+    );
+    expect(question.prompt).toBe("What is the capital of India?");
+    // "It doesn't answer either; it just carries on writing."
+    for (const run of [question, instruction]) {
+      expect(run.continuation).not.toMatch(/Delhi/);
+      expect(run.top[0]?.text).toBe("\n");
+    }
+    // The pattern: it answers, its top guess is Mumbai (wrong), then writes the next question.
+    expect(pattern.prompt.endsWith("Q: What is the capital of India?\nA:")).toBe(true);
+    expect(pattern.top[0]?.text).toBe(" Mumbai");
+    const delhi = pattern.top.find((token) => token.text === " Delhi");
+    expect(delhi?.percent).toBeLessThan(pattern.top[0]?.percent ?? 0);
+    expect(pattern.continuation.trimStart().startsWith("Mumbai\nQ:")).toBe(true);
+    expect(body).toContain("its top guess, Mumbai, is wrong");
+  });
+
+  it("uses GPT-2's real tokens for the prompts", () => {
+    for (const run of Object.values(BASE.prompts)) {
+      expect(r50k.encode(run.prompt).length).toBeGreaterThan(0);
+      expect(r50k.decode(r50k.encode(run.prompt))).toBe(run.prompt);
+      expect(r50k.encode(run.continuation).length).toBeLessThanOrEqual(BASE.tokens + 2);
+    }
+  });
+
+  it("gets InstructGPT's numbers right, in the text and the figure", () => {
+    expect(175 / 1.3).toBeGreaterThan(100);
+    expect(body).toContain("over 100 times bigger");
+    expect(body).toContain("about 13,000 prompts with answers written by a team of about 40");
+    expect(body).toContain("rankings for about 33,000 prompts");
+    const details = TRAINING_STAGES.map((stage) => stage.detail).join(" ");
+    expect(details).toContain("about 13,000 prompts");
+    expect(details).toContain("about 33,000 prompts");
+    expect(details).toContain("300 billion tokens (lesson 3)");
+  });
+
+  it("writes the chat in Llama 3.1's real format", () => {
+    const chat = /```text\n(<\|begin_of_text\|>[\s\S]*?)```/.exec(body)?.[1] ?? "";
+    expect(chat).toBe(
+      [
+        "<|begin_of_text|><|start_header_id|>system<|end_header_id|>",
+        "",
+        "You are a helpful assistant.<|eot_id|><|start_header_id|>user<|end_header_id|>",
+        "",
+        "What is the capital of India?<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+        "",
+        "",
+      ].join("\n"),
+    );
   });
 });

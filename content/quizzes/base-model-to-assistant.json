@@ -1,0 +1,109 @@
+{
+  "lesson": "base-model-to-assistant",
+  "questions": [
+    {
+      "id": "base-model",
+      "type": "recall",
+      "prompt": "What is a base model?",
+      "options": [
+        "A model that has only been pre-trained, so it continues text instead of answering",
+        "The smallest version of a chatbot",
+        "A model that only works offline",
+        "A model trained only on questions and answers"
+      ],
+      "answer": 0,
+      "explanation": "Pre-training teaches a model to continue text. Until it's fine-tuned, that's all it does, which is why GPT-2 carried on writing instead of answering."
+    },
+    {
+      "id": "why-no-answer",
+      "type": "application",
+      "prompt": "You ask a base model \"How do I make masala chai?\" and it replies with three more questions about tea. Why?",
+      "options": [
+        "It doesn't know anything about tea",
+        "Its context window is full",
+        "In text like the kind it learned from, a question is often followed by more questions, such as in a FAQ list",
+        "It's been told to be unhelpful"
+      ],
+      "answer": 2,
+      "explanation": "A base model writes whatever plausibly comes next. Questions on the internet are often followed by more questions, so that's a likely continuation, even though it isn't what you wanted."
+    },
+    {
+      "id": "supervised-fine-tuning",
+      "type": "recall",
+      "prompt": "In supervised fine-tuning, what does the model learn from?",
+      "options": [
+        "Trillions of tokens from the whole internet",
+        "Example prompts with ideal answers written by people",
+        "Its own answers, with no help",
+        "A list of banned words"
+      ],
+      "answer": 1,
+      "explanation": "People write prompts and the answers they'd like to see, and the model is trained on them with the same loop as pre-training. InstructGPT used about 13,000 prompts."
+    },
+    {
+      "id": "eot",
+      "type": "recall",
+      "prompt": "In Llama 3.1's chat format, what does the special token <|eot_id|> do?",
+      "options": [
+        "It marks the start of the user's message",
+        "It turns the model off",
+        "It hides the system message",
+        "It marks the end of a turn, so the model knows to stop after its answer"
+      ],
+      "answer": 3,
+      "explanation": "Special tokens mark who says what. After fine-tuning, the model writes its answer and then <|eot_id|>, \"end of turn\", instead of carrying on with your next question."
+    },
+    {
+      "id": "preferences",
+      "type": "recall",
+      "prompt": "Why do companies collect comparisons (which of two answers is better) instead of only written answers?",
+      "options": [
+        "People can judge which answer is better much faster than they can write a perfect one",
+        "Comparisons don't need any people at all",
+        "Written answers aren't allowed in training",
+        "Comparisons add new facts to the model"
+      ],
+      "answer": 0,
+      "explanation": "Writing ideal answers is slow; ranking a few answers is quick. With RLHF or newer methods like DPO, the model is nudged towards the kind of answer people rank higher."
+    },
+    {
+      "id": "small-beats-big",
+      "type": "application",
+      "prompt": "People preferred a 1.3-billion-parameter InstructGPT model to the 175-billion-parameter GPT-3 base model. What does that show?",
+      "options": [
+        "Smaller models always know more",
+        "GPT-3 was badly pre-trained",
+        "How a model is trained to behave can matter more to people than its size",
+        "Parameters don't matter at all"
+      ],
+      "answer": 2,
+      "explanation": "GPT-3 knew a lot but only continued text. A model over 100 times smaller, fine-tuned to follow instructions, gave answers people found more useful."
+    },
+    {
+      "id": "new-knowledge",
+      "type": "application",
+      "prompt": "A company wants its chatbot to know about products it launched last week. Is fine-tuning the best tool?",
+      "options": [
+        "Yes: fine-tuning is the main way models learn facts",
+        "No: fine-tuning mostly shapes behaviour, so RAG, which hands the model the right documents, usually suits new facts better",
+        "Yes: a single example is enough to teach any fact",
+        "No: chatbots can never learn anything new"
+      ],
+      "answer": 1,
+      "explanation": "The LIMA study argued that almost all a model's knowledge comes from pre-training, and fine-tuning teaches style and format. For fresh or private information, RAG (lesson 8) is usually the better choice."
+    },
+    {
+      "id": "sycophancy",
+      "type": "application",
+      "prompt": "A chatbot warmly agrees with your plan to put all your savings into one stock. What should you take from that?",
+      "options": [
+        "The plan must be good, since the AI agrees",
+        "Nothing: the chatbot is always neutral",
+        "That the stock will go up",
+        "Not much: assistants are trained partly on what people like to hear, so ask for the other side and check the facts"
+      ],
+      "answer": 3,
+      "explanation": "Learning from human preferences can make models too agreeable. OpenAI rolled back a GPT-4o update in 2025 for being \"overly flattering or agreeable\". Agreement isn't evidence."
+    }
+  ]
+}

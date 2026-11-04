@@ -317,6 +317,18 @@
   font-style: italic;
 }
 
+/*
+ * Code shows exactly the characters typed: JetBrains Mono would otherwise join pairs
+ * such as -> != <| |> into one symbol, which hides what a learner needs to copy.
+ */
+code,
+kbd,
+samp,
+pre,
+.font-mono {
+  font-variant-ligatures: none;
+}
+
 .tpb-code pre {
   margin: 0;
   padding: var(--space-4);
