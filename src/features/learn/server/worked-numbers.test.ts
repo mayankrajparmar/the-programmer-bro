@@ -2,12 +2,14 @@ import * as cl100k from "gpt-tokenizer/encoding/cl100k_base";
 import * as o200k from "gpt-tokenizer/encoding/o200k_base";
 import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
+import CAN_AI_REASON_QUIZ from "../../../../content/quizzes/can-ai-reason.json";
 import HOW_MODELS_LEARN_QUIZ from "../../../../content/quizzes/how-models-learn.json";
 import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
 import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
 import { BASE, TRAINING_STAGES } from "../diagrams/base-model";
 import { GPT2, targetShare } from "../diagrams/gpt2-attention";
 import { LEARN, samosaLoss } from "../diagrams/how-models-learn";
+import { AIME, BILL, BILL_ANSWER, BILL_STEPS } from "../diagrams/reasoning";
 import { BLOCK_ORDER, BLOCK_PARTS } from "../diagrams/transformer-block";
 import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
 import { MEANING_MAP } from "../diagrams/meaning-map";
@@ -37,7 +39,8 @@ interface Encoder {
  * network numbers come from scripts/lessons/digit-network.py, via digit-network.json, and
  * lesson 10's GPT-2 numbers from scripts/lessons/gpt2-attention.py, via gpt2-attention.json,
  * lesson 11's training runs from scripts/lessons/how-models-learn.py, and lesson 12's GPT-2
- * outputs from scripts/lessons/base-model.py.
+ * outputs from scripts/lessons/base-model.py. Lesson 13 quotes published results, so its
+ * test checks the sums built from them and that the text quotes them consistently.
  */
 
 /** Temperature scaling: each probability to the power 1/T, then rescaled to add up to 100. */
@@ -672,5 +675,108 @@ describe("worked numbers in lesson 12", () => {
         "",
       ].join("\n"),
     );
+  });
+});
+
+describe("worked numbers in lesson 13", () => {
+  const body = getLesson("how-ai-works", "can-ai-reason")?.body ?? "";
+  const percents = (text: string) => text.match(/\d+(\.\d+)?%/g) ?? [];
+
+  it("adds up Riya's bill correctly in Figure 1", () => {
+    const total = BILL.items.reduce((sum, item) => sum + item.count * item.price, 0);
+    expect(total).toBe(3 * 15 + 2 * 12);
+    expect(BILL.paid - total).toBe(31);
+    expect(BILL_STEPS).toEqual([
+      "3 samosas × ₹15 = ₹45",
+      "2 cups of chai × ₹12 = ₹24",
+      "Total: ₹45 + ₹24 = ₹69",
+      "Change: ₹100 − ₹69 = ₹31",
+      "Check: ₹69 + ₹31 = ₹100, so that's right.",
+    ]);
+    expect(BILL_ANSWER).toBe("Riya gets ₹31 back.");
+    expect(body).toContain("the samosa and chai bill from Figure 1");
+  });
+
+  it("matches OpenAI's AIME results: each percent is the problems solved out of 15", () => {
+    // "Learning to reason with LLMs" (OpenAI, 2024) gives both forms for each result.
+    expect(AIME.map((row) => [row.percent, row.solved])).toEqual([
+      [12, 1.8],
+      [74, 11.1],
+      [83, 12.5],
+      [93, 13.9],
+    ]);
+    for (const row of AIME) expect(Math.round((row.solved / 15) * 100)).toBe(row.percent);
+    expect(body).toContain("GPT-4o, which answers straight away, solved 12% of the problems");
+    expect(body).toContain("o1 solved 74% with one try each");
+    expect(body).toContain(
+      "let it answer 64 times and took the most common answer, it reached 83%",
+    );
+    expect(AIME[2]?.how).toBe("most common answer of 64 tries");
+    expect(body).toContain("the share of the 15 AIME 2024 problems solved");
+  });
+
+  it("works out the kiwi question, and the mistake o1-mini made", () => {
+    const question = /```text\n(Oliver[\s\S]*?)```/.exec(body)?.[1] ?? "";
+    expect(question).toContain("44 kiwis on Friday");
+    expect(question).toContain("58 kiwis on Saturday");
+    expect(question).toContain("double the number of kiwis he did on Friday");
+    expect(question).toContain("five of them were a bit smaller");
+    const [friday, saturday] = [44, 58];
+    const sunday = 2 * friday;
+    expect(friday + saturday + sunday).toBe(190);
+    expect(body).toContain(`${friday} + ${saturday} + ${sunday} = 190`);
+    // o1-mini took the five small kiwis away: 88 - 5 = 83, then 44 + 58 + 83.
+    expect(friday + saturday + (sunday - 5)).toBe(185);
+    expect(body).toContain("o1-mini answered 185");
+  });
+
+  it("reports GSM-NoOp's drops from the paper's own numbers", () => {
+    // GSM-Symbolic (Mirzadeh et al., 2024), appendix Table 1: GSM8K and Symbolic-NoOp accuracy.
+    const paper = { "GPT-4o": [95.2, 63.1], "o1-mini": [95.1, 66.0], "o1-preview": [94.9, 77.4] };
+    const rows = body
+      .split("\n")
+      .filter((line) => /^\| (GPT-4o|o1-mini|o1-preview) /.test(line))
+      .map((line) =>
+        line
+          .split("|")
+          .slice(1, -1)
+          .map((cell) => cell.trim()),
+      );
+    expect(rows).toEqual(
+      Object.entries(paper).map(([model, [before, after]]) => [
+        model,
+        `${before?.toFixed(1)}%`,
+        `${after?.toFixed(1)}%`,
+      ]),
+    );
+    const drops = Object.values(paper).map(([before = 0, after = 0]) => before - after);
+    // "o1-preview held up best": the smallest drop and the highest score with the extra sentence.
+    expect(Math.min(...drops)).toBe(drops[2]);
+    expect(drops[2]?.toFixed(1)).toBe("17.5");
+    expect(body).toContain("dropped by 17.5 points");
+    // "Some smaller models dropped by more than 60 points": Phi-3-mini and Gemma2-9b.
+    expect(83.7 - 18.0).toBeGreaterThan(60);
+    expect(85.3 - 22.3).toBeGreaterThan(60);
+    expect(body).toContain("some smaller models dropped by more than 60 points");
+  });
+
+  it("quotes the other published numbers as the sources give them", () => {
+    expect(body).toContain("went from 17.9% correct to 56.9%"); // Wei et al. 2022, PaLM 540B
+    expect(body).toContain("scored 35 out of 42"); // Google DeepMind, IMO 2025
+    expect(body).toContain("Claude 3.7 Sonnet mentioned it only 25% of the time");
+    expect(body).toContain("DeepSeek R1 39% of the time"); // Anthropic, 2025
+  });
+
+  it("uses only numbers from the lesson in the quiz", () => {
+    for (const question of CAN_AI_REASON_QUIZ.questions) {
+      for (const percent of percents(question.explanation)) expect(body).toContain(percent);
+    }
+    // The fruit question: less ripe mangoes still count.
+    const fruit = CAN_AI_REASON_QUIZ.questions.find((q) => q.id === "irrelevant-detail");
+    expect(fruit?.prompt).toContain("12 mangoes and 8 bananas");
+    expect(fruit?.prompt).toContain("A model answers 17");
+    expect(12 + 8).toBe(20);
+    expect(12 + 8 - 3).toBe(17);
+    expect(fruit?.options[fruit.answer]).toContain("the answer is 20");
   });
 });

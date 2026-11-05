@@ -1,0 +1,130 @@
+---
+description: What reasoning models do differently, from chains of thought to thinking before answering, how much it helps, and where they still slip.
+inShort: Reasoning models write out their working, often hidden, before they answer, and they're trained to do it well. That makes them far better at maths and many-step problems. But they can be thrown by details that don't matter, and the reasoning they show isn't always how they got the answer.
+lastReviewed: 2026-11-05
+draft: true
+sources:
+  - title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+    url: https://arxiv.org/abs/2201.11903
+    type: Paper
+    note: Google's 2022 paper showing that asking a model for step-by-step working makes it much better at maths word problems.
+  - title: Learning to reason with LLMs
+    url: https://openai.com/index/learning-to-reason-with-llms/
+    type: Article
+    note: OpenAI's 2024 introduction of o1, trained to think before answering, with its maths exam results.
+  - title: Reasoning models
+    url: https://developers.openai.com/api/docs/guides/reasoning
+    type: Docs
+    note: OpenAI's guide for developers, which explains that reasoning tokens are hidden but still take up space and cost money.
+  - title: Gemini Deep Think achieves gold-medal standard at the International Mathematical Olympiad
+    url: https://deepmind.google/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/
+    type: Article
+    note: Google DeepMind's July 2025 announcement of an officially graded, gold-medal-standard score at the IMO.
+  - title: "GSM-Symbolic: Understanding the Limitations of Mathematical Reasoning in Large Language Models"
+    url: https://arxiv.org/abs/2410.05229
+    type: Paper
+    note: Apple researchers' 2024 study showing that one irrelevant sentence can throw even reasoning models.
+  - title: Reasoning models don't always say what they think
+    url: https://www.anthropic.com/research/reasoning-models-dont-say-think
+    type: Article
+    note: Anthropic's 2025 study of whether a model's visible reasoning shows what really drove its answer.
+---
+
+In lesson 5, chatbots stumbled when asked to count the r's in "strawberry", because they see tokens, not letters. When OpenAI introduced its first reasoning model, o1, in September 2024, one of its demos was a coded message that o1 cracked by working through it step by step. The hidden message was: "THERE ARE THREE R'S IN STRAWBERRY."
+
+So can AI reason? It depends a lot on what you mean by "reason", and researchers still argue about it. What we can do is look at what reasoning models do differently, how much it helps, and where they still slip. That's this lesson.
+
+## Rough work: thinking on paper
+
+An LLM writes one token at a time, and each token gets one pass through the network (lesson 10). If a model has to give the answer as its very next token, all the working has to happen inside that single pass. But if it writes its steps out first, each step becomes part of the text it reads before writing the next one (lesson 4). The written steps work like rough work in the margin of an exam paper.
+
+In 2022, Google researchers called this a **chain of thought**: "a series of intermediate reasoning steps". They found that showing a model a few worked examples, with the steps written out, made it much better at maths. On a set of school maths word problems, Google's PaLM model went from 17.9% correct to 56.9%. The trick only helped very large models, of about 100 billion parameters or more.
+
+<Analogy>
+
+Try adding up a long kirana bill in your head while someone talks to you. You'll lose track. Write each line down, carry the tens, and you'll get it right, even though you're no cleverer than before. Writing the steps doesn't make you smarter; it gives your working somewhere to live.
+
+</Analogy>
+
+## Reasoning models: trained to think first
+
+A **reasoning model** is an LLM trained to write a chain of thought before every answer, and to do it well. OpenAI said o1 learns "how to think productively using its chain of thought" through "large-scale reinforcement learning", the kind of training from lesson 12. Through this, OpenAI said, "it learns to break down tricky steps into simpler ones" and "learns to try a different approach when the current one isn't working". Other companies soon released reasoning models of their own.
+
+Here's the idea, with a made-up example:
+
+<Figure caption="Figure 1: a made-up example of a reasoning model at work. It writes its rough work first, including a check, then gives the answer. Many apps hide this thinking or show only a summary of it.">
+  <ThinkingDiagram />
+</Figure>
+
+The thinking is made of tokens, just like the answer. OpenAI chose not to show o1's raw chain of thought to users, and shows "a model-generated summary" of it instead. Apps differ in how much of it they show, but the model always writes its working before it writes the answer.
+
+## More thinking, better answers
+
+The difference shows up most on hard, many-step problems. OpenAI tested o1 on the 2024 AIME, "an exam designed to challenge the brightest high school math students in America":
+
+<Figure caption="Figure 2: the share of the 15 AIME 2024 problems solved, as reported by OpenAI. Letting o1 try many times and choosing among its answers helped further.">
+  <AimeDiagram />
+</Figure>
+
+GPT-4o, which answers straight away, solved 12% of the problems. o1 solved 74% with one try each. When OpenAI let it answer 64 times and took the most common answer, it reached 83%. OpenAI found that o1 kept getting better "with more time spent thinking", which it calls **test-time compute**: computing power spent while answering, not while training.
+
+In July 2025, an advanced version of Google's Gemini with Deep Think scored 35 out of 42 at the International Mathematical Olympiad, the world's best-known maths contest for school students. That's gold-medal standard, and the answers were "officially graded and certified by IMO coordinators". It worked in plain language, within the 4.5-hour time limit. A year earlier, Google's systems had needed experts to first translate the problems into a special maths language.
+
+## Thinking costs time and tokens
+
+All that rough work isn't free. OpenAI's guide for developers says that while reasoning tokens "are not visible", they "still occupy space in the model's context window and are billed as output tokens", which are the more expensive kind (lesson 5). Thinking also takes time, so answers come more slowly.
+
+So some reasoning models let you choose how hard they think. OpenAI calls this the **reasoning effort**: "Lower effort favors speed and lower token usage", while at higher effort "the model thinks more completely". For a hard maths or coding problem, more thinking is worth it. For "What's the capital of Kerala?", it's wasted.
+
+## Where they still slip
+
+### Thrown by details that don't matter
+
+In 2024, Apple researchers tested models on school maths problems with one extra sentence that sounds relevant but changes nothing. Here's their best-known example:
+
+```text
+Oliver picks 44 kiwis on Friday. Then he picks 58 kiwis on Saturday.
+On Sunday, he picks double the number of kiwis he did on Friday,
+but five of them were a bit smaller than average.
+How many kiwis does Oliver have?
+```
+
+Small kiwis still count, so the answer is 44 + 58 + 88 = 190. But the researchers found that models "tend to blindly subtract the number of smaller fruits": o1-mini answered 185. Across many questions like this, here's how often models were right on the original test, and on questions with one irrelevant sentence added:
+
+| Model      | Original | Extra sentence |
+| ---------- | -------- | -------------- |
+| GPT-4o     | 95.2%    | 63.1%          |
+| o1-mini    | 95.1%    | 66.0%          |
+| o1-preview | 94.9%    | 77.4%          |
+
+The reasoning model o1-preview held up best, but it still dropped by 17.5 points, and some smaller models dropped by more than 60 points. A careful student would ignore the sentence. The models often didn't.
+
+### The reasoning you see isn't always the real reason
+
+In 2025, Anthropic slipped models a hint about the answer to a question, then checked whether their chain of thought admitted to using it. When the models used the hint, Claude 3.7 Sonnet mentioned it only 25% of the time, and DeepSeek R1 39% of the time. The researchers concluded that "we can't always rely on what they tell us about their reasoning". The steps a model shows you can look neat and still leave out what really drove its answer.
+
+<Callout kind="warn">
+
+A long, confident chain of reasoning isn't proof. Read the steps that matter, especially the numbers, and check the answer another way when it counts.
+
+</Callout>
+
+## So, can AI reason?
+
+Reasoning models really can work through many-step problems far better than models that answer straight away, well enough to reach gold-medal standard at the hardest school maths contest. But their reasoning can be thrown by details a careful person would ignore, and the steps they show aren't always how they got there. Whether that counts as "real" reasoning is still argued over. For you, the useful answer is: use them for hard problems, and check their work like you'd check a classmate's.
+
+<TryIt>
+
+Open a chatbot that has a "thinking" or "reasoning" mode, and give it the kiwi question above. Did it fall for the small kiwis? Then ask it the samosa and chai bill from Figure 1, first with thinking switched on, then off if your app lets you. Compare how long each takes, and if the app shows a summary of its thinking, read it. Does it match how you'd work it out?
+
+</TryIt>
+
+<KeyTakeaways>
+
+- Writing out steps, a chain of thought, gives a model room to work: each step becomes text it can read before the next.
+- Reasoning models are trained to think before answering, and do much better on hard maths and many-step problems.
+- More thinking usually means better answers, but the thinking costs time and tokens, so it's worth it for hard problems, not simple ones.
+- Reasoning models can still be thrown by irrelevant details: one extra sentence cut accuracy sharply, even for o1-preview.
+- The reasoning a model shows isn't always the real reason for its answer, so check what matters.
+
+</KeyTakeaways>
