@@ -9,6 +9,7 @@ import { meaningMapMarkdown } from "./meaning-map";
 import { neuronMarkdown } from "./neuron";
 import { nextTokenMarkdown } from "./next-token";
 import { ragPipelineMarkdown } from "./rag-pipeline";
+import { agentRunMarkdown, patchesMarkdown, voiceMarkdown } from "./multimodal-agents";
 import { aimeMarkdown, thinkingMarkdown } from "./reasoning";
 import { searchVsLlmMarkdown } from "./search-vs-llm";
 import { hindiTokensMarkdown, tokenIdsMarkdown } from "./tokens";
@@ -41,4 +42,7 @@ export const DIAGRAM_MARKDOWN: Record<string, string> = {
   TrainingStagesDiagram: trainingStagesMarkdown,
   ThinkingDiagram: thinkingMarkdown,
   AimeDiagram: aimeMarkdown,
+  PatchesDiagram: patchesMarkdown,
+  VoiceDiagram: voiceMarkdown,
+  AgentRunDiagram: agentRunMarkdown,
 };

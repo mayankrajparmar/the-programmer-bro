@@ -19,6 +19,7 @@ import { MeaningMapDiagram } from "../diagrams/meaning-map";
 import { NeuronDiagram } from "../diagrams/neuron";
 import { NextTokenDiagram } from "../diagrams/next-token";
 import { RagPipelineDiagram } from "../diagrams/rag-pipeline";
+import { AgentRunDiagram, PatchesDiagram, VoiceDiagram } from "../diagrams/multimodal-agents";
 import { AimeDiagram, ThinkingDiagram } from "../diagrams/reasoning";
 import { BlockDiagram } from "../diagrams/transformer-block";
 import { SearchVsLlmDiagram } from "../diagrams/search-vs-llm";
@@ -162,4 +163,7 @@ export const lessonComponents: MDXComponents = {
   TrainingStagesDiagram,
   ThinkingDiagram,
   AimeDiagram,
+  PatchesDiagram,
+  VoiceDiagram,
+  AgentRunDiagram,
 };

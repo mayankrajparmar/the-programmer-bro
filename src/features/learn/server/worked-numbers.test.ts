@@ -4,11 +4,23 @@ import * as r50k from "gpt-tokenizer/encoding/r50k_base";
 import { describe, expect, it } from "vitest";
 import CAN_AI_REASON_QUIZ from "../../../../content/quizzes/can-ai-reason.json";
 import HOW_MODELS_LEARN_QUIZ from "../../../../content/quizzes/how-models-learn.json";
+import MULTIMODAL_QUIZ from "../../../../content/quizzes/multimodal-and-agents.json";
 import NEURAL_NETWORKS_QUIZ from "../../../../content/quizzes/neural-networks.json";
 import { DIGIT_NETWORK, outputPercent } from "../diagrams/digit-network";
 import { BASE, TRAINING_STAGES } from "../diagrams/base-model";
 import { GPT2, targetShare } from "../diagrams/gpt2-attention";
 import { LEARN, samosaLoss } from "../diagrams/how-models-learn";
+import {
+  AGENT_RUN,
+  CHEAPEST,
+  IMAGE,
+  inSamosa,
+  PATCH_COUNT,
+  PATCHES_PER_SIDE,
+  TRAINS,
+  VOICE_LATENCY,
+  voiceMarkdown,
+} from "../diagrams/multimodal-agents";
 import { AIME, BILL, BILL_ANSWER, BILL_STEPS } from "../diagrams/reasoning";
 import { BLOCK_ORDER, BLOCK_PARTS } from "../diagrams/transformer-block";
 import GLOVE_SAMPLE from "../diagrams/glove-sample.json";
@@ -778,5 +790,104 @@ describe("worked numbers in lesson 13", () => {
     expect(12 + 8).toBe(20);
     expect(12 + 8 - 3).toBe(17);
     expect(fruit?.options[fruit.answer]).toContain("the answer is 20");
+  });
+});
+
+describe("worked numbers in lesson 14", () => {
+  const body = getLesson("how-ai-works", "multimodal-and-agents")?.body ?? "";
+
+  it("cuts the picture into the Vision Transformer's 196 patches", () => {
+    expect(IMAGE).toEqual({ size: 224, patch: 16 });
+    expect(PATCHES_PER_SIDE).toBe(224 / 16);
+    expect(PATCH_COUNT).toBe(14 * 14);
+    expect(body).toContain("14 rows of 14 patches, so 196 in all");
+    // The pixel-art samosa is a symmetric triangle inside the grid.
+    const cells = Array.from({ length: PATCH_COUNT }, (_, i) => [
+      Math.floor(i / PATCHES_PER_SIDE),
+      i % PATCHES_PER_SIDE,
+    ]);
+    const filled = cells.filter(([row = 0, column = 0]) => inSamosa(row, column));
+    expect(filled.length).toBeGreaterThan(20);
+    expect(filled.length).toBeLessThan(PATCH_COUNT / 2);
+    for (const [row = 0, column = 0] of cells) {
+      expect(inSamosa(row, column)).toBe(inSamosa(row, PATCHES_PER_SIDE - 1 - column));
+    }
+  });
+
+  it("matches Google's token counts for pictures and audio", () => {
+    // "Understand and count tokens", Gemini API docs: 258 per small image or 768 × 768 tile,
+    // 32 tokens per second of audio, and about 4 characters per token.
+    const table = Object.fromEntries(
+      body
+        .split("\n")
+        .filter((line) => /^\| (A small|Each 768|One second|A one-minute|About 4)/.test(line))
+        .map((line) =>
+          line
+            .split("|")
+            .slice(1, 3)
+            .map((cell) => cell.trim()),
+        ),
+    );
+    const minute = 60 * 32;
+    expect(table).toEqual({
+      "A small picture, up to 384 × 384 pixels": "258",
+      "Each 768 × 768 tile of a bigger picture": "258",
+      "One second of audio": "32",
+      "A one-minute voice note": minute.toLocaleString("en-IN"),
+      "About 4 characters of text": "1",
+    });
+    expect(Math.round((minute * 4) / 100) * 100).toBe(7700);
+    expect(body).toContain("about as many tokens as 7,700 characters of text");
+    expect(body).toContain("a one-minute voice note is 1,920 tokens");
+  });
+
+  it("quotes OpenAI's voice numbers, and 320 ms is about a third of a second", () => {
+    expect(VOICE_LATENCY).toEqual({
+      pipelineSeconds: { "GPT-3.5": 2.8, "GPT-4": 5.4 },
+      gpt4oMilliseconds: { fastest: 232, average: 320 },
+    });
+    expect(voiceMarkdown).toContain("2.8 seconds (GPT-3.5) or 5.4 seconds (GPT-4)");
+    expect(voiceMarkdown).toContain("as little as 232 milliseconds, 320 on average");
+    expect(Math.abs(VOICE_LATENCY.gpt4oMilliseconds.average / 1000 - 1 / 3)).toBeLessThan(0.02);
+    expect(body).toContain("reply in about a third of a second");
+  });
+
+  it("books the cheapest train, and only after you approve", () => {
+    const cheapest = Math.min(...TRAINS.map((train) => train.fare));
+    expect(CHEAPEST.fare).toBe(cheapest);
+    expect(CHEAPEST.name).toBe("Garden City Express");
+    const approve = AGENT_RUN.findIndex((step) => step.kind === "approve");
+    const book = AGENT_RUN.findIndex((step) => step.text.startsWith("book_ticket("));
+    expect(approve).toBeGreaterThan(0);
+    expect(book).toBeGreaterThan(approve);
+    expect(AGENT_RUN[book]?.text).toContain(CHEAPEST.name);
+    expect(AGENT_RUN[approve - 1]?.text).toContain("₹980");
+  });
+
+  it("works out how errors compound over many steps", () => {
+    expect(Math.round(0.95 ** 20 * 100)).toBe(36);
+    expect(body).toContain("the chance it gets 20 steps in a row right");
+    expect(body).toContain("about 36%");
+  });
+
+  it("quotes METR's measurements as published", () => {
+    expect(body).toContain('"doubling approximately every 7 months for the last 6 years"');
+    expect(body).toContain('"a time horizon of approximately one hour"');
+    // Paraphrased: MDX would read the quote's "<10%" as the start of a tag.
+    expect(body).toContain(
+      "less than 10% of the time on tasks that take people more than about 4 hours",
+    );
+  });
+
+  it("gets the quiz's sums right", () => {
+    const question = (id: string) => MULTIMODAL_QUIZ.questions.find((q) => q.id === id);
+    const answer = (id: string) => {
+      const q = question(id);
+      return q?.options[q.answer];
+    };
+    expect(question("patch-count")?.prompt).toContain("320 × 320-pixel picture into 16 × 16");
+    expect(answer("patch-count")).toBe(String((320 / 16) ** 2));
+    expect(answer("audio-tokens")).toBe(String(30 * 32));
+    expect(answer("compounding")).toBe(`About ${Math.round(0.9 ** 10 * 100)}%`);
   });
 });

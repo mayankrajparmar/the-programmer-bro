@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { compileMdx } from "@/lib/mdx";
 import { ComingNextSchema, QuizSchema, TrackSchema } from "../schema";
 import {
   getLearnRoutes,
@@ -20,6 +21,16 @@ describe("learning content", () => {
 
   it("loads every track without errors", () => {
     expect(tracks.length).toBeGreaterThan(0);
+  });
+
+  it("compiles every written lesson as MDX, the way the lesson page does", () => {
+    // Catches Markdown that MDX reads as JSX (like "<10%") before the build does.
+    for (const track of tracks) {
+      for (const { slug } of track.lessons) {
+        const lesson = getLesson(track.slug, slug);
+        if (lesson) expect(() => compileMdx(lesson.body), `${track.slug}/${slug}`).not.toThrow();
+      }
+    }
   });
 
   it("numbers lessons 1..n with no gaps", () => {
@@ -88,7 +99,7 @@ describe("learning content", () => {
   it("returns null for lessons and tracks that don't exist", () => {
     expect(getTrack("no-such-track")).toBeNull();
     expect(getLesson("how-ai-works", "no-such-lesson")).toBeNull();
-    expect(getLesson("how-ai-works", "multimodal-and-agents")).toBeNull(); // planned, not written yet
+    expect(getLesson("how-ai-works", "responsible-ai")).toBeNull(); // planned, not written yet
   });
 
   it("lists the tracks coming next, none of which exist yet", () => {
@@ -171,6 +182,11 @@ describe("learning content", () => {
     expect(thirteenth?.number).toBe(13);
     expect(thirteenth?.previous?.slug).toBe("base-model-to-assistant");
     expect(thirteenth?.next?.slug).toBe("multimodal-and-agents");
+
+    const fourteenth = getLesson("how-ai-works", "multimodal-and-agents");
+    expect(fourteenth?.number).toBe(14);
+    expect(fourteenth?.previous?.slug).toBe("can-ai-reason");
+    expect(fourteenth?.next?.slug).toBe("responsible-ai");
   });
 });
 

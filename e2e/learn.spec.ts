@@ -15,6 +15,7 @@ const LESSON_10 = `${TRACK}/transformer`;
 const LESSON_11 = `${TRACK}/how-models-learn`;
 const LESSON_12 = `${TRACK}/base-model-to-assistant`;
 const LESSON_13 = `${TRACK}/can-ai-reason`;
+const LESSON_14 = `${TRACK}/multimodal-and-agents`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -40,10 +41,8 @@ test.describe("learning section", () => {
     await expect(page.getByRole("heading", { level: 2, name: /^Module [A-D]/ })).toHaveCount(4);
     await expect(page.getByRole("link", { name: /What is AI, really\?/ })).toBeVisible();
     // Lessons that aren't written yet are listed, but not linked.
-    await expect(
-      page.getByText("Beyond text: multimodal AI and agents", { exact: true }),
-    ).toBeVisible();
-    await expect(page.getByRole("link", { name: /Beyond text: multimodal AI/ })).toHaveCount(0);
+    await expect(page.getByText("Using AI responsibly", { exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Using AI responsibly/ })).toHaveCount(0);
     if (!isMobile) {
       const nav = page.getByRole("banner").getByRole("navigation", { name: "Main" });
       await expect(nav.getByRole("link", { name: "Learn" })).toHaveAttribute(
@@ -292,6 +291,33 @@ test.describe("learning section", () => {
     );
   });
 
+  test("renders lesson 14 with picture patches and an agent run, linked from lesson 13", async ({
+    page,
+  }) => {
+    await page.goto(LESSON_14);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Beyond text: multimodal AI and agents",
+    );
+    await expect(
+      page.getByRole("img", { name: /cut into a grid of 14 by 14 patches/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("list", { name: /What the model reads: 196 patch tokens/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("region", { name: "How GPT-4o answers" })).toContainText(
+      "232 milliseconds",
+    );
+    const run = page.getByRole("list", { name: "A made-up agent run, step by step" });
+    await expect(run.getByRole("listitem")).toHaveCount(8);
+    await expect(run.getByRole("listitem").nth(3)).toContainText("Garden City Express");
+    await expect(page.getByRole("cell", { name: "1,920" })).toBeVisible();
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 13/ })).toHaveAttribute(
+      "href",
+      LESSON_13,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
@@ -311,6 +337,7 @@ test.describe("learning section", () => {
         LESSON_11,
         LESSON_12,
         LESSON_13,
+        LESSON_14,
       ]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })

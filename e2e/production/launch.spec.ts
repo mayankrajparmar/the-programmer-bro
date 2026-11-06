@@ -64,7 +64,7 @@ test.describe("the live site", () => {
   }
 
   test("answers lessons that aren't written yet with a 404", async ({ request }) => {
-    expect((await request.get("/learn/how-ai-works/multimodal-and-agents")).status()).toBe(404);
+    expect((await request.get("/learn/how-ai-works/responsible-ai")).status()).toBe(404);
   });
 
   test("hides lessons that are still drafts", async ({ request }) => {
