@@ -14,6 +14,7 @@ const LESSON_9 = `${TRACK}/neural-networks`;
 const LESSON_10 = `${TRACK}/transformer`;
 const LESSON_11 = `${TRACK}/how-models-learn`;
 const LESSON_12 = `${TRACK}/base-model-to-assistant`;
+const LESSON_13 = `${TRACK}/can-ai-reason`;
 // Correct options for lesson 1's quiz, in order (content/quizzes/what-is-ai.json).
 const CORRECT = [
   "It learns patterns from examples instead of following rules a person wrote",
@@ -39,8 +40,10 @@ test.describe("learning section", () => {
     await expect(page.getByRole("heading", { level: 2, name: /^Module [A-D]/ })).toHaveCount(4);
     await expect(page.getByRole("link", { name: /What is AI, really\?/ })).toBeVisible();
     // Lessons that aren't written yet are listed, but not linked.
-    await expect(page.getByText("Can AI reason?", { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Can AI reason\?/ })).toHaveCount(0);
+    await expect(
+      page.getByText("Beyond text: multimodal AI and agents", { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /Beyond text: multimodal AI/ })).toHaveCount(0);
     if (!isMobile) {
       const nav = page.getByRole("banner").getByRole("navigation", { name: "Main" });
       await expect(nav.getByRole("link", { name: "Learn" })).toHaveAttribute(
@@ -266,6 +269,29 @@ test.describe("learning section", () => {
     );
   });
 
+  test("renders lesson 13 with a reasoning model's rough work, linked from lesson 12", async ({
+    page,
+  }) => {
+    await page.goto(LESSON_13);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Can AI reason?");
+    await expect(page.getByRole("region", { name: "The question" })).toContainText("₹100 note");
+    const thinking = page.getByRole("region", { name: "The model's thinking" });
+    await expect(thinking.getByRole("listitem")).toHaveCount(5);
+    await expect(thinking).toContainText("Total: ₹45 + ₹24 = ₹69");
+    await expect(page.getByRole("region", { name: "The answer" })).toHaveText(
+      /Riya gets ₹31 back\./,
+    );
+    const aime = page.getByRole("list", { name: "Share of AIME 2024 maths problems solved" });
+    await expect(aime.getByRole("listitem")).toHaveCount(4);
+    await expect(aime.getByRole("listitem").nth(1)).toContainText("74% (11.1 of 15)");
+    await expect(page.getByRole("cell", { name: "77.4%" })).toBeVisible();
+    await expect(page.locator("#quiz").getByText("Question 1 of 8")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Previous · Lesson 12/ })).toHaveAttribute(
+      "href",
+      LESSON_12,
+    );
+  });
+
   for (const theme of ["dark", "light"] as const) {
     test(`has no detectable accessibility problems in the ${theme} theme`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem("tpb-theme", value), theme);
@@ -284,6 +310,7 @@ test.describe("learning section", () => {
         LESSON_10,
         LESSON_11,
         LESSON_12,
+        LESSON_13,
       ]) {
         await page.goto(path);
         const results = await new AxeBuilder({ page })

@@ -1,0 +1,109 @@
+{
+  "lesson": "can-ai-reason",
+  "questions": [
+    {
+      "id": "chain-of-thought",
+      "type": "recall",
+      "prompt": "What is a chain of thought?",
+      "options": [
+        "A list of the websites a model searched",
+        "The steps of working a model writes out before giving its answer",
+        "A chain of several models passing an answer along",
+        "The order in which a model learned its training data"
+      ],
+      "answer": 1,
+      "explanation": "Google's 2022 paper called it \"a series of intermediate reasoning steps\". Asking for them took PaLM from 17.9% to 56.9% on school maths word problems."
+    },
+    {
+      "id": "why-steps-help",
+      "type": "recall",
+      "prompt": "Why does writing out steps help an LLM get the right answer?",
+      "options": [
+        "Each written step becomes text it reads before the next, so the working doesn't have to fit into a single token",
+        "Steps make the model's training data bigger",
+        "The steps are checked by a person before the answer is shown",
+        "Longer answers are always marked as correct"
+      ],
+      "answer": 0,
+      "explanation": "Each token gets one pass through the network. Written steps act like rough work in the margin: the model can build on them, one token at a time."
+    },
+    {
+      "id": "reasoning-model",
+      "type": "recall",
+      "prompt": "What makes a reasoning model different from an ordinary chatbot model?",
+      "options": [
+        "It has no training data at all",
+        "It searches the web for every answer",
+        "It is trained to write a chain of thought before every answer, and to do it well",
+        "It only works on maths"
+      ],
+      "answer": 2,
+      "explanation": "OpenAI said o1 learns \"how to think productively using its chain of thought\" through large-scale reinforcement learning, and learns to break tricky steps into simpler ones."
+    },
+    {
+      "id": "when-to-think",
+      "type": "application",
+      "prompt": "Which of these is most worth switching on a slower \"thinking\" mode for?",
+      "options": [
+        "Asking for the capital of Kerala",
+        "Saying good morning",
+        "Translating one word into Hindi",
+        "Planning a five-city train trip within a budget, with fixed dates"
+      ],
+      "answer": 3,
+      "explanation": "Thinking costs time and tokens, so it pays off on hard, many-step problems, like a trip with dates, prices and connections to juggle. Simple facts don't need it."
+    },
+    {
+      "id": "test-time-compute",
+      "type": "recall",
+      "prompt": "What does \"test-time compute\" mean?",
+      "options": [
+        "Computing power spent while the model is answering, such as time spent thinking",
+        "The time it takes to train a model from scratch",
+        "How long a person takes to check the answer",
+        "The speed of your internet connection"
+      ],
+      "answer": 0,
+      "explanation": "OpenAI found o1 improved \"with more time spent thinking\". On the AIME, one try solved 74%, and taking the most common answer of 64 tries solved 83%."
+    },
+    {
+      "id": "irrelevant-detail",
+      "type": "application",
+      "prompt": "\"Priya buys 12 mangoes and 8 bananas. Three of the mangoes are a little less ripe than the rest. How many fruits did she buy?\" A model answers 17. What went wrong?",
+      "options": [
+        "Nothing: 17 is right",
+        "It added instead of multiplying",
+        "It was thrown by a detail that doesn't matter: less ripe mangoes still count, so the answer is 20",
+        "It forgot to count the bananas"
+      ],
+      "answer": 2,
+      "explanation": "This is the trap from Apple's kiwi study: one sentence that sounds relevant but changes nothing. Even o1-preview's accuracy fell from 94.9% to 77.4% on questions like this."
+    },
+    {
+      "id": "hidden-tokens",
+      "type": "recall",
+      "prompt": "A reasoning model's thinking is hidden from you. Does it still cost anything?",
+      "options": [
+        "No: hidden tokens are free",
+        "Yes: the thinking tokens take up the context window and are billed as output tokens",
+        "Only if you read the summary",
+        "Only when the answer turns out to be wrong"
+      ],
+      "answer": 1,
+      "explanation": "OpenAI's guide says reasoning tokens \"are not visible\" but \"still occupy space in the model's context window and are billed as output tokens\", the more expensive kind."
+    },
+    {
+      "id": "faithful",
+      "type": "application",
+      "prompt": "A model shows you a neat, step-by-step explanation for its answer. What does Anthropic's 2025 study suggest?",
+      "options": [
+        "The steps always show exactly how it got the answer",
+        "Neat steps prove the answer is right",
+        "The steps can leave out what really drove the answer, so check the parts that matter",
+        "Models never use hints"
+      ],
+      "answer": 2,
+      "explanation": "When models used a hint they'd been slipped, Claude 3.7 Sonnet mentioned it only 25% of the time and DeepSeek R1 39%. Visible reasoning helps, but it isn't a guarantee."
+    }
+  ]
+}
